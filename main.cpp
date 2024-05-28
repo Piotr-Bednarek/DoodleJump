@@ -1,10 +1,45 @@
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <iostream>
+#include <stdlib.h>
+
+class Platform : public sf::RectangleShape
+{
+public:
+    Platform(sf::Vector2f pos, sf::Vector2f s) : sf::RectangleShape()
+    {
+        setPosition(pos);
+        setSize(s);
+        setFillColor(sf::Color::Green);
+    }
+};
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    const int WIDTH = 1000;
+    const int HEIGHT = 1000;
+
+    srand(time(NULL));
+
+    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!");
+
+    std::vector<Platform> platforms;
+
+    int offset = 100;
+
+    int platform_width = 100;
+
+    for (int i=0; i < HEIGHT; i=i+offset)
+    {
+        int platform_y = HEIGHT - i;
+        int platform_x = rand() % (WIDTH-platform_width);
+
+
+        Platform platforma(sf::Vector2f(platform_x, platform_y), sf::Vector2f(100.0, 20.0));
+
+        platforms.emplace_back(platforma);
+    }
+
 
     while (window.isOpen())
     {
@@ -16,7 +51,12 @@ int main()
         }
 
         window.clear();
-        window.draw(shape);
+
+
+        for (const Platform& i : platforms)
+        {
+            window.draw(i);
+        }
 
         window.display();
     }
