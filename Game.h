@@ -12,12 +12,19 @@ private:
     float jump_force;
     float velocity;
 
+    int game_left_bound;
+    int game_right_bound;
+
+    float slow_down = 7.5;
+
 public:
-    Game(float grav, float jump)
+    Game(float grav, float jump, int left_bound, int right_bound)
     {
         gravity = grav;
         jump_force = jump;
         velocity = grav;
+        game_left_bound = left_bound;
+        game_right_bound = right_bound;
     }
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
@@ -25,7 +32,7 @@ public:
         for (int i = 0; i < window_height; i = i + offset)
         {
             int platform_y = window_height - i;
-            int platform_x = rand() % (window_width - platform_width);
+            int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
 
             Platform platform(sf::Vector2f(platform_x, platform_y), sf::Vector2f(platform_width, platform_height));
 
@@ -39,7 +46,7 @@ public:
 
         for (Platform &platform : platforms)
         {
-            int platform_x = rand() % (window.getSize().x - platform_width);
+            int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
 
             platform.move(sf::Vector2f(0, velocity * dt.asSeconds()));
             if (platform.getPosition().y > window.getSize().y)
@@ -52,7 +59,7 @@ public:
 
         if (velocity > gravity)
         {
-            velocity -= gravity * dt.asSeconds();
+            velocity -= gravity * slow_down * dt.asSeconds();
         }
         else
         {
