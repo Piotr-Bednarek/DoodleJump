@@ -5,6 +5,7 @@
 
 #include "Platform.h"
 #include "Enemy.h"
+#include "Game.h"
 
 enum class GameState
 {
@@ -27,7 +28,9 @@ int main()
 
     window.setFramerateLimit(FPS);
 
-    //----------------------------------------------
+    window.setVerticalSyncEnabled(true);
+
+    // ZALADOWANIE TEKSTUR
 
     sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
@@ -49,6 +52,8 @@ int main()
         return 1;
     }
 
+    Game game(50);
+
     sf::Text title("Doodle Jump!", font, 100);
     sf::Text info("Press SPACE to start", font, 50);
 
@@ -60,7 +65,7 @@ int main()
     info.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
     info.setPosition(sf::Vector2f(WIDTH / 2.0f, 150));
 
-    GameState state = GameState::TITLE;
+    GameState state = GameState::GAME;
 
     Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0);
 
@@ -71,27 +76,19 @@ int main()
         enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
     }
 
-    std::vector<Platform> platforms;
+    // std::vector<Platform> platforms;
 
     int offset = 50;
     int platform_width = 100;
 
-    // kod do kamery
-    //  sf::View view1(sf::FloatRect(200.f, 200.f, 300.f, 200.f));
-    //  window.setView(view1);
+    game.create_platforms(50, 100, 20, HEIGHT, WIDTH);
 
-    for (int i = 0; i < HEIGHT; i = i + offset)
-    {
-        int platform_y = HEIGHT - i;
-        int platform_x = rand() % (WIDTH - platform_width);
-
-        Platform platforma(sf::Vector2f(platform_x, platform_y), sf::Vector2f(100.0, 20.0));
-
-        platforms.emplace_back(platforma);
-    }
+    sf::Clock clock;
 
     while (window.isOpen())
     {
+        sf::Time dt = clock.restart();
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -117,10 +114,9 @@ int main()
         }
         else if (state == GameState::GAME)
         {
-            for (const Platform &i : platforms)
-            {
-                window.draw(i);
-            }
+
+            game.draw(window);
+            game.update(dt, window);
 
             window.draw(enemy1);
             enemy1.step();
