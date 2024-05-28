@@ -27,6 +27,8 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
+    // create view 2 times bigger and place window in the middle
+
     window.setFramerateLimit(FPS);
 
     window.setVerticalSyncEnabled(true);
@@ -53,7 +55,7 @@ int main()
         return 1;
     }
 
-    Game game(50);
+    Game game(75, 150);
 
     // ----------------------------------------------
 
@@ -108,7 +110,9 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
             {
-                state = GameState::GAME;
+                // state = GameState::GAME;
+
+                game.jump();
             }
         }
 

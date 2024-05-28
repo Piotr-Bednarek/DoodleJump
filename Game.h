@@ -9,11 +9,15 @@ private:
     float gravity;
     std::vector<Platform> platforms;
     float score;
+    float jump_force;
+    float velocity;
 
 public:
-    Game(float g)
+    Game(float grav, float jump)
     {
-        gravity = g;
+        gravity = grav;
+        jump_force = jump;
+        velocity = grav;
     }
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
@@ -31,17 +35,29 @@ public:
 
     void update(sf::Time dt, sf::RenderWindow &window)
     {
+        int platform_width = platforms[0].getSize().x;
 
         for (Platform &platform : platforms)
         {
-            platform.move(sf::Vector2f(0, gravity * dt.asSeconds()));
+            int platform_x = rand() % (window.getSize().x - platform_width);
+
+            platform.move(sf::Vector2f(0, velocity * dt.asSeconds()));
             if (platform.getPosition().y > window.getSize().y)
             {
-                platform.setPosition(sf::Vector2f(rand() % window.getSize().x, 0));
+                platform.setPosition(sf::Vector2f(platform_x, 0));
             }
         }
 
         update_score();
+
+        if (velocity > gravity)
+        {
+            velocity -= gravity * dt.asSeconds();
+        }
+        else
+        {
+            velocity = gravity;
+        }
     }
 
     void draw(sf::RenderWindow &window)
@@ -52,9 +68,14 @@ public:
         }
     }
 
+    void jump()
+    {
+        velocity += jump_force;
+    }
+
     void update_score()
     {
-        score += 0.1;
+        score += 0.05 * velocity;
     }
 
     float get_score()
