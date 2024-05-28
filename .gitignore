@@ -1,7 +1,10 @@
 .vscode
+src
 
 main.exe
 main.o
+makefile
+compile.bat
 
 openal32.dll
 sfml-audio-2.dll
