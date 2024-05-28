@@ -11,15 +11,28 @@
 enum class GameState
 {
     TITLE,
-    GAME,
+    SINGLEPLAYER,
     MULTIPLAYER,
     GAMEOVER
 
 };
 
+sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
+{
+    sf::Text sfText(text, font, size);
+    sfText.setFillColor(color);
+
+    sf::FloatRect textRect = sfText.getLocalBounds();
+    sfText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+    sfText.setPosition(position);
+
+    return sfText;
+}
+
 int main()
 {
     srand(time(NULL));
+    sf::Clock clock;
 
     const int WIDTH = 800;
     const int HEIGHT = 800;
@@ -27,10 +40,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
-    // create view 2 times bigger and place window in the middle
-
     window.setFramerateLimit(FPS);
-
     window.setVerticalSyncEnabled(true);
 
     // ----------------------------------------------
@@ -55,28 +65,15 @@ int main()
         return 1;
     }
 
+    sf::Text title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 75));
+    sf::Text info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 150));
+    sf::Text score = createText("Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
+
+    // ----------------------------------------------
+
     Game game(50, 250, 0, WIDTH);
 
-    // ----------------------------------------------
-
-    sf::Text title("Doodle Jump!", font, 100);
-    sf::Text info("Press SPACE to start", font, 50);
-    sf::Text score("Score: 0", font, 50);
-
-    score.setFillColor(sf::Color::Black);
-    score.setPosition(sf::Vector2f(10, 0));
-
-    sf::FloatRect textRect = title.getLocalBounds();
-    title.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    title.setPosition(sf::Vector2f(WIDTH / 2.0f, 75));
-
-    textRect = info.getLocalBounds();
-    info.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    info.setPosition(sf::Vector2f(WIDTH / 2.0f, 150));
-
-    // ----------------------------------------------
-
-    GameState state = GameState::GAME;
+    GameState state = GameState::SINGLEPLAYER;
 
     Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0);
 
@@ -89,12 +86,9 @@ int main()
 
     // ----------------------------------------------
 
-    int offset = 50;
-    int platform_width = 100;
-
     game.create_platforms(50, 100, 20, HEIGHT, WIDTH);
 
-    sf::Clock clock;
+    // ----------------------------------------------
 
     while (window.isOpen())
     {
@@ -110,9 +104,19 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
             {
-                // state = GameState::GAME;
+                if (state == GameState::TITLE)
+                    state = GameState::SINGLEPLAYER;
 
                 game.jump();
+            }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Backspace)
+            {
+                state = GameState::GAMEOVER;
+
+                int final_score = game.end();
+
+                score.setString("Score: " + std::to_string(static_cast<int>(std::round(final_score))));
             }
         }
 
@@ -120,14 +124,14 @@ int main()
 
         window.draw(sf::Sprite(background_texture));
 
-        if (state == GameState::TITLE)
+        switch (state)
         {
+        case GameState::TITLE:
             window.draw(title);
             window.draw(info);
-        }
 
-        else if (state == GameState::GAME)
-        {
+            break;
+        case GameState::SINGLEPLAYER:
             game.draw(window);
             game.update(dt, window);
 
@@ -138,6 +142,18 @@ int main()
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
 
             window.draw(score);
+
+            break;
+
+        case GameState::MULTIPLAYER:
+            break;
+        case GameState::GAMEOVER:
+
+            window.draw(title);
+            window.draw(score);
+            score.setPosition(WIDTH / 2.0f, 150);
+
+            break;
         }
 
         window.display();

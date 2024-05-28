@@ -6,6 +6,7 @@
 class Game
 {
 private:
+    bool game_over;
     float gravity;
     std::vector<Platform> platforms;
     float score;
@@ -87,6 +88,12 @@ public:
 
     float get_score()
     {
+        return score;
+    }
+
+    float end()
+    {
+        game_over = true;
         return score;
     }
 };
