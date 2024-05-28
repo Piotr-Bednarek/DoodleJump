@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <cmath>
 
 #include "Platform.h"
 #include "Enemy.h"
@@ -30,7 +31,7 @@ int main()
 
     window.setVerticalSyncEnabled(true);
 
-    // ZALADOWANIE TEKSTUR
+    // ----------------------------------------------
 
     sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
@@ -54,8 +55,14 @@ int main()
 
     Game game(50);
 
+    // ----------------------------------------------
+
     sf::Text title("Doodle Jump!", font, 100);
     sf::Text info("Press SPACE to start", font, 50);
+    sf::Text score("Score: 0", font, 50);
+
+    score.setFillColor(sf::Color::Black);
+    score.setPosition(sf::Vector2f(10, 0));
 
     sf::FloatRect textRect = title.getLocalBounds();
     title.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
@@ -64,6 +71,8 @@ int main()
     textRect = info.getLocalBounds();
     info.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
     info.setPosition(sf::Vector2f(WIDTH / 2.0f, 150));
+
+    // ----------------------------------------------
 
     GameState state = GameState::GAME;
 
@@ -76,7 +85,7 @@ int main()
         enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
     }
 
-    // std::vector<Platform> platforms;
+    // ----------------------------------------------
 
     int offset = 50;
     int platform_width = 100;
@@ -112,15 +121,19 @@ int main()
             window.draw(title);
             window.draw(info);
         }
+
         else if (state == GameState::GAME)
         {
-
             game.draw(window);
             game.update(dt, window);
 
             window.draw(enemy1);
             enemy1.step();
             enemy1.move(1.0 / FPS);
+
+            score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
+
+            window.draw(score);
         }
 
         window.display();

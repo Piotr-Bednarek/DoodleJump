@@ -8,6 +8,7 @@ class Game
 private:
     float gravity;
     std::vector<Platform> platforms;
+    float score;
 
 public:
     Game(float g)
@@ -39,6 +40,8 @@ public:
                 platform.setPosition(sf::Vector2f(rand() % window.getSize().x, 0));
             }
         }
+
+        update_score();
     }
 
     void draw(sf::RenderWindow &window)
@@ -47,5 +50,15 @@ public:
         {
             window.draw(platform);
         }
+    }
+
+    void update_score()
+    {
+        score += 0.1;
+    }
+
+    float get_score()
+    {
+        return score;
     }
 };
