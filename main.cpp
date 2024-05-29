@@ -7,6 +7,8 @@
 #include "Platform.h"
 #include "Enemy.h"
 #include "Game.h"
+#include "Projectile.h"
+#include "Weapon.h"
 
 enum class GameState
 {
@@ -14,7 +16,6 @@ enum class GameState
     SINGLEPLAYER,
     MULTIPLAYER,
     GAMEOVER
-
 };
 
 sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
@@ -48,6 +49,8 @@ int main()
     sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
 
+    sf::Texture projectile_texture;
+
     sf::Font font;
 
     if (!enemy_flying_texture.loadFromFile("assets/enemy/FLYING.png"))
@@ -56,6 +59,11 @@ int main()
     }
 
     if (!background_texture.loadFromFile("assets/background.png"))
+    {
+        return 1;
+    }
+
+    if (!projectile_texture.loadFromFile("assets/projectile.png"))
     {
         return 1;
     }
@@ -72,6 +80,9 @@ int main()
     // ----------------------------------------------
 
     Game game(50, 250, 0, WIDTH);
+
+    // Projectile projectile(sf::Vector2f(500, 500), 200, 0, projectile_texture);
+    Weapon weapon(sf::Vector2f(500, 500), WeaponType::SINGLE, projectile_texture);
 
     GameState state = GameState::SINGLEPLAYER;
 
@@ -118,6 +129,21 @@ int main()
 
                 score.setString("Score: " + std::to_string(static_cast<int>(std::round(final_score))));
             }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
+            {
+                weapon.shoot(WeaponType::SINGLE);
+            }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Left)
+            {
+                weapon.shoot(WeaponType::MACHINEGUN);
+            }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Right)
+            {
+                weapon.shoot(WeaponType::TRIPLE);
+            }
         }
 
         window.clear();
@@ -135,9 +161,13 @@ int main()
             game.draw(window);
             game.update(dt, window);
 
+            weapon.update(dt);
+
             window.draw(enemy1);
             enemy1.step();
             enemy1.move(1.0 / FPS);
+
+            weapon.draw(window);
 
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
 
