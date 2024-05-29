@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include "Platform.h"
+#include <iostream>
+#include "Weapon.h"
 
 class Game
 {
@@ -18,8 +20,10 @@ private:
 
     float slow_down = 7.5;
 
+    Weapon weapon;
+
 public:
-    Game(float grav, float jump, int left_bound, int right_bound)
+    Game(float grav, float jump, int left_bound, int right_bound, sf::Texture &projectile_texture) : weapon(sf::Vector2f(500, 500), WeaponType::SINGLE, projectile_texture)
     {
         gravity = grav;
         jump_force = jump;
@@ -58,14 +62,25 @@ public:
 
         update_score();
 
-        if (velocity > gravity)
+        if (velocity > 0)
         {
-            velocity -= gravity * slow_down * dt.asSeconds();
+            if (gravity == 0)
+            {
+                velocity -= 50 * slow_down * dt.asSeconds();
+
+                std::cout << velocity << std::endl;
+            }
+            else
+            {
+                velocity -= gravity * slow_down * dt.asSeconds();
+            }
         }
         else
         {
             velocity = gravity;
         }
+
+        weapon.update(dt);
     }
 
     void draw(sf::RenderWindow &window)
@@ -74,6 +89,8 @@ public:
         {
             window.draw(platform);
         }
+
+        weapon.draw(window);
     }
 
     void jump()
@@ -95,5 +112,10 @@ public:
     {
         game_over = true;
         return score;
+    }
+
+    void shoot(WeaponType type)
+    {
+        weapon.shoot(type);
     }
 };

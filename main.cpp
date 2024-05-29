@@ -9,6 +9,8 @@
 #include "Game.h"
 #include "Projectile.h"
 #include "Weapon.h"
+#include "Button.h"
+#include "TittleScreen.h"
 
 enum class GameState
 {
@@ -79,12 +81,11 @@ int main()
 
     // ----------------------------------------------
 
-    Game game(50, 250, 0, WIDTH);
+    Game game(0, 350, 0, WIDTH, projectile_texture);
 
-    // Projectile projectile(sf::Vector2f(500, 500), 200, 0, projectile_texture);
-    Weapon weapon(sf::Vector2f(500, 500), WeaponType::SINGLE, projectile_texture);
+    GameState state = GameState::TITLE;
 
-    GameState state = GameState::SINGLEPLAYER;
+    TittleScreen tittle_screen(font);
 
     Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0);
 
@@ -132,17 +133,17 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
-                weapon.shoot(WeaponType::SINGLE);
+                game.shoot(WeaponType::SINGLE);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Left)
             {
-                weapon.shoot(WeaponType::MACHINEGUN);
+                game.shoot(WeaponType::MACHINEGUN);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Right)
             {
-                weapon.shoot(WeaponType::TRIPLE);
+                game.shoot(WeaponType::TRIPLE);
             }
         }
 
@@ -156,18 +157,17 @@ int main()
             window.draw(title);
             window.draw(info);
 
+            tittle_screen.update(window);
+            tittle_screen.draw(window);
+
             break;
         case GameState::SINGLEPLAYER:
             game.draw(window);
             game.update(dt, window);
 
-            weapon.update(dt);
-
             window.draw(enemy1);
             enemy1.step();
             enemy1.move(1.0 / FPS);
-
-            weapon.draw(window);
 
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
 
