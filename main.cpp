@@ -37,9 +37,9 @@ int main()
     srand(time(NULL));
     sf::Clock clock;
 
-    const int WIDTH = 800;
-    const int HEIGHT = 800;
-    const int FPS = 60;
+    int WIDTH = 800;
+    int HEIGHT = 800;
+    int FPS = 60;
 
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
@@ -51,6 +51,9 @@ int main()
     sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
 
+    sf::Texture platform_grass_texture;
+    sf::Texture platform_stone_texture;
+
     sf::Texture projectile_texture;
 
     sf::Font font;
@@ -61,6 +64,16 @@ int main()
     }
 
     if (!background_texture.loadFromFile("assets/background.png"))
+    {
+        return 1;
+    }
+
+    if (!platform_grass_texture.loadFromFile("assets/platform_grass.png"))
+    {
+        return 1;
+    }
+
+    if (!platform_stone_texture.loadFromFile("assets/platform_stone.png"))
     {
         return 1;
     }
@@ -78,6 +91,11 @@ int main()
     sf::Text title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 75));
     sf::Text info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 150));
     sf::Text score = createText("Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
+
+    // std::vector<sf::Texture> platform_textures = {platform_grass_texture, platform_stone_texture};
+
+    // Platform platform1(sf::Vector2f(100, 100), sf::Vector2f(100, 20));
+    // Platform platform2(sf::Vector2f(200, 200), sf::Vector2f(100, 20));
 
     // ----------------------------------------------
 
@@ -164,6 +182,9 @@ int main()
         case GameState::SINGLEPLAYER:
             game.draw(window);
             game.update(dt, window);
+
+            // window.draw(platform1);
+            // window.draw(platform2);
 
             window.draw(enemy1);
             enemy1.step();
