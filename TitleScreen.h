@@ -3,28 +3,50 @@
 #include <SFML/Graphics.hpp>
 #include "Button.h"
 
-class TittleScreen
+class TitleScreen
 {
-
 private:
     Button singleplayer_button;
     Button multiplayer_button;
     Button score_button;
 
+    std::vector<Button> buttons;
+
     sf::Text title;
     sf::Text info;
 
+    sf::Texture singleplayer_button_texture;
+    sf::Texture multiplayer_button_texture;
+    sf::Texture score_button_texture;
+
 public:
-    TittleScreen(sf::Font &font, sf::RenderWindow &window)
-        : singleplayer_button(sf::Vector2f(100, 450), sf::Vector2f(100, 100), "Singleplayer", font),
-          multiplayer_button(sf::Vector2f(350, 450), sf::Vector2f(100, 100), "Multiplayer", font),
-          score_button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font)
+    TitleScreen(sf::Font &font, sf::RenderWindow &window)
     {
+
+        if (!singleplayer_button_texture.loadFromFile("assets/singleplayer_button.png"))
+        {
+            std::cout << "Failed to load texture from assets/singleplayer_button.png" << std::endl;
+        }
+
+        if (!multiplayer_button_texture.loadFromFile("assets/multiplayer_button.png"))
+        {
+            std::cout << "Failed to load texture from assets/multiplayer_button.png" << std::endl;
+        }
 
         int WIDTH = window.getSize().x;
 
+        create_buttons(font);
+
         title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 75));
         info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 150));
+    }
+
+    void create_buttons(sf::Font &font)
+    {
+
+        singleplayer_button = Button(sf::Vector2f(100, 450), sf::Vector2f(100, 100), "Singleplayer", font, singleplayer_button_texture);
+        multiplayer_button = Button(sf::Vector2f(350, 450), sf::Vector2f(100, 100), "Multiplayer", font, multiplayer_button_texture);
+        score_button = Button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font, singleplayer_button_texture);
     }
 
     void draw(sf::RenderWindow &window)

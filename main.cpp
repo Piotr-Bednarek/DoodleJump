@@ -10,7 +10,7 @@
 #include "Projectile.h"
 #include "Weapon.h"
 #include "Button.h"
-#include "TittleScreen.h"
+#include "TitleScreen.h"
 
 enum class GameState
 {
@@ -44,6 +44,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
     window.setFramerateLimit(FPS);
+
     window.setVerticalSyncEnabled(true);
 
     // ----------------------------------------------
@@ -79,7 +80,7 @@ int main()
 
     GameState state = GameState::TITLE;
 
-    TittleScreen tittle_screen(font, window);
+    TitleScreen tittle_screen(font, window);
 
     Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0);
 
