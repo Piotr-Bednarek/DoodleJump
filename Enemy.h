@@ -9,6 +9,9 @@ private:
     float speed;
     int direction;
 
+    float health_points;
+    float damage;
+
 public:
     Enemy(sf::Vector2f pos, float s, int dir) : AnimatedSprite(pos, 10)
     {

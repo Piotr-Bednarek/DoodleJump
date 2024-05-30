@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <string>
 
 class Projectile : public sf::Sprite
 {
@@ -8,7 +9,6 @@ private:
     sf::Vector2f position;
     float speed;
     float angle;
-    const double PI = 3.14159265358979323846;
 
 public:
     Projectile(sf::Vector2f pos, float s, float a, sf::Texture &projectile_texture) : sf::Sprite()
@@ -24,6 +24,8 @@ public:
 
     void update(sf::Time dt)
     {
+        const double PI = 3.14159265358979323846;
+
         float radian_angle = (90 - angle) * PI / 180.0f;
         move(speed * cos(radian_angle) * dt.asSeconds(), -speed * sin(radian_angle) * dt.asSeconds());
     }

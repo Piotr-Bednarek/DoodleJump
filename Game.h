@@ -25,7 +25,7 @@ private:
     std::vector<sf::Texture> platform_textures;
 
 public:
-    Game(float grav, float jump, int left_bound, int right_bound, sf::Texture &projectile_texture) : weapon(sf::Vector2f(500, 500), WeaponType::SINGLE, projectile_texture)
+    Game(float grav, float jump, int left_bound, int right_bound) : weapon(sf::Vector2f(500, 500), WeaponType::SINGLE)
     {
         gravity = grav;
         jump_force = jump;
@@ -83,8 +83,7 @@ public:
             if (gravity == 0)
             {
                 velocity -= 50 * slow_down * dt.asSeconds();
-
-                std::cout << velocity << std::endl;
+                // std::cout << velocity << std::endl;
             }
             else
             {

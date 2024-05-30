@@ -27,13 +27,19 @@ private:
     int burstCounter = 0;
 
 public:
-    Weapon(sf::Vector2f pos, WeaponType initial_type, sf::Texture &texture)
+    Weapon(sf::Vector2f pos, WeaponType initial_type)
     {
         position = pos;
         type = initial_type;
-        projectile_texture = texture;
 
         setType(type);
+
+        std::string path = "assets/projectile.png";
+
+        if (!projectile_texture.loadFromFile(path))
+        {
+            std::cout << "Failed to load texture from " << path << std::endl;
+        }
     }
 
     void setType(WeaponType newType)

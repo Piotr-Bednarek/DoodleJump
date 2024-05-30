@@ -54,8 +54,6 @@ int main()
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
 
-    sf::Texture projectile_texture;
-
     sf::Font font;
 
     if (!enemy_flying_texture.loadFromFile("assets/enemy/FLYING.png"))
@@ -68,42 +66,20 @@ int main()
         return 1;
     }
 
-    if (!platform_grass_texture.loadFromFile("assets/platform_grass.png"))
-    {
-        return 1;
-    }
-
-    if (!platform_stone_texture.loadFromFile("assets/platform_stone.png"))
-    {
-        return 1;
-    }
-
-    if (!projectile_texture.loadFromFile("assets/projectile.png"))
-    {
-        return 1;
-    }
-
     if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
     {
         return 1;
     }
 
-    sf::Text title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 75));
-    sf::Text info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 150));
     sf::Text score = createText("Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
-
-    // std::vector<sf::Texture> platform_textures = {platform_grass_texture, platform_stone_texture};
-
-    // Platform platform1(sf::Vector2f(100, 100), sf::Vector2f(100, 20));
-    // Platform platform2(sf::Vector2f(200, 200), sf::Vector2f(100, 20));
 
     // ----------------------------------------------
 
-    Game game(0, 350, 0, WIDTH, projectile_texture);
+    Game game(0, 350, 0, WIDTH);
 
     GameState state = GameState::TITLE;
 
-    TittleScreen tittle_screen(font);
+    TittleScreen tittle_screen(font, window);
 
     Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0);
 
@@ -172,8 +148,6 @@ int main()
         switch (state)
         {
         case GameState::TITLE:
-            window.draw(title);
-            window.draw(info);
 
             tittle_screen.update(window);
             tittle_screen.draw(window);
@@ -182,9 +156,6 @@ int main()
         case GameState::SINGLEPLAYER:
             game.draw(window);
             game.update(dt, window);
-
-            // window.draw(platform1);
-            // window.draw(platform2);
 
             window.draw(enemy1);
             enemy1.step();
@@ -200,7 +171,6 @@ int main()
             break;
         case GameState::GAMEOVER:
 
-            window.draw(title);
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
 
