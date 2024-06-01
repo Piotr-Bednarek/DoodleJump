@@ -44,6 +44,7 @@ public:
     {
         setRotation(angle);
     }
+
     void draw(sf::RenderWindow &window)
     {
         window.draw(*this);

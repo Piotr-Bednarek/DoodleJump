@@ -99,11 +99,11 @@ public:
             velocity = gravity;
         }
 
-        float threshold = window.getSize().y * 0.5f; // 20% from the top of the screen
+        float threshold = window.getSize().y * 0.5f;
         if (player.getPosition().y < threshold)
         {
             float diff = threshold - player.getPosition().y;
-            player.move(0, diff); // Move the player down
+            player.move(0, diff);
 
             for (Platform &platform : platforms)
             {

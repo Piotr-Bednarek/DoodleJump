@@ -21,16 +21,22 @@ private:
     float friction = 0.9;
     float air_friction = 0.9;
 
+    int game_left_bound;
+    int game_right_bound;
+
     Weapon weapon;
 
 public:
-    Player(sf::Vector2f pos, sf::Vector2f s) : sf::RectangleShape(), weapon(pos, WeaponType::SINGLE)
+    Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::RectangleShape(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
     {
         setPosition(pos);
         setSize(s);
+
+        game_left_bound = left_bound;
+        game_right_bound = right_bound;
     }
 
-    void update(float dt)
+    void update(float dt, sf::RenderWindow &window)
     {
         if (is_on_ground)
         {
@@ -48,7 +54,7 @@ public:
         pos.y += velocity.y * dt;
         setPosition(pos);
 
-        weapon.update(dt, getPosition() + sf::Vector2f(getSize().x / 2, 0));
+        weapon.update(dt, getPosition() + sf::Vector2f(getSize().x / 2, 0), window);
     }
 
     void move(float dx, float dy)

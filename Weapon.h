@@ -1,6 +1,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
+#include <SFML/System/Vector2.hpp>
+
 #include <vector>
 
 #include "Projectile.h"
@@ -34,11 +37,17 @@ private:
     sf::Time shootDelay;
     int burstCounter = 0;
 
+    int game_left_bound;
+    int game_right_bound;
+
 public:
-    Weapon(sf::Vector2f pos, WeaponType initial_type)
+    Weapon(sf::Vector2f pos, WeaponType initial_type, int left_bound, int right_bound)
     {
         position = pos;
         type = initial_type;
+
+        game_left_bound = left_bound;
+        game_right_bound = right_bound;
 
         setType(type);
 
@@ -100,13 +109,22 @@ public:
         }
     }
 
-    void update(float dt, sf::Vector2f pos)
+    void update(float dt, sf::Vector2f pos, sf::RenderWindow &window)
     {
         position = pos;
 
-        for (Projectile &projectile : projectiles)
+        for (auto it = projectiles.begin(); it != projectiles.end();)
         {
-            projectile.update(dt);
+            it->update(dt);
+
+            if (it->getPosition().x < game_left_bound || it->getPosition().x > game_right_bound || it->getPosition().y < 0 || it->getPosition().y > window.getSize().y)
+            {
+                it = projectiles.erase(it);
+            }
+            else
+            {
+                it++;
+            }
         }
     }
 

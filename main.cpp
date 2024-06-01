@@ -57,7 +57,7 @@ int main()
     sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
 
-    // sf::Texture projectile_texture;
+    sf::Texture projectile_texture;
 
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
@@ -74,10 +74,10 @@ int main()
         return 1;
     }
 
-    // if (!projectile_texture.loadFromFile("assets/projectile.png"))
-    // {
-    //     return 1;
-    // }
+    if (!projectile_texture.loadFromFile("assets/fireball_projectile.png"))
+    {
+        return 1;
+    }
 
     if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
     {
@@ -94,14 +94,14 @@ int main()
 
     TitleScreen tittle_screen(font, window);
 
-    Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50));
+    Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50), 0, WIDTH);
 
-    // Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, projectile_texture);
+    Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, projectile_texture, 0, WIDTH);
 
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
-    // }
+    for (int i = 0; i < 4; i++)
+    {
+        enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
+    }
 
     // enemy1.setRotation(90);
 
@@ -200,13 +200,13 @@ int main()
 
             game.check_collision(player);
 
-            player.update(dt);
+            player.update(dt, window);
 
             game.draw(window);
             game.update(dt, window, player);
 
-            // enemy1.update(dt);
-            // enemy1.draw(window);
+            enemy1.update(dt, window);
+            enemy1.draw(window);
 
             player.draw(window);
 
