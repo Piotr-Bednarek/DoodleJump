@@ -69,7 +69,7 @@ public:
             shootDelay = sf::milliseconds(100);
             break;
         case WeaponType::TRIPLE:
-            shootDelay = sf::milliseconds(1000);
+            shootDelay = sf::milliseconds(1);
             break;
         }
     }
@@ -77,54 +77,27 @@ public:
     void shoot(WeaponType type, int angle_offset)
     {
 
-        std::cout << "Shooting" << std::endl;
+        std::cout << "Projectile count: " << projectiles.size() << std::endl;
 
         setType(type);
 
-        if (type == WeaponType::SINGLE)
+        if (clock.getElapsedTime() >= shootDelay)
         {
-            if (clock.getElapsedTime() >= shootDelay)
+
+            if (type == WeaponType::SINGLE || type == WeaponType::MACHINEGUN)
             {
-                Projectile projectile(position, sf::Vector2f(64, 32), projectile_speed, 0 + angle_offset);
-
-                for (int i = 0; i < 5; i++)
-                {
-                    projectile.add_animation_frame(sf::IntRect(64 * i, 0, 64, 32));
-                }
-
-                projectile.setTexture(projectile_texture[0]);
-
-                projectiles.emplace_back(projectile);
-
-                clock.restart();
+                create_projectile(position, projectile_speed, 0 + angle_offset);
             }
+            else if (type == WeaponType::TRIPLE)
+            {
+
+                create_projectile(position, projectile_speed, 0 + angle_offset);
+                create_projectile(position, projectile_speed, 45 + angle_offset);
+                create_projectile(position, projectile_speed, -45 + angle_offset);
+            }
+
+            clock.restart();
         }
-        // else if (type == WeaponType::MACHINEGUN)
-        // {
-        //     if (clock.getElapsedTime() >= shootDelay)
-        //     {
-        //         Projectile projectile(position, projectile_speed, 0 + angle_offset, ProjectileType::FIREBALL);
-
-        //         projectiles.emplace_back(projectile);
-
-        //         clock.restart();
-        //     }
-        // }
-        // else if (type == WeaponType::TRIPLE)
-        // {
-        //     if (clock.getElapsedTime() >= shootDelay)
-        //     {
-        //         Projectile projectile1(position, projectile_speed, 0 + angle_offset, ProjectileType::FIREBALL);
-        //         Projectile projectile2(position, projectile_speed, 45 + angle_offset, ProjectileType::FIREBALL);
-        //         Projectile projectile3(position, projectile_speed, -45 + angle_offset, ProjectileType::FIREBALL);
-
-        //         projectiles.emplace_back(projectile1);
-        //         projectiles.emplace_back(projectile2);
-        //         projectiles.emplace_back(projectile3);
-
-        //         clock.restart();
-        //     }
-        // }
     }
 
     void update(float dt, sf::Vector2f pos)
@@ -141,12 +114,14 @@ public:
     {
         for (Projectile &projectile : projectiles)
         {
-            projectile.step();
-
-            if (projectile.getGlobalBounds().width <= 64 && projectile.getGlobalBounds().height <= 64)
-            {
-                projectile.draw(window);
-            }
+            projectile.draw(window);
         }
     };
+
+    void create_projectile(sf::Vector2f position, float speed, int angle_offset)
+    {
+        Projectile projectile(position, speed, angle_offset, projectile_texture[1]);
+
+        projectiles.emplace_back(projectile);
+    }
 };

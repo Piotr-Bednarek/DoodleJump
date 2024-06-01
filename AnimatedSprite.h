@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <array>
 
 class AnimatedSprite : public sf::Sprite
 {

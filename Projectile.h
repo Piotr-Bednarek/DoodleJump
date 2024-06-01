@@ -5,25 +5,31 @@
 
 #include "AnimatedSprite.h"
 
-class Projectile : public AnimatedSprite
+class Projectile : public sf::Sprite
 {
 private:
     sf::Vector2f position;
-    sf::Vector2f size;
     float speed;
-    float angle;
+    int angle;
 
 public:
-    Projectile(sf::Vector2f pos, sf::Vector2f sprite_size, float s, float a) : AnimatedSprite(pos, 10)
+    Projectile(sf::Vector2f pos, float s, int a, sf::Texture &texture) : sf::Sprite()
     {
         position = pos;
         speed = s;
         angle = a;
 
-        size = sprite_size;
+        setTexture(texture);
 
         setPosition(position);
-        rotate(angle - 90);
+
+        sf::FloatRect bounds = getGlobalBounds();
+
+        setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+
+        rotate(angle);
+
+        // setScale(1.5f, 1.5f);
     }
 
     void update(float dt)
@@ -32,25 +38,14 @@ public:
 
         float radian_angle = (90 - angle) * PI / 180.0f;
         move(speed * cos(radian_angle) * dt, -speed * sin(radian_angle) * dt);
-
-        step();
     }
 
-    void rotate(float a)
+    void rotate(float angle)
     {
-        setOrigin(getLocalBounds().width / 2, getLocalBounds().height / 2);
-        setRotation(a);
+        setRotation(angle);
     }
-
     void draw(sf::RenderWindow &window)
     {
-        static bool firstDraw = true;
-        if (firstDraw)
-        {
-            firstDraw = false;
-            return;
-        }
-
         window.draw(*this);
     }
 };

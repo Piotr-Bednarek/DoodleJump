@@ -57,7 +57,7 @@ int main()
     sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
 
-    sf::Texture projectile_texture;
+    // sf::Texture projectile_texture;
 
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
@@ -74,10 +74,10 @@ int main()
         return 1;
     }
 
-    if (!projectile_texture.loadFromFile("assets/projectile.png"))
-    {
-        return 1;
-    }
+    // if (!projectile_texture.loadFromFile("assets/projectile.png"))
+    // {
+    //     return 1;
+    // }
 
     if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
     {
@@ -102,6 +102,8 @@ int main()
     // {
     //     enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
     // }
+
+    // enemy1.setRotation(90);
 
     // Projectile projectile(sf::Vector2f(400, 400), 200, 0);
 
@@ -134,7 +136,7 @@ int main()
                 {
                     moveRight = true;
                 }
-                if (event.key.code == sf::Keyboard::Space)
+                if (event.key.code == sf::Keyboard::W)
                 {
                     if (state == GameState::TITLE)
                         state = GameState::SINGLEPLAYER;
@@ -203,8 +205,8 @@ int main()
             game.draw(window);
             game.update(dt, window, player);
 
-            enemy1.update(dt);
-            enemy1.draw(window);
+            // enemy1.update(dt);
+            // enemy1.draw(window);
 
             player.draw(window);
 

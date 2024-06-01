@@ -96,7 +96,6 @@ public:
 
         sf::RectangleShape hitbox;
 
-        // Update hitbox
         hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
         hitbox.setPosition(getPosition());
         hitbox.setOutlineColor(sf::Color::Red);
