@@ -4,6 +4,7 @@
 #include "Platform.h"
 #include <iostream>
 #include "Weapon.h"
+#include "Player.h"
 
 class Game
 {
@@ -58,9 +59,15 @@ public:
 
             platforms.emplace_back(platform);
         }
+
+        Platform platform(sf::Vector2f(400, 700), sf::Vector2f(800, 50), platform_textures[rand() % platform_textures.size()]);
+        platforms.emplace_back(platform);
+
+        // Platform platform1(sf::Vector2f(400, 500), sf::Vector2f(800, 50), platform_textures[rand() % platform_textures.size()]);
+        // platforms.emplace_back(platform1);
     }
 
-    void update(sf::Time dt, sf::RenderWindow &window)
+    void update(float dt, sf::RenderWindow &window)
     {
         int platform_width = platforms[0].getLocalBounds().width;
 
@@ -68,7 +75,7 @@ public:
         {
             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
 
-            platform.move(sf::Vector2f(0, velocity * dt.asSeconds()));
+            platform.move(sf::Vector2f(0, velocity * dt));
             if (platform.getPosition().y > window.getSize().y)
             {
                 platform.setPosition(sf::Vector2f(platform_x, 0));
@@ -82,12 +89,12 @@ public:
         {
             if (gravity == 0)
             {
-                velocity -= 50 * slow_down * dt.asSeconds();
+                velocity -= 50 * slow_down * dt;
                 // std::cout << velocity << std::endl;
             }
             else
             {
-                velocity -= gravity * slow_down * dt.asSeconds();
+                velocity -= gravity * slow_down * dt;
             }
         }
         else
@@ -108,10 +115,10 @@ public:
         weapon.draw(window);
     }
 
-    void jump()
-    {
-        velocity += jump_force;
-    }
+    // void jump()
+    // {
+    //     velocity += jump_force;
+    // }
 
     void update_score()
     {
@@ -133,4 +140,174 @@ public:
     {
         weapon.shoot(type);
     }
+
+    // void check_collision(Player &player)
+    // {
+    //     for (Platform &platform : platforms)
+    //     {
+    //         sf::FloatRect playerBounds = player.getGlobalBounds();
+    //         sf::FloatRect platformBounds = platform.getGlobalBounds();
+
+    //         // Skip the check if the platform is above the player
+    //         if (platformBounds.top < playerBounds.top)
+    //         {
+    //             continue;
+    //         }
+
+    //         bool isPlayerOutsidePlatform = playerBounds.left + playerBounds.width < platformBounds.left || playerBounds.left > platformBounds.left + platformBounds.width;
+
+    //         if (isPlayerOutsidePlatform)
+    //         {
+    //             player.set_ground(false);
+    //         }
+
+    //         if (playerBounds.intersects(platformBounds))
+    //         {
+    //             sf::FloatRect intersection;
+    //             playerBounds.intersects(platformBounds, intersection);
+
+    //             sf::Vector2f player_velocity = player.get_velocity();
+
+    //             if (player_velocity.y > 0 && intersection.height <= intersection.width)
+    //             {
+    //                 player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
+    //                 player.set_ground(true); // Set the player to be on the ground if a collision is found
+    //             }
+    //         }
+    //     }
+    // }
+
+    void check_collision(Player &player)
+    {
+        int platformIndex = find_platform_index(player);
+
+        std::cout << "Platform index: " << platformIndex << std::endl;
+
+        if (platformIndex != -1) // If the player is standing on a platform
+        {
+            Platform &platform = platforms[platformIndex];
+            sf::FloatRect playerBounds = player.getGlobalBounds();
+            sf::FloatRect platformBounds = platform.getGlobalBounds();
+
+            bool isPlayerOutsidePlatform = playerBounds.left + playerBounds.width < platformBounds.left || playerBounds.left > platformBounds.left + platformBounds.width;
+
+            if (isPlayerOutsidePlatform)
+            {
+                player.set_ground(false);
+            }
+            else if (playerBounds.intersects(platformBounds))
+            {
+                sf::FloatRect intersection;
+                playerBounds.intersects(platformBounds, intersection);
+
+                sf::Vector2f player_velocity = player.get_velocity();
+
+                if (player_velocity.y > 0 && intersection.height <= intersection.width)
+                {
+                    player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
+                    player.set_ground(true); // Set the player to be on the ground if a collision is found
+                }
+            }
+        }
+        else // If the player is not standing on any platform
+        {
+            player.set_ground(false);
+        }
+    }
+
+    int find_platform_index(Player &player)
+    {
+        for (int i = 0; i < platforms.size(); i++)
+        {
+            sf::FloatRect playerBounds = player.getGlobalBounds();
+            sf::FloatRect platformBounds = platforms[i].getGlobalBounds();
+
+            // Add a slight offset to the bottom of the player
+            float offset = 5.0f; // Change this value to adjust the offset
+            playerBounds.height += offset;
+
+            if (playerBounds.intersects(platformBounds))
+            {
+                return i;
+            }
+        }
+
+        return -1; // Return -1 if no platform is found
+    }
+
+    // void check_collision(Player &player)
+    // {
+    //     bool isPlayerOnPlatform = false;
+
+    //     for (Platform &platform : platforms)
+    //     {
+    //         sf::FloatRect playerBounds = player.getGlobalBounds();
+    //         sf::FloatRect platformBounds = platform.getGlobalBounds();
+
+    //         // Skip the check if the platform is above the player
+    //         if (platformBounds.top < playerBounds.top)
+    //         {
+    //             continue;
+    //         }
+
+    //         bool isPlayerOutsidePlatform = playerBounds.left + playerBounds.width < platformBounds.left || playerBounds.left > platformBounds.left + platformBounds.width;
+
+    //         if (playerBounds.intersects(platformBounds))
+    //         {
+    //             sf::FloatRect intersection;
+    //             playerBounds.intersects(platformBounds, intersection);
+
+    //             sf::Vector2f player_velocity = player.get_velocity();
+
+    //             if (player_velocity.y > 0 && intersection.height <= intersection.width)
+    //             {
+    //                 player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
+    //                 player.set_ground(true); // Set the player to be on the ground if a collision is found
+    //                 isPlayerOnPlatform = true;
+    //             }
+    //         }
+
+    //         if (isPlayerOutsidePlatform && isPlayerOnPlatform)
+    //         {
+    //             player.set_ground(false);
+    //         }
+    //     }
+
+    //     // If the player is not on any platform, set ground to false
+    //     if (!isPlayerOnPlatform)
+    //     {
+    //         player.set_ground(false);
+    //     }
+    // }
+
+    // void check_collision(Player &player)
+    // {
+    //     player.set_ground(false); // Assume the player is not on the ground to start with
+
+    //     for (Platform &platform : platforms)
+    //     {
+    //         sf::FloatRect playerBounds = player.getGlobalBounds();
+    //         sf::FloatRect platformBounds = platform.getGlobalBounds();
+
+    //         // Skip the check if the platform is above the player
+    //         if (platformBounds.top < playerBounds.top)
+    //         {
+    //             continue;
+    //         }
+
+    //         if (playerBounds.intersects(platformBounds))
+    //         {
+    //             sf::FloatRect intersection;
+    //             playerBounds.intersects(platformBounds, intersection);
+
+    //             sf::Vector2f player_velocity = player.get_velocity();
+
+    //             if (player_velocity.y > 0 && intersection.height <= intersection.width)
+    //             {
+    //                 player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
+    //                 player.set_ground(true); // Set the player to be on the ground if a collision is found
+    //             }
+    //         }
+    //     }
+    // }
 };

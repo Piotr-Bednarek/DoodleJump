@@ -22,12 +22,12 @@ public:
         rotate(angle);
     }
 
-    void update(sf::Time dt)
+    void update(float dt)
     {
         const double PI = 3.14159265358979323846;
 
         float radian_angle = (90 - angle) * PI / 180.0f;
-        move(speed * cos(radian_angle) * dt.asSeconds(), -speed * sin(radian_angle) * dt.asSeconds());
+        move(speed * cos(radian_angle) * dt, -speed * sin(radian_angle) * dt);
     }
 
     void rotate(float a)

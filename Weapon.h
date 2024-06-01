@@ -104,7 +104,7 @@ public:
         }
     }
 
-    void update(sf::Time dt)
+    void update(float dt)
     {
         for (Projectile &projectile : projectiles)
         {
