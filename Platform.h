@@ -4,8 +4,6 @@
 #include <vector>
 #include <iostream>
 
-// #include "Player.h"
-
 class Platform : public sf::Sprite
 {
 public:

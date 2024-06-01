@@ -4,17 +4,27 @@
 #include <vector>
 #include <iostream>
 
+#include "Weapon.h"
+
 class Player : public sf::RectangleShape
 {
 private:
     float gravity = 500;
     float jump_force = 500;
+
     sf::Vector2f velocity;
     bool is_on_ground = false;
-    // bool is_falling = false;
+
+    float speed = 5;
+    float air_speed = 10;
+
+    float friction = 0.9;
+    float air_friction = 0.9;
+
+    Weapon weapon;
 
 public:
-    Player(sf::Vector2f pos, sf::Vector2f s) : sf::RectangleShape()
+    Player(sf::Vector2f pos, sf::Vector2f s) : sf::RectangleShape(), weapon(pos, WeaponType::SINGLE)
     {
         setPosition(pos);
         setSize(s);
@@ -22,42 +32,47 @@ public:
 
     void update(float dt)
     {
-
-        // std::cout << "On ground: " << is_on_ground << std::endl;
-        // std::cout << "Falling: " << is_falling << std::endl;
-
         if (is_on_ground)
         {
             velocity.y = 0;
-            // is_falling = false;
+            velocity.x *= friction;
         }
-        // else if (is_falling)
         else
         {
             velocity.y += gravity * dt;
-            sf::Vector2f pos = getPosition();
-            pos.y += velocity.y * dt;
-            setPosition(pos);
+            velocity.x *= air_friction;
         }
+
+        sf::Vector2f pos = getPosition();
+        pos.x += velocity.x * dt;
+        pos.y += velocity.y * dt;
+        setPosition(pos);
+
+        weapon.update(dt, getPosition() + sf::Vector2f(getSize().x / 2, 0));
+    }
+
+    void move(float dx, float dy)
+    {
+        sf::Vector2f pos = getPosition();
+        pos.x += dx * speed;
+        pos.y += dy;
+        setPosition(pos);
     }
 
     void draw(sf::RenderWindow &window)
     {
         window.draw(*this);
+
+        weapon.draw(window);
     }
 
     void jump()
     {
-        std::cout << "Jumping: " << is_on_ground << std::endl;
         if (is_on_ground)
         {
             is_on_ground = false;
-            // is_falling = true;
             velocity.y = -jump_force;
         }
-
-        // std::cout << velocity.y << std::endl;
-        // std::cout << -jump_force << std::endl;
     }
 
     sf::Vector2f get_velocity()
@@ -68,7 +83,12 @@ public:
     void set_ground(bool ground)
     {
         is_on_ground = ground;
+    }
 
-        // std::cout << "Ground: " << is_on_ground << std::endl;
+    void shoot(WeaponType type)
+    {
+        weapon.shoot(type, 0);
+
+        std::cout << "Shooting" << std::endl;
     }
 };

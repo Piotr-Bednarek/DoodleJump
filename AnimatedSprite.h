@@ -9,12 +9,14 @@ private:
     std::vector<sf::IntRect> animation_frames;
     sf::Clock clock;
     int animation_fps;
+    int current_frame;
 
 public:
     AnimatedSprite(sf::Vector2f pos, int fps) : sf::Sprite()
     {
         setPosition(pos);
         animation_fps = fps;
+        current_frame = 0;
     }
 
     void add_animation_frame(sf::IntRect frame_rect)
@@ -26,9 +28,8 @@ public:
     {
         if (clock.getElapsedTime().asSeconds() >= 1.0f / animation_fps)
         {
-            int current_frame = getTextureRect().left / getTextureRect().width;
-            int next_frame = (current_frame + 1) % animation_frames.size();
-            setTextureRect(animation_frames[next_frame]);
+            current_frame = (current_frame + 1) % animation_frames.size();
+            setTextureRect(animation_frames[current_frame]);
             clock.restart();
         }
     }

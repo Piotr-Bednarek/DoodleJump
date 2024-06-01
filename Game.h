@@ -21,12 +21,10 @@ private:
 
     float slow_down = 7.5;
 
-    Weapon weapon;
-
     std::vector<sf::Texture> platform_textures;
 
 public:
-    Game(float grav, float jump, int left_bound, int right_bound) : weapon(sf::Vector2f(500, 500), WeaponType::SINGLE)
+    Game(float grav, float jump, int left_bound, int right_bound)
     {
         gravity = grav;
         jump_force = jump;
@@ -67,7 +65,7 @@ public:
         // platforms.emplace_back(platform1);
     }
 
-    void update(float dt, sf::RenderWindow &window)
+    void update(float dt, sf::RenderWindow &window, Player &player)
     {
         int platform_width = platforms[0].getLocalBounds().width;
 
@@ -90,7 +88,6 @@ public:
             if (gravity == 0)
             {
                 velocity -= 50 * slow_down * dt;
-                // std::cout << velocity << std::endl;
             }
             else
             {
@@ -102,7 +99,23 @@ public:
             velocity = gravity;
         }
 
-        weapon.update(dt);
+        float threshold = window.getSize().y * 0.5f; // 20% from the top of the screen
+        if (player.getPosition().y < threshold)
+        {
+            float diff = threshold - player.getPosition().y;
+            player.move(0, diff); // Move the player down
+
+            for (Platform &platform : platforms)
+            {
+                platform.move(0, diff);
+
+                if (platform.getPosition().y > window.getSize().y)
+                {
+                    platform.setPosition(sf::Vector2f(platform.getPosition().x, 0));
+                    platform.randomizeTexture(platform_textures[rand() % platform_textures.size()]);
+                }
+            }
+        }
     }
 
     void draw(sf::RenderWindow &window)
@@ -111,14 +124,7 @@ public:
         {
             window.draw(platform);
         }
-
-        weapon.draw(window);
     }
-
-    // void jump()
-    // {
-    //     velocity += jump_force;
-    // }
 
     void update_score()
     {
@@ -136,54 +142,13 @@ public:
         return score;
     }
 
-    void shoot(WeaponType type)
-    {
-        weapon.shoot(type);
-    }
-
-    // void check_collision(Player &player)
-    // {
-    //     for (Platform &platform : platforms)
-    //     {
-    //         sf::FloatRect playerBounds = player.getGlobalBounds();
-    //         sf::FloatRect platformBounds = platform.getGlobalBounds();
-
-    //         // Skip the check if the platform is above the player
-    //         if (platformBounds.top < playerBounds.top)
-    //         {
-    //             continue;
-    //         }
-
-    //         bool isPlayerOutsidePlatform = playerBounds.left + playerBounds.width < platformBounds.left || playerBounds.left > platformBounds.left + platformBounds.width;
-
-    //         if (isPlayerOutsidePlatform)
-    //         {
-    //             player.set_ground(false);
-    //         }
-
-    //         if (playerBounds.intersects(platformBounds))
-    //         {
-    //             sf::FloatRect intersection;
-    //             playerBounds.intersects(platformBounds, intersection);
-
-    //             sf::Vector2f player_velocity = player.get_velocity();
-
-    //             if (player_velocity.y > 0 && intersection.height <= intersection.width)
-    //             {
-    //                 player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
-    //                 player.set_ground(true); // Set the player to be on the ground if a collision is found
-    //             }
-    //         }
-    //     }
-    // }
-
     void check_collision(Player &player)
     {
         int platformIndex = find_platform_index(player);
 
-        std::cout << "Platform index: " << platformIndex << std::endl;
+        // std::cout << "Platform index: " << platformIndex << std::endl;
 
-        if (platformIndex != -1) // If the player is standing on a platform
+        if (platformIndex != -1)
         {
             Platform &platform = platforms[platformIndex];
             sf::FloatRect playerBounds = player.getGlobalBounds();
@@ -205,11 +170,11 @@ public:
                 if (player_velocity.y > 0 && intersection.height <= intersection.width)
                 {
                     player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
-                    player.set_ground(true); // Set the player to be on the ground if a collision is found
+                    player.set_ground(true);
                 }
             }
         }
-        else // If the player is not standing on any platform
+        else
         {
             player.set_ground(false);
         }
@@ -222,8 +187,7 @@ public:
             sf::FloatRect playerBounds = player.getGlobalBounds();
             sf::FloatRect platformBounds = platforms[i].getGlobalBounds();
 
-            // Add a slight offset to the bottom of the player
-            float offset = 5.0f; // Change this value to adjust the offset
+            float offset = 5.0f;
             playerBounds.height += offset;
 
             if (playerBounds.intersects(platformBounds))
@@ -232,82 +196,6 @@ public:
             }
         }
 
-        return -1; // Return -1 if no platform is found
+        return -1;
     }
-
-    // void check_collision(Player &player)
-    // {
-    //     bool isPlayerOnPlatform = false;
-
-    //     for (Platform &platform : platforms)
-    //     {
-    //         sf::FloatRect playerBounds = player.getGlobalBounds();
-    //         sf::FloatRect platformBounds = platform.getGlobalBounds();
-
-    //         // Skip the check if the platform is above the player
-    //         if (platformBounds.top < playerBounds.top)
-    //         {
-    //             continue;
-    //         }
-
-    //         bool isPlayerOutsidePlatform = playerBounds.left + playerBounds.width < platformBounds.left || playerBounds.left > platformBounds.left + platformBounds.width;
-
-    //         if (playerBounds.intersects(platformBounds))
-    //         {
-    //             sf::FloatRect intersection;
-    //             playerBounds.intersects(platformBounds, intersection);
-
-    //             sf::Vector2f player_velocity = player.get_velocity();
-
-    //             if (player_velocity.y > 0 && intersection.height <= intersection.width)
-    //             {
-    //                 player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
-    //                 player.set_ground(true); // Set the player to be on the ground if a collision is found
-    //                 isPlayerOnPlatform = true;
-    //             }
-    //         }
-
-    //         if (isPlayerOutsidePlatform && isPlayerOnPlatform)
-    //         {
-    //             player.set_ground(false);
-    //         }
-    //     }
-
-    //     // If the player is not on any platform, set ground to false
-    //     if (!isPlayerOnPlatform)
-    //     {
-    //         player.set_ground(false);
-    //     }
-    // }
-
-    // void check_collision(Player &player)
-    // {
-    //     player.set_ground(false); // Assume the player is not on the ground to start with
-
-    //     for (Platform &platform : platforms)
-    //     {
-    //         sf::FloatRect playerBounds = player.getGlobalBounds();
-    //         sf::FloatRect platformBounds = platform.getGlobalBounds();
-
-    //         // Skip the check if the platform is above the player
-    //         if (platformBounds.top < playerBounds.top)
-    //         {
-    //             continue;
-    //         }
-
-    //         if (playerBounds.intersects(platformBounds))
-    //         {
-    //             sf::FloatRect intersection;
-    //             playerBounds.intersects(platformBounds, intersection);
-
-    //             sf::Vector2f player_velocity = player.get_velocity();
-
-    //             if (player_velocity.y > 0 && intersection.height <= intersection.width)
-    //             {
-    //                 player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
-    //                 player.set_ground(true); // Set the player to be on the ground if a collision is found
-    //             }
-    //         }
-    //     }
-    // }
 };

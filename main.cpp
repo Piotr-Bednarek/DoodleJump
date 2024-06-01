@@ -43,6 +43,9 @@ int main()
     int HEIGHT = 800;
     int FPS = 60;
 
+    bool moveLeft = false;
+    bool moveRight = false;
+
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
     window.setFramerateLimit(FPS);
@@ -54,17 +57,24 @@ int main()
     sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
 
+    sf::Texture projectile_texture;
+
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
 
     sf::Font font;
 
-    if (!enemy_flying_texture.loadFromFile("assets/enemy/FLYING.png"))
+    if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
     {
         return 1;
     }
 
     if (!background_texture.loadFromFile("assets/background.png"))
+    {
+        return 1;
+    }
+
+    if (!projectile_texture.loadFromFile("assets/projectile.png"))
     {
         return 1;
     }
@@ -84,16 +94,16 @@ int main()
 
     TitleScreen tittle_screen(font, window);
 
-    Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0);
-
     Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50));
 
-    enemy1.setTexture(enemy_flying_texture);
+    // Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, projectile_texture);
 
-    for (int i = 0; i < 4; ++i)
-    {
-        enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
-    }
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
+    // }
+
+    // Projectile projectile(sf::Vector2f(400, 400), 200, 0);
 
     // ----------------------------------------------
 
@@ -114,54 +124,60 @@ int main()
                 window.close();
             }
 
-            // if (event.type == sf::Event::KeyPressed && aw
-
-            // if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S)
-            // {
-            //     player.move(sf::Vector2f(0, 50 * dt));
-            // }
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::A)
+            if (event.type == sf::Event::KeyPressed)
             {
-                player.move(sf::Vector2f(-150 * dt, 0));
-            }
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D)
-            {
-                player.move(sf::Vector2f(150 * dt, 0));
-            }
+                if (event.key.code == sf::Keyboard::A)
+                {
+                    moveLeft = true;
+                }
+                if (event.key.code == sf::Keyboard::D)
+                {
+                    moveRight = true;
+                }
+                if (event.key.code == sf::Keyboard::Space)
+                {
+                    if (state == GameState::TITLE)
+                        state = GameState::SINGLEPLAYER;
 
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
-            {
-                if (state == GameState::TITLE)
-                    state = GameState::SINGLEPLAYER;
-
-                // game.jump();
-
-                player.jump();
+                    player.jump();
+                }
             }
 
-            // if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Backspace)
-            // {
-            //     state = GameState::GAMEOVER;
-
-            //     int final_score = game.end();
-
-            //     score.setString("Score: " + std::to_string(static_cast<int>(std::round(final_score))));
-            // }
+            if (event.type == sf::Event::KeyReleased)
+            {
+                if (event.key.code == sf::Keyboard::A)
+                {
+                    moveLeft = false;
+                }
+                if (event.key.code == sf::Keyboard::D)
+                {
+                    moveRight = false;
+                }
+            }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
-                game.shoot(WeaponType::SINGLE);
+                player.shoot(WeaponType::SINGLE);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Left)
             {
-                game.shoot(WeaponType::MACHINEGUN);
+                player.shoot(WeaponType::MACHINEGUN);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Right)
             {
-                game.shoot(WeaponType::TRIPLE);
+                player.shoot(WeaponType::TRIPLE);
             }
+        }
+
+        if (moveLeft)
+        {
+            player.move(-1.0f, 0.0f);
+        }
+        if (moveRight)
+        {
+            player.move(1.0f, 0.0f);
         }
 
         window.clear();
@@ -178,18 +194,21 @@ int main()
             break;
         case GameState::SINGLEPLAYER:
 
+            // projectile.update(dt);
+
             game.check_collision(player);
 
             player.update(dt);
 
             game.draw(window);
-            game.update(dt, window);
+            game.update(dt, window, player);
 
-            window.draw(enemy1);
-            enemy1.step();
-            enemy1.move(1.0 / FPS);
+            enemy1.update(dt);
+            enemy1.draw(window);
 
             player.draw(window);
+
+            // window.draw(projectile);
 
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
 
