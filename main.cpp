@@ -54,30 +54,30 @@ int main()
 
     // ----------------------------------------------
 
-    sf::Texture enemy_flying_texture;
+    // sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
 
-    sf::Texture projectile_texture;
+    // sf::Texture projectile_texture;
 
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
 
     sf::Font font;
 
-    if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
-    {
-        return 1;
-    }
+    // if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
+    // {
+    //     return 1;
+    // }
 
     if (!background_texture.loadFromFile("assets/background.png"))
     {
         return 1;
     }
 
-    if (!projectile_texture.loadFromFile("assets/fireball_projectile.png"))
-    {
-        return 1;
-    }
+    // if (!projectile_texture.loadFromFile("assets/fireball_projectile.png"))
+    // {
+    //     return 1;
+    // }
 
     if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
     {
@@ -186,29 +186,21 @@ int main()
         switch (state)
         {
         case GameState::TITLE:
-
             tittle_screen.update(window);
             tittle_screen.draw(window);
 
             break;
+
         case GameState::SINGLEPLAYER:
-
-            // projectile.update(dt);
-
             game.check_collision(player);
 
+            game.update(dt, window, player);
             player.update(dt, window);
 
-            game.draw(window);
-            game.update(dt, window, player);
-
-            // enemy1.update(dt, window);
-            // enemy1.draw(window);
-
             player.draw(window);
+            game.draw(window);
 
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
-
             window.draw(score);
 
             break;
@@ -216,7 +208,6 @@ int main()
         case GameState::MULTIPLAYER:
             break;
         case GameState::GAMEOVER:
-
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
 

@@ -18,14 +18,6 @@ public:
     Button() : sf::Sprite()
     {
         setPosition(sf::Vector2f(0, 0));
-
-        // setTextureRect(sf::IntRect(0, 0, 0, 0));
-
-        // text = sf::Text("", sf::Font(), 40);
-
-        // sf::FloatRect textRect = text.getLocalBounds();
-        // text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-        // text.setPosition(0, 0);
     }
 
     Button(sf::Vector2f pos, sf::Vector2f s, std::string t, sf::Font &font, sf::Texture &texture) : sf::Sprite()

@@ -2,7 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-
 #include <iostream>
 
 class AnimatedSprite : public sf::Sprite
@@ -33,16 +32,11 @@ public:
 
     void step()
     {
-        // std::cout << animation_frames.size() << std::endl;
         if (clock.getElapsedTime().asSeconds() >= 1.0f / animation_fps)
         {
             current_frame = (current_frame + 1) % animation_frames.size();
             setTextureRect(animation_frames[current_frame]);
             clock.restart();
-
-            // std::cout << current_frame << std::endl;
-
-            // std::cout << "Stepping" << std::endl;
         }
     }
 };

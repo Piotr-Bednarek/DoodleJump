@@ -99,7 +99,7 @@ public:
             if (platform.getPosition().y > window.getSize().y)
             {
                 platform.setPosition(sf::Vector2f(platform_x, 0));
-                platform.randomizeTexture(platform_textures[rand() % platform_textures.size()]);
+                platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
             }
         }
 
@@ -128,7 +128,7 @@ public:
                 if (platform.getPosition().y > window.getSize().y)
                 {
                     platform.setPosition(sf::Vector2f(platform.getPosition().x, 0));
-                    platform.randomizeTexture(platform_textures[rand() % platform_textures.size()]);
+                    platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
                 }
             }
 
@@ -144,9 +144,7 @@ public:
 
         int enemy_spawn = static_cast<int>(round(elevation / 100) * 100);
 
-        int threshold = 600;
-
-        // std::cout << threshold << std::endl;
+        int threshold = 700;
 
         if (enemy_spawn % 500 == 0 && enemy_spawn != last_enemy_spawn)
         {
@@ -168,11 +166,6 @@ public:
         }
     }
 
-    // void update_score(float diff)
-    // {
-    //     score += diff;
-    // }
-
     float get_score()
     {
         return score;
@@ -187,8 +180,6 @@ public:
     void check_collision(Player &player)
     {
         int platformIndex = find_platform_index(player);
-
-        // std::cout << "Platform index: " << platformIndex << std::endl;
 
         if (platformIndex != -1)
         {
@@ -243,11 +234,6 @@ public:
 
     void create_enemy()
     {
-
-        std::cout << "Creating enemy" << std::endl;
-        std::cout << "Creating enemy" << std::endl;
-        std::cout << "Creating enemy" << std::endl;
-
         sf::Vector2f position;
         float speed;
         int direction;

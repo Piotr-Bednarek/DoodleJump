@@ -4,9 +4,7 @@
 #include <iostream>
 
 #include "AnimatedSprite.h"
-
 #include "Projectile.h"
-
 #include "Weapon.h"
 
 class Enemy : public AnimatedSprite
@@ -52,8 +50,6 @@ public:
 
     void update(float dt, sf::RenderWindow &window)
     {
-        // move(dt);
-
         sf::Vector2f weaponPos = getPosition();
         weaponPos.x += getGlobalBounds().width / 2.0f;
         weaponPos.y += getGlobalBounds().height / 2.0f;
