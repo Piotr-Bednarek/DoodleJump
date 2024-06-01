@@ -96,20 +96,17 @@ int main()
 
     Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50), 0, WIDTH);
 
-    Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, projectile_texture, 0, WIDTH);
+    // Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, 0, WIDTH);
 
-    for (int i = 0; i < 4; i++)
-    {
-        enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
-    }
-
-    // enemy1.setRotation(90);
-
-    // Projectile projectile(sf::Vector2f(400, 400), 200, 0);
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
+    // }
 
     // ----------------------------------------------
 
     game.create_platforms(50, 100, 20, HEIGHT, WIDTH);
+    game.create_enemy();
 
     // ----------------------------------------------
 
@@ -205,12 +202,10 @@ int main()
             game.draw(window);
             game.update(dt, window, player);
 
-            enemy1.update(dt, window);
-            enemy1.draw(window);
+            // enemy1.update(dt, window);
+            // enemy1.draw(window);
 
             player.draw(window);
-
-            // window.draw(projectile);
 
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
 

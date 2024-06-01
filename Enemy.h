@@ -18,7 +18,6 @@ private:
     float health_points;
     float damage;
 
-    sf::Texture projectile_texture;
     sf::Texture enemy_texture;
 
     Weapon weapon;
@@ -27,7 +26,7 @@ private:
     int game_right_bound;
 
 public:
-    Enemy(sf::Vector2f pos, float s, int dir, sf::Texture &texture, sf::Texture &proj_texture, int left_bound, int right_bound) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
+    Enemy(sf::Vector2f pos, float s, int dir, sf::Texture &texture, int left_bound, int right_bound) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
     {
         speed = s;
         direction = dir;
@@ -38,17 +37,22 @@ public:
         }
 
         enemy_texture = texture;
-        projectile_texture = proj_texture;
 
         game_left_bound = left_bound;
         game_right_bound = right_bound;
 
-        setTexture(enemy_texture);
+        setTexture(texture);
+        step();
+    }
+
+    sf::Sprite &getSprite()
+    {
+        return *this;
     }
 
     void update(float dt, sf::RenderWindow &window)
     {
-        move(dt);
+        // move(dt);
 
         sf::Vector2f weaponPos = getPosition();
         weaponPos.x += getGlobalBounds().width / 2.0f;
@@ -56,13 +60,15 @@ public:
         weapon.update(dt, weaponPos, window);
 
         step();
+        draw(window);
     }
 
-    void move(float dt)
+    void move(float dt, float dy)
     {
         sf::Vector2f pos = getPosition();
 
         pos.x += speed * direction * dt;
+        pos.y += dy;
         setPosition(pos);
 
         if (pos.x < 0 || pos.x > 800)
@@ -71,7 +77,7 @@ public:
             bounce(pos);
         }
 
-        if (rand() % 100 < 5) // 5% chance to shoot each frame
+        if (rand() % 100 < 5)
         {
             shoot(WeaponType::SINGLE);
         }

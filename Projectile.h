@@ -29,7 +29,7 @@ public:
 
         rotate(angle);
 
-        // setScale(1.5f, 1.5f);
+        setScale(1.5f, 1.5f);
     }
 
     void update(float dt)

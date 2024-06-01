@@ -1,18 +1,25 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "Platform.h"
 #include <iostream>
+
+#include "Platform.h"
 #include "Weapon.h"
 #include "Player.h"
+#include "Enemy.h"
 
 class Game
 {
 private:
     bool game_over;
-    float gravity;
+
     std::vector<Platform> platforms;
+    std::vector<Enemy> enemies;
+
     float score;
+
+    float elevation;
+
     float jump_force;
     float velocity;
 
@@ -21,20 +28,22 @@ private:
 
     float slow_down = 7.5;
 
+    int last_enemy_spawn;
+
     std::vector<sf::Texture> platform_textures;
+    std::vector<sf::Texture> enemy_textures;
 
 public:
     Game(float grav, float jump, int left_bound, int right_bound)
     {
-        gravity = grav;
         jump_force = jump;
         velocity = grav;
         game_left_bound = left_bound;
         game_right_bound = right_bound;
 
-        std::vector<std::string> texturePaths = {"assets/platform_grass.png", "assets/platform_stone.png"};
+        std::vector<std::string> platform_texture_paths = {"assets/platform_grass.png", "assets/platform_stone.png"};
 
-        for (const auto &path : texturePaths)
+        for (const auto &path : platform_texture_paths)
         {
             sf::Texture texture;
             if (!texture.loadFromFile(path))
@@ -43,6 +52,19 @@ public:
                 continue;
             }
             platform_textures.push_back(std::move(texture));
+        }
+
+        std::vector<std::string> enemy_texture_paths = {"assets/enemy/dragon_flying.png"};
+
+        for (const auto &path : enemy_texture_paths)
+        {
+            sf::Texture texture;
+            if (!texture.loadFromFile(path))
+            {
+                std::cout << "Failed to load texture from " << path << std::endl;
+                continue;
+            }
+            enemy_textures.push_back(std::move(texture));
         }
     }
 
@@ -81,29 +103,23 @@ public:
             }
         }
 
-        update_score();
+        for (Enemy &enemy : enemies)
+        {
+            enemy.move(dt, velocity * dt);
+            enemy.update(dt, window);
+        }
 
-        if (velocity > 0)
-        {
-            if (gravity == 0)
-            {
-                velocity -= 50 * slow_down * dt;
-            }
-            else
-            {
-                velocity -= gravity * slow_down * dt;
-            }
-        }
-        else
-        {
-            velocity = gravity;
-        }
+        check_if_spawn_enemy();
 
         float threshold = window.getSize().y * 0.5f;
         if (player.getPosition().y < threshold)
         {
             float diff = threshold - player.getPosition().y;
             player.move(0, diff);
+
+            score += diff;
+
+            elevation += diff;
 
             for (Platform &platform : platforms)
             {
@@ -115,6 +131,27 @@ public:
                     platform.randomizeTexture(platform_textures[rand() % platform_textures.size()]);
                 }
             }
+
+            for (Enemy &enemy : enemies)
+            {
+                enemy.move(0, diff);
+            }
+        }
+    }
+
+    void check_if_spawn_enemy()
+    {
+
+        int enemy_spawn = static_cast<int>(round(elevation / 100) * 100);
+
+        int threshold = 600;
+
+        // std::cout << threshold << std::endl;
+
+        if (enemy_spawn % 500 == 0 && enemy_spawn != last_enemy_spawn)
+        {
+            create_enemy();
+            last_enemy_spawn = enemy_spawn;
         }
     }
 
@@ -124,12 +161,17 @@ public:
         {
             window.draw(platform);
         }
+
+        for (Enemy &enemy : enemies)
+        {
+            window.draw(enemy);
+        }
     }
 
-    void update_score()
-    {
-        score += 0.05 * velocity;
-    }
+    // void update_score(float diff)
+    // {
+    //     score += diff;
+    // }
 
     float get_score()
     {
@@ -197,5 +239,39 @@ public:
         }
 
         return -1;
+    }
+
+    void create_enemy()
+    {
+
+        std::cout << "Creating enemy" << std::endl;
+        std::cout << "Creating enemy" << std::endl;
+        std::cout << "Creating enemy" << std::endl;
+
+        sf::Vector2f position;
+        float speed;
+        int direction;
+
+        if (rand() % 2 == 0)
+        {
+            position = sf::Vector2f(game_left_bound, 0);
+            direction = 1;
+        }
+        else
+        {
+            position = sf::Vector2f(game_right_bound, 0);
+            direction = -1;
+        }
+
+        speed = rand() % 101 + 100;
+
+        Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound);
+
+        for (int i = 0; i < 4; i++)
+        {
+            enemy.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
+        }
+
+        enemies.emplace_back(enemy);
     }
 };

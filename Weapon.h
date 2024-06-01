@@ -86,7 +86,7 @@ public:
     void shoot(WeaponType type, int angle_offset)
     {
 
-        std::cout << "Projectile count: " << projectiles.size() << std::endl;
+        // std::cout << "Projectile count: " << projectiles.size() << std::endl;
 
         setType(type);
 
