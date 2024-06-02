@@ -71,7 +71,7 @@ public:
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
     {
-        for (int i = 0; i < window_height; i = i + offset)
+        for (int i = -platform_height * 2; i < window_height; i = i + offset)
         {
             int platform_y = window_height - i;
             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
@@ -94,6 +94,7 @@ public:
         check_if_player_is_dead(player);
 
         int platform_width = platforms[0].getLocalBounds().width;
+        int platform_height = platforms[0].getLocalBounds().height;
 
         for (Platform &platform : platforms)
         {
@@ -102,7 +103,7 @@ public:
             platform.move(sf::Vector2f(0, velocity * dt));
             if (platform.getPosition().y > window.getSize().y)
             {
-                platform.setPosition(sf::Vector2f(platform_x, 0));
+                platform.setPosition(sf::Vector2f(platform_x, -platform_height));
                 platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
             }
         }
@@ -141,7 +142,7 @@ public:
 
                 if (platform.getPosition().y > window.getSize().y)
                 {
-                    platform.setPosition(sf::Vector2f(platform.getPosition().x, 0));
+                    platform.setPosition(sf::Vector2f(platform.getPosition().x, -platform_height));
                     platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
                 }
             }
