@@ -77,6 +77,8 @@ public:
         {
             shoot(WeaponType::SINGLE);
         }
+
+        weapon.move(0, dy);
     }
 
     void bounce(sf::Vector2f pos)

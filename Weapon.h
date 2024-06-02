@@ -142,4 +142,12 @@ public:
 
         projectiles.emplace_back(projectile);
     }
+
+    void move(float dx, float dy)
+    {
+        for (Projectile &projectile : projectiles)
+        {
+            projectile.move(dx, dy);
+        }
+    }
 };

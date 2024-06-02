@@ -12,12 +12,15 @@ private:
     float speed;
     int angle;
 
+    sf::Texture projectile_texture;
+
 public:
     Projectile(sf::Vector2f pos, float s, int a, sf::Texture &texture) : sf::Sprite()
     {
         position = pos;
         speed = s;
         angle = a;
+        projectile_texture = texture;
 
         setTexture(texture);
 
@@ -34,6 +37,8 @@ public:
 
     void update(float dt)
     {
+
+        setTexture(projectile_texture);
         const double PI = 3.14159265358979323846;
 
         float radian_angle = (90 - angle) * PI / 180.0f;
