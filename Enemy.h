@@ -23,15 +23,25 @@ private:
     int game_left_bound;
     int game_right_bound;
 
+    float scaleX;
+    float scaleY;
+
 public:
-    Enemy(sf::Vector2f pos, float s, int dir, sf::Texture &texture, int left_bound, int right_bound) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
+    Enemy(sf::Vector2f pos, float s, int dir, sf::Texture &texture, int left_bound, int right_bound, float sX, float sY) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
     {
         speed = s;
         direction = dir;
 
+        scaleX = sX;
+        scaleY = sY;
+
         if (direction == 1)
         {
-            setScale(-1, 1);
+            setScale(-scaleX, scaleY);
+        }
+        else if (direction == -1)
+        {
+            setScale(scaleX, scaleY);
         }
 
         enemy_texture = texture;
@@ -55,8 +65,13 @@ public:
         weaponPos.y += getGlobalBounds().height / 2.0f;
         weapon.update(dt, weaponPos, window);
 
+        int width = getGlobalBounds().width;
+        int height = getGlobalBounds().height;
+
         step();
         draw(window);
+
+        weapon.update(dt, getPosition() + sf::Vector2f(0, height / 2), window);
     }
 
     void move(float dt, float dy)
@@ -70,7 +85,7 @@ public:
         if (pos.x < 0 || pos.x > 800)
         {
             direction *= -1;
-            bounce(pos);
+            bounce(pos, dy);
         }
 
         if (rand() % 100 < 5)
@@ -81,19 +96,19 @@ public:
         weapon.move(0, dy);
     }
 
-    void bounce(sf::Vector2f pos)
+    void bounce(sf::Vector2f pos, float dy)
     {
         float width = getGlobalBounds().width;
 
         if (direction == 1)
         {
-            setScale(-1, 1);
-            setPosition(pos.x + width, pos.y);
+            setScale(-scaleX, scaleY);
+            setPosition(pos.x + width / 2, pos.y);
         }
         else if (direction == -1)
         {
-            setScale(1, 1);
-            setPosition(pos.x - width, pos.y);
+            setScale(scaleX, scaleY);
+            setPosition(pos.x - width / 2, pos.y);
         }
     }
 
@@ -102,15 +117,15 @@ public:
         window.draw(*this);
         weapon.draw(window);
 
-        sf::RectangleShape hitbox;
+        // sf::RectangleShape hitbox;
 
-        hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
-        hitbox.setPosition(getPosition());
-        hitbox.setOutlineColor(sf::Color::Red);
-        hitbox.setOutlineThickness(1.0f);
-        hitbox.setFillColor(sf::Color::Transparent);
+        // hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
+        // hitbox.setPosition(getPosition().x - getGlobalBounds().width / 2, getPosition().y - getGlobalBounds().height / 2);
+        // hitbox.setOutlineColor(sf::Color::Red);
+        // hitbox.setOutlineThickness(1.0f);
+        // hitbox.setFillColor(sf::Color::Transparent);
 
-        window.draw(hitbox);
+        // window.draw(hitbox);
     }
 
     void shoot(WeaponType type)

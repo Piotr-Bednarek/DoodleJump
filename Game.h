@@ -280,7 +280,7 @@ public:
 
         if (rand() % 2 == 0)
         {
-            Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound);
+            Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound, 1, 1);
 
             for (int i = 0; i < 4; i++)
             {
@@ -291,7 +291,7 @@ public:
         }
         else
         {
-            Enemy enemy(position, speed, direction, enemy_textures[1], game_left_bound, game_right_bound);
+            Enemy enemy(position, speed, direction, enemy_textures[1], game_left_bound, game_right_bound, 2, 2);
 
             for (int i = 0; i < 4; i++)
             {
