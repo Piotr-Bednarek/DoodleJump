@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <functional>
 
 class Button : public sf::Sprite
 {
@@ -14,13 +15,12 @@ private:
     sf::Vector2f position;
     sf::Vector2f size;
 
-public:
-    Button() : sf::Sprite()
-    {
-        setPosition(sf::Vector2f(0, 0));
-    }
+    std::function<void()> callback;
 
-    Button(sf::Vector2f pos, sf::Vector2f s, std::string t, sf::Font &font, sf::Texture &texture) : sf::Sprite()
+public:
+    Button() {}
+
+    Button(sf::Vector2f pos, sf::Vector2f s, std::string t, sf::Font &font, sf::Texture &texture, std::function<void()> callback) : sf::Sprite(), callback(callback)
     {
         sf::Vector2u textureSize = texture.getSize();
 
@@ -72,6 +72,8 @@ public:
                 setScale(scaleX * 0.975, scaleY * 0.975);
 
                 center_button();
+
+                callback();
             }
         }
         else

@@ -14,14 +14,6 @@
 
 #include "Player.h"
 
-enum class GameState
-{
-    TITLE,
-    SINGLEPLAYER,
-    MULTIPLAYER,
-    GAMEOVER
-};
-
 sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
 {
     sf::Text sfText(text, font, size);
@@ -90,9 +82,9 @@ int main()
 
     Game game(0, 350, 0, WIDTH);
 
-    GameState state = GameState::SINGLEPLAYER;
+    GameState state = GameState::TITLE;
 
-    TitleScreen tittle_screen(font, window);
+    TitleScreen tittle_screen(font, window, state);
 
     Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50), 0, WIDTH);
 
@@ -135,10 +127,24 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    if (state == GameState::TITLE)
-                        state = GameState::SINGLEPLAYER;
+                    // if (state == GameState::TITLE)
+                    // state = GameState::SINGLEPLAYER;
 
                     player.jump();
+                }
+
+                if (event.key.code == sf::Keyboard::Space)
+                {
+                    switch (state)
+                    {
+                    case GameState::TITLE:
+                        std::cout << "TITLE" << std::endl;
+                        break;
+
+                    case GameState::SINGLEPLAYER:
+                        std::cout << "SINGLEPLAYER" << std::endl;
+                        break;
+                    }
                 }
             }
 

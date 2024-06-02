@@ -3,6 +3,14 @@
 #include <SFML/Graphics.hpp>
 #include "Button.h"
 
+enum class GameState
+{
+    TITLE,
+    SINGLEPLAYER,
+    MULTIPLAYER,
+    GAMEOVER
+};
+
 class TitleScreen
 {
 private:
@@ -20,7 +28,7 @@ private:
     sf::Texture score_button_texture;
 
 public:
-    TitleScreen(sf::Font &font, sf::RenderWindow &window)
+    TitleScreen(sf::Font &font, sf::RenderWindow &window, GameState &game_state)
     {
 
         if (!singleplayer_button_texture.loadFromFile("assets/singleplayer_button.png"))
@@ -35,18 +43,23 @@ public:
 
         int WIDTH = window.getSize().x;
 
-        create_buttons(font);
+        create_buttons(font, game_state);
 
         title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 75));
         info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(WIDTH / 2.0f, 150));
     }
 
-    void create_buttons(sf::Font &font)
+    void create_buttons(sf::Font &font, GameState &game_state)
     {
 
-        singleplayer_button = Button(sf::Vector2f(100, 450), sf::Vector2f(100, 100), "Singleplayer", font, singleplayer_button_texture);
-        multiplayer_button = Button(sf::Vector2f(350, 450), sf::Vector2f(100, 100), "Multiplayer", font, multiplayer_button_texture);
-        score_button = Button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font, singleplayer_button_texture);
+        singleplayer_button = Button(sf::Vector2f(100, 450), sf::Vector2f(100, 100), "Singleplayer", font, singleplayer_button_texture, [&game_state]
+                                     { game_state = GameState::SINGLEPLAYER; });
+
+        multiplayer_button = Button(sf::Vector2f(350, 450), sf::Vector2f(100, 100), "Multiplayer", font, multiplayer_button_texture, [&game_state]
+                                    { game_state = GameState::MULTIPLAYER; });
+
+        score_button = Button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font, singleplayer_button_texture, [&game_state]
+                              { game_state = GameState::GAMEOVER; });
     }
 
     void draw(sf::RenderWindow &window)
