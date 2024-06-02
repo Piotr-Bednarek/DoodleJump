@@ -42,7 +42,7 @@ public:
         game_left_bound = left_bound;
         game_right_bound = right_bound;
 
-        std::vector<std::string> platform_texture_paths = {"assets/platform_grass.png", "assets/platform_stone.png"};
+        std::vector<std::string> platform_texture_paths = {"assets/enviroment/platform_grass.png", "assets/enviroment/platform_stone.png"};
 
         for (const auto &path : platform_texture_paths)
         {

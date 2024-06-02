@@ -54,12 +54,12 @@ int main()
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
 
-        // if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
+    // if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
     // {
     //     return 1;
     // }
 
-    if (!background_texture.loadFromFile("assets/background.png"))
+    if (!background_texture.loadFromFile("assets/enviroment/background.png"))
     {
         return 1;
     }

@@ -49,7 +49,7 @@ public:
 
         setType(type);
 
-        std::vector<std::string> texturePaths = {"assets/fireball_projectile.png", "assets/shuriken_projectile.png"};
+        std::vector<std::string> texturePaths = {"assets/enviroment/fireball_projectile.png", "assets/enviroment/shuriken_projectile.png"};
 
         for (const auto &path : texturePaths)
         {

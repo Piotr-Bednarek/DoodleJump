@@ -31,14 +31,19 @@ public:
     TitleScreen(sf::Font &font, sf::RenderWindow &window, GameState &game_state)
     {
 
-        if (!singleplayer_button_texture.loadFromFile("assets/singleplayer_button.png"))
+        if (!singleplayer_button_texture.loadFromFile("assets/buttons/singleplayer_button.png"))
         {
-            std::cout << "Failed to load texture from assets/singleplayer_button.png" << std::endl;
+            std::cout << "Failed to load texture from assets/buttons/singleplayer_button.png" << std::endl;
         }
 
-        if (!multiplayer_button_texture.loadFromFile("assets/multiplayer_button.png"))
+        if (!multiplayer_button_texture.loadFromFile("assets/buttons/multiplayer_button.png"))
         {
-            std::cout << "Failed to load texture from assets/multiplayer_button.png" << std::endl;
+            std::cout << "Failed to load texture from assets/buttons/multiplayer_button.png" << std::endl;
+        }
+
+        if (!score_button_texture.loadFromFile("assets/buttons/score_button.png"))
+        {
+            std::cout << "Failed to load texture from assets/buttons/score_button.png" << std::endl;
         }
 
         int WIDTH = window.getSize().x;
@@ -58,7 +63,7 @@ public:
         multiplayer_button = Button(sf::Vector2f(350, 450), sf::Vector2f(100, 100), "Multiplayer", font, multiplayer_button_texture, [&game_state]
                                     { game_state = GameState::MULTIPLAYER; });
 
-        score_button = Button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font, singleplayer_button_texture, [&game_state]
+        score_button = Button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font, score_button_texture, [&game_state]
                               { game_state = GameState::GAMEOVER; });
     }
 
