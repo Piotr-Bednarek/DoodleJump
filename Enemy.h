@@ -114,7 +114,7 @@ public:
         if (pos.x < 0 || pos.x > 800)
         {
             direction *= -1;
-            bounce(pos, dy);
+            bounce(weapon);
         }
 
         if (rand() % 100 < 5)
@@ -125,19 +125,29 @@ public:
         weapon.move(0, dy);
     }
 
-    void bounce(sf::Vector2f pos, float dy)
+    void bounce(Weapon &weapon)
     {
         float width = getGlobalBounds().width;
+
+        sf::Vector2f position = getPosition();
 
         if (direction == 1)
         {
             setScale(-scaleX, scaleY);
-            setPosition(pos.x + width / 2, pos.y);
+            setPosition(position.x + width, position.y);
+
+            weapon.move(-width, 0);
+
+            std::cout << "Bounce right" << std::endl;
         }
         else if (direction == -1)
         {
             setScale(scaleX, scaleY);
-            setPosition(pos.x - width / 2, pos.y);
+            setPosition(position.x - width, position.y);
+
+            weapon.move(width, 0);
+
+            std::cout << "Bounce left" << std::endl;
         }
     }
 
@@ -145,17 +155,13 @@ public:
     {
         window.draw(*this);
         weapon.draw(window);
-
-        // window.draw(health_text);
-        // sf::RectangleShape hitbox;
-
-        // hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
-        // hitbox.setPosition(getPosition().x - getGlobalBounds().width / 2, getPosition().y - getGlobalBounds().height / 2);
-        // hitbox.setOutlineColor(sf::Color::Red);
-        // hitbox.setOutlineThickness(1.0f);
-        // hitbox.setFillColor(sf::Color::Transparent);
-
-        // window.draw(hitbox);
+        sf::RectangleShape hitbox;
+        hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
+        hitbox.setPosition(getPosition().x - getGlobalBounds().width / 2, getPosition().y - getGlobalBounds().height / 2);
+        hitbox.setOutlineColor(sf::Color::Red);
+        hitbox.setOutlineThickness(1.0f);
+        hitbox.setFillColor(sf::Color::Transparent);
+        window.draw(hitbox);
     }
 
     void shoot(WeaponType type)

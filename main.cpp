@@ -82,7 +82,7 @@ int main()
 
     Game game(0, 350, 0, WIDTH);
 
-    GameState state = GameState::TITLE;
+    GameState state = GameState::SINGLEPLAYER;
 
     TitleScreen tittle_screen(font, window, state);
 
