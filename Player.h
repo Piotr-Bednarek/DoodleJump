@@ -27,6 +27,8 @@ private:
 
     Weapon weapon;
 
+    int health_points = 100;
+
 public:
     Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::RectangleShape(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
     {
@@ -111,8 +113,19 @@ public:
                 std::cout << "Collision" << std::endl;
 
                 enemy.update_health(result);
-                // enemies.erase(std::remove(enemies.begin(), enemies.end(), enemy), enemies.end());
             }
         }
+    }
+
+    void update_health(int damage)
+    {
+        health_points -= damage;
+
+        std::cout << "Health: " << health_points << std::endl;
+    }
+
+    int get_health()
+    {
+        return health_points;
     }
 };

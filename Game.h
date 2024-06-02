@@ -90,6 +90,9 @@ public:
 
     void update(float dt, sf::RenderWindow &window, Player &player)
     {
+
+        check_if_player_is_dead(player);
+
         int platform_width = platforms[0].getLocalBounds().width;
 
         for (Platform &platform : platforms)
@@ -150,6 +153,16 @@ public:
         }
 
         player.check_projeciltile_collision(enemies);
+
+        for (Enemy &enemy : enemies)
+        {
+            int result = enemy.check_projeciltile_collision(player.getGlobalBounds());
+
+            if (result != -1)
+            {
+                player.update_health(result);
+            }
+        }
     }
 
     void check_if_spawn_enemy()
@@ -186,7 +199,7 @@ public:
 
     float end()
     {
-        game_over = true;
+
         return score;
     }
 
@@ -272,5 +285,18 @@ public:
         }
 
         enemies.emplace_back(enemy);
+    }
+
+    void check_if_player_is_dead(Player &player)
+    {
+        if (player.get_health() <= 0 || player.getPosition().y > 800)
+        {
+            game_over = true;
+        }
+    }
+
+    bool get_game_state()
+    {
+        return game_over;
     }
 };

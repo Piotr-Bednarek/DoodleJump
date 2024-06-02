@@ -151,11 +151,13 @@ public:
 
     int check_collision(sf::FloatRect bounds)
     {
-        for (Projectile &projectile : projectiles)
+        for (int i = 0; i < projectiles.size(); i++)
         {
-            if (projectile.getGlobalBounds().intersects(bounds))
+            if (projectiles[i].getGlobalBounds().intersects(bounds))
             {
-                return projectile.get_damage();
+                int damage = projectiles[i].get_damage();
+                projectiles.erase(projectiles.begin() + i);
+                return damage;
             }
         }
 

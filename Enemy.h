@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <algorithm>
 
 #include "AnimatedSprite.h"
 #include "Projectile.h"
@@ -125,5 +126,12 @@ public:
     int get_health()
     {
         return health_points;
+    }
+
+    int check_projeciltile_collision(sf::FloatRect bounds)
+    {
+        int result = weapon.check_collision(bounds);
+
+        return result;
     }
 };

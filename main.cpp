@@ -203,6 +203,9 @@ int main()
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
             window.draw(score);
 
+            if (game.get_game_state())
+                state = GameState::GAMEOVER;
+
             break;
 
         case GameState::MULTIPLAYER:
