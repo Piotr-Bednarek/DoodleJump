@@ -2,12 +2,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <SFML/System/Vector2.hpp>
-
 #include <vector>
+#include <iostream>
 
 #include "Projectile.h"
-#include <iostream>
 
 enum class WeaponType
 {
@@ -149,5 +147,18 @@ public:
         {
             projectile.move(dx, dy);
         }
+    }
+
+    int check_collision(sf::FloatRect bounds)
+    {
+        for (Projectile &projectile : projectiles)
+        {
+            if (projectile.getGlobalBounds().intersects(bounds))
+            {
+                return projectile.get_damage();
+            }
+        }
+
+        return -1;
     }
 };

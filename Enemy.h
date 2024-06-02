@@ -13,8 +13,7 @@ private:
     float speed;
     int direction;
 
-    float health_points;
-    float damage;
+    int health_points = 10;
 
     sf::Texture enemy_texture;
 
@@ -116,5 +115,15 @@ public:
     void shoot(WeaponType type)
     {
         weapon.shoot(type, 180);
+    }
+
+    void update_health(int damage)
+    {
+        health_points -= damage;
+    }
+
+    int get_health()
+    {
+        return health_points;
     }
 };

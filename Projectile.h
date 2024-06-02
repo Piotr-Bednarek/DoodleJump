@@ -12,6 +12,8 @@ private:
     float speed;
     int angle;
 
+    int damage = 10;
+
     sf::Texture projectile_texture;
 
 public:
@@ -53,5 +55,10 @@ public:
     void draw(sf::RenderWindow &window)
     {
         window.draw(*this);
+    }
+
+    int get_damage()
+    {
+        return damage;
     }
 };

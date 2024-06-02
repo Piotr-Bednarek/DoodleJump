@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Weapon.h"
+#include "Enemy.h"
 
 class Player : public sf::RectangleShape
 {
@@ -94,7 +95,24 @@ public:
     void shoot(WeaponType type)
     {
         weapon.shoot(type, 0);
+    }
 
-        std::cout << "Shooting" << std::endl;
+    void check_projeciltile_collision(std::vector<Enemy> &enemies)
+    {
+        for (Enemy &enemy : enemies)
+        {
+
+            sf::FloatRect bounds = enemy.getGlobalBounds();
+
+            int result = weapon.check_collision(bounds);
+
+            if (result != -1)
+            {
+                std::cout << "Collision" << std::endl;
+
+                enemy.update_health(result);
+                // enemies.erase(std::remove(enemies.begin(), enemies.end(), enemy), enemies.end());
+            }
+        }
     }
 };

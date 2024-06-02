@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <algorithm>
 
 #include "Platform.h"
 #include "Weapon.h"
@@ -103,10 +104,20 @@ public:
             }
         }
 
+        enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy)
+                                     { return enemy.get_health() <= 0; }),
+                      enemies.end());
+
         for (Enemy &enemy : enemies)
         {
             enemy.move(dt, velocity * dt);
             enemy.update(dt, window);
+
+            // if (enemy.get_health() <= 0)
+            // {
+            //     enemies.erase(std::remove(enemies.begin(), enemies.end(), enemy), enemies.end());
+            //     continue;
+            // }
         }
 
         check_if_spawn_enemy();
@@ -137,6 +148,8 @@ public:
                 enemy.move(0, diff);
             }
         }
+
+        player.check_projeciltile_collision(enemies);
     }
 
     void check_if_spawn_enemy()
