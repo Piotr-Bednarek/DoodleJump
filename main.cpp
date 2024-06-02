@@ -54,9 +54,7 @@ int main()
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
 
-    sf::Font font;
-
-    // if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
+        // if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
     // {
     //     return 1;
     // }
@@ -70,6 +68,8 @@ int main()
     // {
     //     return 1;
     // }
+
+    sf::Font font;
 
     if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
     {

@@ -27,7 +27,13 @@ private:
 
     Weapon weapon;
 
-    int health_points = 100;
+    int max_health = 100;
+
+    int health_points = max_health;
+
+    sf::Text health_text;
+
+    sf::Font font;
 
 public:
     Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::RectangleShape(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
@@ -37,6 +43,16 @@ public:
 
         game_left_bound = left_bound;
         game_right_bound = right_bound;
+
+        if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
+        {
+            std::cout << "Failed to load font" << std::endl;
+        }
+
+        health_text = createText(std::to_string(health_points) + "/" + std::to_string(max_health), font, 40, sf::Color::White, pos);
+
+        health_text.setOutlineColor(sf::Color::Black);
+        health_text.setOutlineThickness(3);
     }
 
     void update(float dt, sf::RenderWindow &window)
@@ -58,6 +74,9 @@ public:
         setPosition(pos);
 
         weapon.update(dt, getPosition() + sf::Vector2f(getSize().x / 2, 0), window);
+
+        health_text.setPosition(getPosition() + sf::Vector2f(getGlobalBounds().width / 2, -20));
+        health_text.setString(std::to_string(health_points) + "/" + std::to_string(max_health));
     }
 
     void move(float dx, float dy)
@@ -73,6 +92,8 @@ public:
         window.draw(*this);
 
         weapon.draw(window);
+
+        window.draw(health_text);
     }
 
     void jump()
@@ -103,14 +124,15 @@ public:
     {
         for (Enemy &enemy : enemies)
         {
-
             sf::FloatRect bounds = enemy.getGlobalBounds();
 
             int result = weapon.check_collision(bounds);
 
             if (result != -1)
             {
-                std::cout << "Collision" << std::endl;
+                // std::cout << "Collision" << std::endl;
+
+                std::cout << "Collision with enemy at index: " << &enemy - &enemies[0] << std::endl;
 
                 enemy.update_health(result);
             }
@@ -121,11 +143,23 @@ public:
     {
         health_points -= damage;
 
-        std::cout << "Health: " << health_points << std::endl;
+        // std::cout << "Health: " << health_points << std::endl;
     }
 
     int get_health()
     {
         return health_points;
+    }
+
+    sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
+    {
+        sf::Text sfText(text, font, size);
+        sfText.setFillColor(color);
+
+        sf::FloatRect textRect = sfText.getLocalBounds();
+        sfText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+        sfText.setPosition(position);
+
+        return sfText;
     }
 };
