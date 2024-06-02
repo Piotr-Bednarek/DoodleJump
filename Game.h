@@ -55,7 +55,7 @@ public:
             platform_textures.push_back(std::move(texture));
         }
 
-        std::vector<std::string> enemy_texture_paths = {"assets/enemy/dragon_flying.png"};
+        std::vector<std::string> enemy_texture_paths = {"assets/enemy/dragon_flying.png", "assets/enemy/bee_flying.png"};
 
         for (const auto &path : enemy_texture_paths)
         {
@@ -277,14 +277,28 @@ public:
 
         speed = rand() % 101 + 100;
 
-        Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound);
-
-        for (int i = 0; i < 4; i++)
+        if (rand() % 2 == 0)
         {
-            enemy.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
-        }
+            Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound);
 
-        enemies.emplace_back(enemy);
+            for (int i = 0; i < 4; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
+            }
+
+            enemies.emplace_back(enemy);
+        }
+        else
+        {
+            Enemy enemy(position, speed, direction, enemy_textures[1], game_left_bound, game_right_bound);
+
+            for (int i = 0; i < 4; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(64 * i, 0, 64, 64));
+            }
+
+            enemies.emplace_back(enemy);
+        }
     }
 
     void check_if_player_is_dead(Player &player)
