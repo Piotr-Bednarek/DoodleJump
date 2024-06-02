@@ -28,6 +28,8 @@ private:
     float scaleX;
     float scaleY;
 
+    sf::Vector2f player_position;
+
     // sf::Text health_text;
     // sf::Font font;
 
@@ -84,7 +86,7 @@ public:
         return *this;
     }
 
-    void update(float dt, sf::RenderWindow &window)
+    void update(float dt, sf::RenderWindow &window, sf::Vector2f player_pos)
     {
         sf::Vector2f weaponPos = getPosition();
         weaponPos.x += getGlobalBounds().width / 2.0f;
@@ -98,6 +100,8 @@ public:
         draw(window);
 
         weapon.update(dt, getPosition() + sf::Vector2f(0, height / 2), window);
+
+        player_position = player_pos;
 
         // health_text.setPosition(getPosition() + sf::Vector2f(getGlobalBounds().width / 2, -20));
         // health_text.setString(std::to_string(health_points) + "/" + std::to_string(max_health));
@@ -136,18 +140,18 @@ public:
             setScale(-scaleX, scaleY);
             setPosition(position.x + width, position.y);
 
-            weapon.move(-width, 0);
+            weapon.move(-width);
 
-            std::cout << "Bounce right" << std::endl;
+            // std::cout << "Bounce right" << std::endl;
         }
         else if (direction == -1)
         {
             setScale(scaleX, scaleY);
             setPosition(position.x - width, position.y);
 
-            weapon.move(width, 0);
+            weapon.move(width);
 
-            std::cout << "Bounce left" << std::endl;
+            // std::cout << "Bounce left" << std::endl;
         }
     }
 
@@ -166,7 +170,20 @@ public:
 
     void shoot(WeaponType type)
     {
-        weapon.shoot(type, 180);
+        const double PI = 3.14159265358979323846;
+        int threshold = 90;
+
+        sf::Vector2f enemy_pos = getPosition();
+
+        float dx = player_position.x - enemy_pos.x;
+        float dy = player_position.y - enemy_pos.y;
+        float angle = atan2(dy, dx) * 180 / PI + 90;
+
+        if (std::abs(angle) >= threshold)
+        {
+            std::cout << "Angle: " << angle << std::endl;
+            weapon.shoot(type, angle);
+        }
     }
 
     void update_health(int damage)

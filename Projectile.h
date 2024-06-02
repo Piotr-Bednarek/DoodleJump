@@ -39,7 +39,6 @@ public:
 
     void update(float dt)
     {
-
         setTexture(projectile_texture);
         const double PI = 3.14159265358979323846;
 

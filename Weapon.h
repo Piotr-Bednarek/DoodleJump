@@ -149,6 +149,11 @@ public:
         }
     }
 
+    void move(float width)
+    {
+        position.x += width;
+    }
+
     int check_collision(sf::FloatRect bounds)
     {
         for (int i = 0; i < projectiles.size(); i++)

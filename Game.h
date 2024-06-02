@@ -115,7 +115,7 @@ public:
         for (Enemy &enemy : enemies)
         {
             enemy.move(dt, velocity * dt);
-            enemy.update(dt, window);
+            enemy.update(dt, window, player.getPosition());
 
             // if (enemy.get_health() <= 0)
             // {
