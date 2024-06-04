@@ -122,7 +122,10 @@ public:
         highScoresText.setPosition(sf::Vector2f(WIDTH / 2.0f, HEIGHT / 2.0f));
     }
 
-    void drawHighScore(sf::RenderWindow &window){
-        window.draw(highScoresText);
+    void drawGameOver(sf::RenderWindow &window, HighScoreManager &highScoreManager){
+            updateHighScore(highScoreManager);
+            highScoreManager.saveHighScores();
+            window.draw(highScoresText);
+        
     }
 };

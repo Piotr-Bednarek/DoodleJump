@@ -280,7 +280,7 @@ public:
 
             bool isPlayerOutsidePlatform = true;
 
-            if(playerBounds.left + playerBounds.width > platformBounds.left && playerBounds.left < platformBounds.left + platformBounds.width && playerBounds.top + playerBounds.height >= platformBounds.top && playerBounds.top + playerBounds.height <= platformBounds.top + 1 + player.get_velocity().y * time)
+            if(playerBounds.left + playerBounds.width > platformBounds.left && playerBounds.left < platformBounds.left + platformBounds.width && playerBounds.top + playerBounds.height >= platformBounds.top && playerBounds.top + playerBounds.height <= platformBounds.top + 5 + player.get_velocity().y * time)
             {
                 isPlayerOutsidePlatform = false;
             }

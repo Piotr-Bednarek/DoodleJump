@@ -57,7 +57,7 @@ public:
             return a.score > b.score;
         });
 
-        if (highScores.size() > 5) { // Keep only top 10 scores
+        if (highScores.size() > 5) { 
             highScores.pop_back();
         }
 

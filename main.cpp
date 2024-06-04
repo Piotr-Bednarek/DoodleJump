@@ -218,6 +218,7 @@ int main()
             {
                 // std::cout << game.get_game_state() << std::endl;
                 state = GameState::GAMEOVER;
+                highScoreManager.addHighScore(HighScore(player.getName(), game.get_score()));
             }
 
             break;
@@ -227,10 +228,7 @@ int main()
         case GameState::GAMEOVER:
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
-            highScoreManager.addHighScore(HighScore(player.getName(), static_cast<int>(std::round(game.get_score()))));
-            tittle_screen.updateHighScore(highScoreManager);
-            highScoreManager.saveHighScores();
-            tittle_screen.drawHighScore(window);
+            tittle_screen.drawGameOver(window, highScoreManager);
             break;
         }
 

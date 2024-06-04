@@ -31,7 +31,7 @@ private:
 
     int health_points = max_health;
 
-    std::string name;
+    std::string name = "Player";
 
     bool is_invincible = false;
     float invincible_timer = 0;
