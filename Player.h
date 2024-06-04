@@ -32,7 +32,9 @@ private:
     int health_points = max_health;
 
     bool is_invincible = false;
+    float invincible_timer = 0;
     bool massacre_mode = false;
+    float massacre_timer = 0;
 
     sf::Text health_text;
 
@@ -60,6 +62,24 @@ public:
 
     void update(float dt, sf::RenderWindow &window)
     {
+        if(invincible_timer > 0)
+        {
+            invincible_timer -= dt;
+            if(invincible_timer <= 0)
+            {
+                is_invincible = false;
+            }
+        }
+        if(massacre_timer > 0)
+        {
+            massacre_timer -= dt;
+            if(massacre_timer <= 0)
+            {
+                massacre_mode = false;
+            }
+        }
+
+
         if (is_on_ground)
         {
             velocity.y = 0;
@@ -144,8 +164,8 @@ public:
 
     void update_health(int damage)
     {
-        health_points -= damage;
-
+        if(!is_invincible && !massacre_mode)
+            health_points -= damage;
         // std::cout << "Health: " << health_points << std::endl;
     }
     void restoreHealth(int health)
@@ -178,7 +198,8 @@ public:
 
     void set_invincible(int invincible)
     {
-        is_invincible = invincible;
+        is_invincible = true;
+        invincible_timer = (float)invincible;
     }
     void boostJump(int boost){
         velocity.y = boost;
@@ -186,7 +207,12 @@ public:
     }
     void set_massacre(int massacre)
     {
-        massacre_mode = massacre;
+        massacre_mode = true;
+        massacre_timer = (float)massacre;
     }
+    bool get_massacre()
+    {
+        return massacre_mode;
+    }  
 
 };

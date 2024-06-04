@@ -135,7 +135,11 @@ public:
                 platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
             }
         }
-
+        for (Enemy &enemy : enemies){
+            if (enemy.getGlobalBounds().intersects(player.getGlobalBounds()) && player.get_massacre()){
+                enemy.update_health(100000);
+            }
+        }
         enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy)
                                      { return enemy.get_health() <= 0; }),
                       enemies.end());
@@ -373,14 +377,14 @@ public:
                     powerUp = new PowerUp(powerUp_textures[(int)type], type, 50);
                     break;
                 case PowerUpType::INVINCIBILITY:
-                    powerUp = new PowerUp(powerUp_textures[(int)type], type, 1);
+                    powerUp = new PowerUp(powerUp_textures[(int)type], type, 10);
                     break;
                 case PowerUpType::JUMPBOOST:
                     powerUp = new PowerUp(powerUp_textures[(int)type], type, -2500);
                     powerUp->setScale(0.3, 0.3);
                     break;
                 case PowerUpType::MASSACRE:
-                    powerUp = new PowerUp(powerUp_textures[(int)type], type, 1);
+                    powerUp = new PowerUp(powerUp_textures[(int)type], type, 5);
                     powerUp->setScale(0.1, 0.1);
                     break;
                 default:
