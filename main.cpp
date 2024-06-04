@@ -204,8 +204,9 @@ int main()
             game.update(dt, window, player);
             player.update(dt, window);
 
-            player.draw(window);
             game.draw(window);
+            player.draw(window);
+
 
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
             window.draw(score);

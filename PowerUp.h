@@ -26,12 +26,12 @@ public:
         effect_amount = amount;
     }
 
-    PowerUpType getType() const
+    PowerUpType getType()
     {
         return type;
     }
 
-    int getEffectAmount() const
+    int getEffectAmount()
     {
         return effect_amount;
     }

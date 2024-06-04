@@ -123,7 +123,6 @@ public:
 
             if(platform.getPowerUp()!=nullptr){
                 if (platform.getPowerUp()->getGlobalBounds().intersects(player.getGlobalBounds())){
-                    std::cout << "PowerUp collision" << std::endl;
                     applyPowerUpEffect(*platform.getPowerUp(), player);
                     platform.setPowerUp(nullptr);
                 }
@@ -368,7 +367,7 @@ public:
     PowerUp* create_powerUps(Platform &platform)
     {
         PowerUp* powerUp = nullptr;
-            if (rand() % 100 < 5)
+            if (rand() % 100 < 100)
             { 
                 PowerUpType type = static_cast<PowerUpType>(rand() % (static_cast<int>(PowerUpType::MASSACRE) + 1)); 
                 switch (type)
@@ -399,7 +398,7 @@ public:
             }
         return powerUp;
     }
-    void applyPowerUpEffect(const PowerUp &powerUp, Player &player){
+    void applyPowerUpEffect(PowerUp &powerUp, Player &player){
         PowerUpType type = powerUp.getType();
 
         switch (type)

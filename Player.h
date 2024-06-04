@@ -36,9 +36,13 @@ private:
     bool massacre_mode = false;
     float massacre_timer = 0;
 
+    sf::Sprite shield;
+
     sf::Text health_text;
 
     sf::Font font;
+
+   
 
 public:
     Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::RectangleShape(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
@@ -58,6 +62,11 @@ public:
 
         health_text.setOutlineColor(sf::Color::Black);
         health_text.setOutlineThickness(3);
+
+        sf::Texture shield_texture;
+        shield_texture.loadFromFile("assets/powerup/shield.png");
+        shield.setTexture(shield_texture);
+
     }
 
     void update(float dt, sf::RenderWindow &window)
@@ -95,6 +104,10 @@ public:
         pos.x += velocity.x * dt;
         pos.y += velocity.y * dt;
         setPosition(pos);
+        if(is_invincible){
+            //shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width, getPosition().y + getGlobalBounds().height - shield.getGlobalBounds().height);
+            shield.setPosition(getPosition().x + getGlobalBounds().width, getPosition().y + getGlobalBounds().height);
+        }
 
         weapon.update(dt, getPosition() + sf::Vector2f(getSize().x / 2, 0), window);
 
@@ -117,6 +130,11 @@ public:
         weapon.draw(window);
 
         window.draw(health_text);
+        
+        if(is_invincible)
+        {
+            window.draw(shield);
+        }
     }
 
     void jump()
@@ -200,6 +218,9 @@ public:
     {
         is_invincible = true;
         invincible_timer = (float)invincible;
+        shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width, getPosition().y + getGlobalBounds().height - shield.getGlobalBounds().height);
+        shield.setScale(0.5, 0.5);
+        
     }
     void boostJump(int boost){
         velocity.y = boost;
