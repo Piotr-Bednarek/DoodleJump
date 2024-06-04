@@ -211,7 +211,10 @@ int main()
             window.draw(score);
 
             if (game.get_game_state())
+            {
+                // std::cout << game.get_game_state() << std::endl;
                 state = GameState::GAMEOVER;
+            }
 
             break;
 
