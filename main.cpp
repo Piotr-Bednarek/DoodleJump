@@ -85,11 +85,14 @@ int main()
 
     Game game(0, 350, 0, WIDTH);
 
+    game.create_platforms(50, 78, 35, HEIGHT, WIDTH);
+    game.create_enemy();
+
     GameState state = GameState::TITLE;
 
     TitleScreen tittle_screen(font, window, state);
 
-    Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50), 0, WIDTH);
+    Player player(sf::Vector2f(WIDTH/2,HEIGHT-84), sf::Vector2f(50, 50), 0, WIDTH);
 
     // Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, 0, WIDTH);
 
@@ -100,8 +103,7 @@ int main()
 
     // ----------------------------------------------
 
-    game.create_platforms(50, 100, 20, HEIGHT, WIDTH);
-    game.create_enemy();
+
     tittle_screen.updateHighScore(highScoreManager);
 
     // ----------------------------------------------
