@@ -17,6 +17,8 @@ class Game
 private:
     bool game_over = false;
 
+    float time = 0;
+
     std::vector<Platform> platforms;
     std::vector<Enemy> enemies;
 
@@ -106,6 +108,8 @@ public:
 
     void update(float dt, sf::RenderWindow &window, Player &player)
     {
+        time = dt;
+
         //std::cout << "Game update" << std::endl;
         check_if_player_is_dead(player);
 
@@ -274,7 +278,13 @@ public:
             sf::FloatRect playerBounds = player.getGlobalBounds();
             sf::FloatRect platformBounds = platform.getGlobalBounds();
 
-            bool isPlayerOutsidePlatform = playerBounds.left + playerBounds.width < platformBounds.left || playerBounds.left > platformBounds.left + platformBounds.width;
+            bool isPlayerOutsidePlatform = true;
+
+            if(playerBounds.left + playerBounds.width > platformBounds.left && playerBounds.left < platformBounds.left + platformBounds.width && playerBounds.top + playerBounds.height >= platformBounds.top && playerBounds.top + playerBounds.height <= platformBounds.top + 1 + player.get_velocity().y * time)
+            {
+                isPlayerOutsidePlatform = false;
+            }
+
 
             if (isPlayerOutsidePlatform)
             {
@@ -287,7 +297,7 @@ public:
 
                 sf::Vector2f player_velocity = player.get_velocity();
 
-                if (player_velocity.y > 0 && intersection.height <= intersection.width)
+                if (player_velocity.y > 0 )//&& intersection.height <= intersection.width)
                 {
                     player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
                     player.set_ground(true);
