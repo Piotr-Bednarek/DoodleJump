@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "PowerUp.h"
+#include "HighScoreManager.h"
 
 class Game
 {
@@ -19,7 +20,7 @@ private:
     std::vector<Platform> platforms;
     std::vector<Enemy> enemies;
 
-    float score;
+    float score = 0;
 
     float elevation;
 
@@ -377,7 +378,7 @@ public:
     PowerUp *create_powerUps(Platform &platform)
     {
         PowerUp* powerUp = nullptr;
-            if (rand() % 100 < 1)
+            if (rand() % 100 < 3)
             { 
                 PowerUpType type = static_cast<PowerUpType>(rand() % (static_cast<int>(PowerUpType::MASSACRE) + 1)); 
                 switch (type)
@@ -430,4 +431,6 @@ public:
             break;
         }
     }
+
+
 };

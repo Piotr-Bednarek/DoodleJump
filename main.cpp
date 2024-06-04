@@ -12,7 +12,7 @@
 #include "Weapon.h"
 #include "Button.h"
 #include "TitleScreen.h"
-
+#include "HighScoreManager.h"
 #include "Player.h"
 
 sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
@@ -77,13 +77,15 @@ int main()
         return 1;
     }
 
-    sf::Text score = createText("Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
+    sf::Text score = createText("Your Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
+
+    HighScoreManager highScoreManager("highscores.txt");
 
     // ----------------------------------------------
 
     Game game(0, 350, 0, WIDTH);
 
-    GameState state = GameState::SINGLEPLAYER;
+    GameState state = GameState::TITLE;
 
     TitleScreen tittle_screen(font, window, state);
 
@@ -100,6 +102,7 @@ int main()
 
     game.create_platforms(50, 100, 20, HEIGHT, WIDTH);
     game.create_enemy();
+    tittle_screen.updateHighScore(highScoreManager);
 
     // ----------------------------------------------
 
@@ -128,8 +131,8 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    // if (state == GameState::TITLE)
-                    // state = GameState::SINGLEPLAYER;
+                    if (state == GameState::TITLE)
+                     state = GameState::SINGLEPLAYER;
 
                     player.jump();
                 }
@@ -208,7 +211,7 @@ int main()
             player.draw(window);
 
 
-            score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
+            score.setString("Your Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
             window.draw(score);
 
             if (game.get_game_state())
@@ -224,7 +227,10 @@ int main()
         case GameState::GAMEOVER:
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
-
+            highScoreManager.addHighScore(HighScore(player.getName(), static_cast<int>(std::round(game.get_score()))));
+            tittle_screen.updateHighScore(highScoreManager);
+            highScoreManager.saveHighScores();
+            tittle_screen.drawHighScore(window);
             break;
         }
 

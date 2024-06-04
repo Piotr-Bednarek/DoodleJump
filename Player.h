@@ -31,6 +31,8 @@ private:
 
     int health_points = max_health;
 
+    std::string name;
+
     bool is_invincible = false;
     float invincible_timer = 0;
     bool massacre_mode = false;
@@ -232,5 +234,15 @@ public:
     bool get_massacre()
     {
         return massacre_mode;
+    }
+
+    void setName(std::string n)
+    {
+        name = n;
+    }
+
+    std::string getName()
+    {
+        return name;
     }
 };
