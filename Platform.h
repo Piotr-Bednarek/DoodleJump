@@ -4,9 +4,17 @@
 #include <vector>
 #include <iostream>
 
+#include "PowerUp.h"
+
 class Platform : public sf::Sprite
 {
+private:
+    bool powerup_spawned = true;
+    PowerUp* powerup = nullptr;
+
 public:
+    
+
     Platform(sf::Vector2f pos, sf::Vector2f s, sf::Texture &platform_texture) : sf::Sprite()
     {
         sf::Vector2u textureSize = platform_texture.getSize();
@@ -28,5 +36,22 @@ public:
         sf::Vector2u textureSize = platform_texture.getSize();
         setTextureRect(sf::IntRect(0, 0, textureSize.x, textureSize.y));
         setTexture(platform_texture);
+    }
+
+    void setPowerUpSpawned(bool value)
+    {
+        powerup_spawned = value;
+    }
+    bool getPowerUpSpawned()
+    {
+        return powerup_spawned;
+    }
+    PowerUp* getPowerUp()
+    {
+        return powerup;
+    }
+    void setPowerUp(PowerUp* p)
+    {
+        powerup = p;
     }
 };

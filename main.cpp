@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <time.h>
 #include <cmath>
 
 #include "Platform.h"

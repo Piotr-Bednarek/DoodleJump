@@ -31,6 +31,9 @@ private:
 
     int health_points = max_health;
 
+    bool is_invincible = false;
+    bool massacre_mode = false;
+
     sf::Text health_text;
 
     sf::Font font;
@@ -145,7 +148,17 @@ public:
 
         // std::cout << "Health: " << health_points << std::endl;
     }
-
+    void restoreHealth(int health)
+    {
+        if (health_points + health> max_health)
+        {
+            health_points = max_health;
+        }
+        else
+        {
+            health_points += health;
+        }
+    }
     int get_health()
     {
         return health_points;
@@ -162,4 +175,18 @@ public:
 
         return sfText;
     }
+
+    void set_invincible(int invincible)
+    {
+        is_invincible = invincible;
+    }
+    void boostJump(int boost){
+        velocity.y = boost;
+        set_ground(false);
+    }
+    void set_massacre(int massacre)
+    {
+        massacre_mode = massacre;
+    }
+
 };
