@@ -105,7 +105,7 @@ public:
 
     void update(float dt, sf::RenderWindow &window, Player &player)
     {
-        std::cout << "Game update" << std::endl;
+        //std::cout << "Game update" << std::endl;
         check_if_player_is_dead(player);
 
         int platform_width = platforms[0].getLocalBounds().width;
@@ -114,9 +114,18 @@ public:
         for (Platform &platform : platforms)
         {
             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-
+            
             platform.move(sf::Vector2f(0, velocity * dt));
+            if (platform.getPowerUp() != nullptr)
+            {
+                platform.getPowerUp()->move(0, velocity * dt);
+            }
 
+            if (!platform.getPowerUpSpawned())
+            {
+                platform.setPowerUp(create_powerUps(platform));
+                platform.setPowerUpSpawned(true);
+            }
             if(platform.getPowerUp()!=nullptr){
                 if (platform.getPowerUp()->getGlobalBounds().intersects(player.getGlobalBounds())){
                     applyPowerUpEffect(*platform.getPowerUp(), player);
@@ -158,6 +167,8 @@ public:
         float threshold = window.getSize().y * 0.5f;
         if (player.getPosition().y < threshold)
         {
+            int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
+
             float diff = threshold - player.getPosition().y;
             player.move(0, diff);
 
@@ -182,7 +193,7 @@ public:
 
                 if (platform.getPosition().y > window.getSize().y)
                 {
-                    platform.setPosition(sf::Vector2f(platform.getPosition().x, -platform_height));
+                    platform.setPosition(sf::Vector2f(platform_x, -platform_height));
                     platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
                     platform.setPowerUpSpawned(false);
                     delete platform.getPowerUp();
@@ -207,6 +218,7 @@ public:
                 player.update_health(result);
             }
         }
+
     }
 
     void check_if_spawn_enemy()
@@ -365,7 +377,7 @@ public:
     PowerUp *create_powerUps(Platform &platform)
     {
         PowerUp* powerUp = nullptr;
-            if (rand() % 100 < 100)
+            if (rand() % 100 < 1)
             { 
                 PowerUpType type = static_cast<PowerUpType>(rand() % (static_cast<int>(PowerUpType::MASSACRE) + 1)); 
                 switch (type)
