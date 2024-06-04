@@ -5,6 +5,7 @@ main.exe
 main.o
 makefile
 compile.bat
+highscores.txt
 
 openal32.dll
 sfml-audio-2.dll
