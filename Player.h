@@ -71,23 +71,22 @@ public:
 
     void update(float dt, sf::RenderWindow &window)
     {
-        if(invincible_timer > 0)
+        if (invincible_timer > 0)
         {
             invincible_timer -= dt;
-            if(invincible_timer <= 0)
+            if (invincible_timer <= 0)
             {
                 is_invincible = false;
             }
         }
-        if(massacre_timer > 0)
+        if (massacre_timer > 0)
         {
             massacre_timer -= dt;
-            if(massacre_timer <= 0)
+            if (massacre_timer <= 0)
             {
                 massacre_mode = false;
             }
         }
-
 
         if (is_on_ground)
         {
@@ -182,13 +181,13 @@ public:
 
     void update_health(int damage)
     {
-        if(!is_invincible && !massacre_mode)
+        if (!is_invincible && !massacre_mode)
             health_points -= damage;
         // std::cout << "Health: " << health_points << std::endl;
     }
     void restoreHealth(int health)
     {
-        if (health_points + health> max_health)
+        if (health_points + health > max_health)
         {
             health_points = max_health;
         }
@@ -222,7 +221,8 @@ public:
         shield.setScale(0.5, 0.5);
         
     }
-    void boostJump(int boost){
+    void boostJump(int boost)
+    {
         velocity.y = boost;
         set_ground(false);
     }
@@ -234,6 +234,5 @@ public:
     bool get_massacre()
     {
         return massacre_mode;
-    }  
-
+    }
 };
