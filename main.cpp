@@ -47,8 +47,6 @@ int main()
 
     window.setVerticalSyncEnabled(true);
 
-    InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75));
-
     // ----------------------------------------------
 
     // sf::Texture enemy_flying_texture;
@@ -75,8 +73,13 @@ int main()
     // }
 
     sf::Font font;
+    sf::Font font1;
 
     if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
+    {
+        return 1;
+    }
+    if (!font1.loadFromFile("assets/fonts/Jaro.ttf"))
     {
         return 1;
     }
@@ -97,6 +100,8 @@ int main()
     TitleScreen title_screen(font, window, state);
 
     Player player(sf::Vector2f(WIDTH / 2, HEIGHT - 84), sf::Vector2f(50, 50), 0, WIDTH);
+
+    InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player);
 
     // ----------------------------------------------
 
@@ -134,9 +139,6 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    if (state == GameState::TITLE)
-                        state = GameState::SINGLEPLAYER;
-
                     player.jump();
                 }
 

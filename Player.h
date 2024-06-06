@@ -45,8 +45,6 @@ private:
 
     sf::Font font;
 
-   
-
 public:
     Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::RectangleShape(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
     {
@@ -66,10 +64,8 @@ public:
         health_text.setOutlineColor(sf::Color::Black);
         health_text.setOutlineThickness(3);
 
-        
         shield_texture.loadFromFile("assets/powerup/shield.png");
         shield.setTexture(shield_texture);
-
     }
 
     void update(float dt, sf::RenderWindow &window)
@@ -106,7 +102,8 @@ public:
         pos.x += velocity.x * dt;
         pos.y += velocity.y * dt;
         setPosition(pos);
-        if(is_invincible){
+        if (is_invincible)
+        {
             shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width, getPosition().y + getGlobalBounds().height - shield.getGlobalBounds().height);
         }
 
@@ -131,8 +128,8 @@ public:
         weapon.draw(window);
 
         window.draw(health_text);
-        
-        if(is_invincible)
+
+        if (is_invincible)
         {
             window.draw(shield);
         }
@@ -239,6 +236,8 @@ public:
     void setName(std::string n)
     {
         name = n;
+
+        std::cout << "Name set to: " << name << std::endl;
     }
 
     std::string getName()

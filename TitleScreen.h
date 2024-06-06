@@ -24,7 +24,7 @@ private:
 
     std::vector<Button> buttons;
 
-    sf::Font font_;
+    sf::Font font;
 
     sf::Text title;
     sf::Text info;
@@ -38,7 +38,7 @@ private:
     sf::Clock clock;
 
 public:
-    TitleScreen(sf::Font &font, sf::RenderWindow &window, GameState &game_state) : font_(font)
+    TitleScreen(sf::Font &font_, sf::RenderWindow &window, GameState &game_state) : font(font_)
     {
         WIDTH = window.getSize().x;
         HEIGHT = window.getSize().y;
@@ -82,7 +82,7 @@ public:
         score_button = Button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font, score_button_texture, [&game_state]
                               { game_state = GameState::GAMEOVER; });
 
-        home_button = Button(sf::Vector2f(350, 600), sf::Vector2f(100, 100), "Home", font_, home_button_texture, [&game_state]
+        home_button = Button(sf::Vector2f(350, 600), sf::Vector2f(100, 100), "Home", font, home_button_texture, [&game_state]
                              { game_state = GameState::TITLE; });
     }
 
@@ -122,7 +122,7 @@ public:
     void updateHighScore(HighScoreManager &highScoreManager)
     {
         highScoresText.setFillColor(sf::Color::White);
-        highScoresText.setFont(font_);
+        highScoresText.setFont(font);
         highScoresText.setCharacterSize(50);
         auto updateHighScoresText = [&]()
         {

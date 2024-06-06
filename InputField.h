@@ -4,7 +4,9 @@
 #include <vector>
 #include <iostream>
 
-class InputField : public sf::RectangleShape
+#include "Player.h"
+
+class InputField : public sf::Sprite
 {
 private:
     std::string value = "";
@@ -15,30 +17,48 @@ private:
     sf::Vector2f size;
 
     sf::Text text;
+    int char_lmit = 10;
+
+    sf::Font font;
+
+    sf::Texture texture;
+
+    Player *player;
 
 public:
-    InputField(sf::Vector2f pos, sf::Vector2f s) : sf::RectangleShape()
+    InputField(sf::Vector2f pos, sf::Vector2f s, sf::Font &font_, Player &player) : sf::Sprite(), font(font_)
     {
+        if (!texture.loadFromFile("assets/buttons/inputfield_background.png"))
+        {
+            std::cout << "Failed to load inputfield texture" << std::endl;
+        }
+
         position = pos;
         size = s;
 
-        setOrigin(size.x / 2, size.y / 2);
-        setPosition(position);
-        setSize(size);
+        setTexture(texture);
+        setPosition(position.x - size.x / 2, position.y - size.y / 2);
+        setScale(size.x / texture.getSize().x, size.y / texture.getSize().y);
 
-        setFillColor(sf::Color::White);
+        text.setFont(font);
+        text.setCharacterSize(30);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(position.x - size.x / 2 + 12, position.y - size.y / 2 + 24);
 
-        sf::Text text(value, sf::Font(), 24);
+        this->player = &player;
     }
 
     void draw(sf::RenderWindow &window)
     {
         window.draw(*this);
+        window.draw(text);
     }
 
     void update(sf::RenderWindow &window)
     {
         text.setString(value);
+        float textWidth = text.getLocalBounds().width;
+        text.setPosition(position.x - textWidth / 2, position.y - size.y / 2 + 18);
 
         sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
 
@@ -47,9 +67,13 @@ public:
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
-                setFillColor(sf::Color(120, 120, 120, 255));
+                setColor(sf::Color(120, 120, 120, 255));
                 is_active = true;
             }
+        }
+        else if (!is_active)
+        {
+            setColor(sf::Color::White);
         }
     }
 
@@ -60,35 +84,33 @@ public:
 
     void handle_event(sf::Event &event)
     {
-        std::cout << "handle_event called with event type: " << event.type << std::endl;
-
         if (is_active)
         {
-            std::cout << "Input field is active" << std::endl;
-
             if (event.type == sf::Event::KeyPressed)
             {
-                std::cout << "Key pressed with code: " << event.key.code << std::endl;
-
-                if (event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z)
+                if (event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z && value.size() < char_lmit)
                 {
                     char letter = 'A' + (event.key.code - sf::Keyboard::A);
-                    value += letter;
-                    std::cout << "Letter " << letter << " was pressed" << std::endl;
+                    value += std::toupper(letter);
+                    std::cout << value << std::endl;
                 }
 
-                // You can handle specific keys like this:
                 if (event.key.code == sf::Keyboard::Enter)
                 {
                     std::cout << "Enter key was pressed" << std::endl;
-                    // Handle Enter key...
+                    is_active = false;
+
+                    player->setName(value);
                 }
                 else if (event.key.code == sf::Keyboard::BackSpace)
                 {
                     std::cout << "Backspace key was pressed" << std::endl;
-                    // Handle Backspace key...
+
+                    if (value.size() > 0)
+                    {
+                        value.pop_back();
+                    }
                 }
-                // Add more else if blocks for other keys you want to handle...
             }
         }
     }
