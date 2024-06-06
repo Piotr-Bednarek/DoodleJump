@@ -99,7 +99,7 @@ int main()
 
     TitleScreen title_screen(font, window, state);
 
-    Player player(sf::Vector2f(WIDTH / 2, HEIGHT - 84), sf::Vector2f(50, 50), 0, WIDTH);
+    Player player(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
 
     InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player);
 
