@@ -118,6 +118,19 @@ public:
         sf::Vector2f pos = getPosition();
         pos.x += dx * speed;
         pos.y += dy;
+
+        if (pos.x < game_left_bound)
+        {
+            pos.x = game_left_bound;
+            std::cout << "Left bound" << std::endl;
+        }
+        if (pos.x + getGlobalBounds().width > game_right_bound)
+        {
+            pos.x = game_right_bound - getGlobalBounds().width;
+
+            std::cout << "Right bound" << std::endl;
+        }
+
         setPosition(pos);
     }
 

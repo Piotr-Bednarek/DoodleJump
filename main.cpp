@@ -103,8 +103,6 @@ int main()
 
     InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player);
 
-    // ----------------------------------------------
-
     title_screen.updateHighScore(highScoreManager);
 
     // ----------------------------------------------
@@ -124,7 +122,7 @@ int main()
 
             if (event.type == sf::Event::KeyPressed)
             {
-                if (username_field.is_field_active() && sf::Event::TextEntered)
+                if (username_field.is_field_active() && sf::Event::TextEntered && state == GameState::TITLE)
                 {
                     username_field.handle_event(event);
                 }
