@@ -10,11 +10,9 @@ class Platform : public sf::Sprite
 {
 private:
     bool powerup_spawned = true;
-    PowerUp* powerup = nullptr;
+    PowerUp *powerup = nullptr;
 
 public:
-    
-
     Platform(sf::Vector2f pos, sf::Vector2f s, sf::Texture &platform_texture) : sf::Sprite()
     {
         sf::Vector2u textureSize = platform_texture.getSize();
@@ -26,8 +24,8 @@ public:
         }
         setPosition(pos);
 
-        
-        if(textureSize.x != s.x && textureSize.y != s.y){
+        if (textureSize.x != s.x && textureSize.y != s.y)
+        {
             platform_texture.setRepeated(true);
         }
         setTexture(platform_texture);
@@ -49,11 +47,11 @@ public:
     {
         return powerup_spawned;
     }
-    PowerUp* getPowerUp()
+    PowerUp *getPowerUp()
     {
         return powerup;
     }
-    void setPowerUp(PowerUp* p)
+    void setPowerUp(PowerUp *p)
     {
         powerup = p;
     }

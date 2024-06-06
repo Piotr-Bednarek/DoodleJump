@@ -50,7 +50,6 @@ public:
     void draw(sf::RenderWindow &window)
     {
         window.draw(*this);
-
         window.draw(text);
     }
 
@@ -68,6 +67,7 @@ public:
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
+
                 setColor(sf::Color(180, 180, 180, 255));
                 setScale(scaleX * 0.975, scaleY * 0.975);
 
@@ -89,5 +89,17 @@ public:
     {
         sf::FloatRect bounds = getGlobalBounds();
         setPosition(position.x + size.x / 2.0f - bounds.width / 2.0f, position.y + size.y / 2.0f - bounds.height / 2.0f);
+    }
+
+    bool isClicked(sf::RenderWindow &window) const
+    {
+        sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+
+        if (getGlobalBounds().contains(mouse_pos.x, mouse_pos.y))
+        {
+            return true;
+        }
+
+        return false;
     }
 };

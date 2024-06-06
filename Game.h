@@ -109,7 +109,6 @@ public:
     {
         time = dt;
 
-        // std::cout << "Game update" << std::endl;
         check_if_player_is_dead(player);
 
         int platform_width = platforms[1].getLocalBounds().width;
@@ -259,12 +258,6 @@ public:
 
     float get_score()
     {
-        return score;
-    }
-
-    float end()
-    {
-
         return score;
     }
 

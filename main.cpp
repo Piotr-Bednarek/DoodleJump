@@ -94,20 +94,13 @@ int main()
 
     GameState state = GameState::TITLE;
 
-    TitleScreen tittle_screen(font, window, state);
+    TitleScreen title_screen(font, window, state);
 
     Player player(sf::Vector2f(WIDTH / 2, HEIGHT - 84), sf::Vector2f(50, 50), 0, WIDTH);
 
-    // Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, 0, WIDTH);
-
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
-    // }
-
     // ----------------------------------------------
 
-    tittle_screen.updateHighScore(highScoreManager);
+    title_screen.updateHighScore(highScoreManager);
 
     // ----------------------------------------------
 
@@ -206,8 +199,8 @@ int main()
         switch (state)
         {
         case GameState::TITLE:
-            tittle_screen.update(window);
-            tittle_screen.draw(window);
+            title_screen.update(window);
+            title_screen.draw(window);
 
             username_field.draw(window);
 
@@ -241,7 +234,7 @@ int main()
         case GameState::GAMEOVER:
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
-            tittle_screen.drawGameOver(window, highScoreManager);
+            title_screen.drawGameOver(window, highScoreManager);
             break;
         }
 

@@ -14,13 +14,13 @@ enum class GameState
 class TitleScreen
 {
 private:
-
     int WIDTH;
     int HEIGHT;
 
     Button singleplayer_button;
     Button multiplayer_button;
     Button score_button;
+    Button home_button;
 
     std::vector<Button> buttons;
 
@@ -33,9 +33,12 @@ private:
     sf::Texture singleplayer_button_texture;
     sf::Texture multiplayer_button_texture;
     sf::Texture score_button_texture;
+    sf::Texture home_button_texture;
+
+    sf::Clock clock;
 
 public:
-    TitleScreen(sf::Font &font, sf::RenderWindow &window, GameState &game_state):font_(font)
+    TitleScreen(sf::Font &font, sf::RenderWindow &window, GameState &game_state) : font_(font)
     {
         WIDTH = window.getSize().x;
         HEIGHT = window.getSize().y;
@@ -52,6 +55,11 @@ public:
         if (!score_button_texture.loadFromFile("assets/buttons/score_button.png"))
         {
             std::cout << "Failed to load texture from assets/buttons/score_button.png" << std::endl;
+        }
+
+        if (!home_button_texture.loadFromFile("assets/buttons/home_button.png"))
+        {
+            std::cout << "Failed to load texture from assets/buttons/home_button.png" << std::endl;
         }
 
         int WIDTH = window.getSize().x;
@@ -73,6 +81,9 @@ public:
 
         score_button = Button(sf::Vector2f(600, 450), sf::Vector2f(100, 100), "Score", font, score_button_texture, [&game_state]
                               { game_state = GameState::GAMEOVER; });
+
+        home_button = Button(sf::Vector2f(350, 600), sf::Vector2f(100, 100), "Home", font_, home_button_texture, [&game_state]
+                             { game_state = GameState::TITLE; });
     }
 
     void draw(sf::RenderWindow &window)
@@ -80,6 +91,7 @@ public:
         singleplayer_button.draw(window);
         multiplayer_button.draw(window);
         score_button.draw(window);
+        // home_button.draw(window);
 
         window.draw(title);
         window.draw(info);
@@ -87,9 +99,12 @@ public:
 
     void update(sf::RenderWindow &window)
     {
-        singleplayer_button.update(window);
-        multiplayer_button.update(window);
-        score_button.update(window);
+        if (clock.getElapsedTime().asMilliseconds() > 300)
+        {
+            singleplayer_button.update(window);
+            multiplayer_button.update(window);
+            score_button.update(window);
+        }
     }
 
     sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
@@ -104,14 +119,17 @@ public:
         return sfText;
     }
 
-    void updateHighScore(HighScoreManager &highScoreManager){
+    void updateHighScore(HighScoreManager &highScoreManager)
+    {
         highScoresText.setFillColor(sf::Color::White);
         highScoresText.setFont(font_);
         highScoresText.setCharacterSize(50);
-        auto updateHighScoresText = [&]() {
+        auto updateHighScoresText = [&]()
+        {
             std::string highScoresString = "High Scores\n";
-            const auto& scores = highScoreManager.getHighScores();
-            for (const auto& hs : scores) {
+            const auto &scores = highScoreManager.getHighScores();
+            for (const auto &hs : scores)
+            {
                 highScoresString += "   " + hs.name + ": " + std::to_string(hs.score) + "\n";
             }
             highScoresText.setString(highScoresString);
@@ -122,10 +140,17 @@ public:
         highScoresText.setPosition(sf::Vector2f(WIDTH / 2.0f, HEIGHT / 2.0f));
     }
 
-    void drawGameOver(sf::RenderWindow &window, HighScoreManager &highScoreManager){
-            updateHighScore(highScoreManager);
-            highScoreManager.saveHighScores();
-            window.draw(highScoresText);
-        
+    void drawGameOver(sf::RenderWindow &window, HighScoreManager &highScoreManager)
+    {
+        updateHighScore(highScoreManager);
+        highScoreManager.saveHighScores();
+        window.draw(highScoresText);
+
+        home_button.draw(window);
+        home_button.update(window);
+        if (home_button.isClicked(window))
+        {
+            clock.restart();
+        }
     }
 };
