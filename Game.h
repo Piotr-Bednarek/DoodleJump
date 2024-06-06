@@ -19,7 +19,7 @@ private:
     std::vector<Platform> platforms;
     std::vector<Enemy> enemies;
 
-    float score;
+    float score = 0;
 
     float elevation;
 
@@ -105,7 +105,7 @@ public:
 
     void update(float dt, sf::RenderWindow &window, Player &player)
     {
-        //std::cout << "Game update" << std::endl;
+        // std::cout << "Game update" << std::endl;
         check_if_player_is_dead(player);
 
         int platform_width = platforms[0].getLocalBounds().width;
@@ -114,7 +114,7 @@ public:
         for (Platform &platform : platforms)
         {
             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-            
+
             platform.move(sf::Vector2f(0, velocity * dt));
             if (platform.getPowerUp() != nullptr)
             {
@@ -126,8 +126,10 @@ public:
                 platform.setPowerUp(create_powerUps(platform));
                 platform.setPowerUpSpawned(true);
             }
-            if(platform.getPowerUp()!=nullptr){
-                if (platform.getPowerUp()->getGlobalBounds().intersects(player.getGlobalBounds())){
+            if (platform.getPowerUp() != nullptr)
+            {
+                if (platform.getPowerUp()->getGlobalBounds().intersects(player.getGlobalBounds()))
+                {
                     applyPowerUpEffect(*platform.getPowerUp(), player);
                     platform.setPowerUp(nullptr);
                 }
@@ -218,7 +220,6 @@ public:
                 player.update_health(result);
             }
         }
-
     }
 
     void check_if_spawn_enemy()
@@ -376,39 +377,40 @@ public:
 
     PowerUp *create_powerUps(Platform &platform)
     {
-        PowerUp* powerUp = nullptr;
-            if (rand() % 100 < 1)
-            { 
-                PowerUpType type = static_cast<PowerUpType>(rand() % (static_cast<int>(PowerUpType::MASSACRE) + 1)); 
-                switch (type)
-                {
-                case PowerUpType::HEAL:
-                    powerUp = new PowerUp(powerUp_textures[(int)type], type, 50);
-                    break;
-                case PowerUpType::INVINCIBILITY:
-                    powerUp = new PowerUp(powerUp_textures[(int)type], type, 10);
-                    break;
-                case PowerUpType::JUMPBOOST:
-                    powerUp = new PowerUp(powerUp_textures[(int)type], type, -2500);
-                    powerUp->setScale(0.3, 0.3);
-                    break;
-                case PowerUpType::MASSACRE:
-                    powerUp = new PowerUp(powerUp_textures[(int)type], type, 5);
-                    powerUp->setScale(0.1, 0.1);
-                    break;
-                default:
-                    std::cout << "Unknown power-up type!" << std::endl;
-                    break;
-                }
-                float powerUpX = platform.getPosition().x + (rand() % static_cast<int>(platform.getGlobalBounds().getSize().x) - powerUp->getGlobalBounds().getSize().x); 
-                if(powerUpX < platform.getPosition().x)
-                    powerUpX = platform.getPosition().x;
-                float powerUpY = platform.getPosition().y - powerUp->getGlobalBounds().getSize().y; 
-                powerUp->setPosition(powerUpX, powerUpY);
+        PowerUp *powerUp = nullptr;
+        if (rand() % 100 < 25)
+        {
+            PowerUpType type = static_cast<PowerUpType>(rand() % (static_cast<int>(PowerUpType::MASSACRE) + 1));
+            switch (type)
+            {
+            case PowerUpType::HEAL:
+                powerUp = new PowerUp(powerUp_textures[(int)type], type, 50);
+                break;
+            case PowerUpType::INVINCIBILITY:
+                powerUp = new PowerUp(powerUp_textures[(int)type], type, 10);
+                break;
+            case PowerUpType::JUMPBOOST:
+                powerUp = new PowerUp(powerUp_textures[(int)type], type, -1500);
+                powerUp->setScale(0.3, 0.3);
+                break;
+            case PowerUpType::MASSACRE:
+                powerUp = new PowerUp(powerUp_textures[(int)type], type, 5);
+                powerUp->setScale(0.1, 0.1);
+                break;
+            default:
+                std::cout << "Unknown power-up type!" << std::endl;
+                break;
             }
+            float powerUpX = platform.getPosition().x + (rand() % static_cast<int>(platform.getGlobalBounds().getSize().x) - powerUp->getGlobalBounds().getSize().x);
+            if (powerUpX < platform.getPosition().x)
+                powerUpX = platform.getPosition().x;
+            float powerUpY = platform.getPosition().y - powerUp->getGlobalBounds().getSize().y;
+            powerUp->setPosition(powerUpX, powerUpY);
+        }
         return powerUp;
     }
-    void applyPowerUpEffect(PowerUp &powerUp, Player &player){
+    void applyPowerUpEffect(PowerUp &powerUp, Player &player)
+    {
         PowerUpType type = powerUp.getType();
 
         switch (type)

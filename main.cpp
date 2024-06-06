@@ -12,6 +12,7 @@
 #include "Weapon.h"
 #include "Button.h"
 #include "TitleScreen.h"
+#include "InputField.h"
 
 #include "Player.h"
 
@@ -44,6 +45,8 @@ int main()
     window.setFramerateLimit(FPS);
 
     window.setVerticalSyncEnabled(true);
+
+    InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75));
 
     // ----------------------------------------------
 
@@ -83,18 +86,11 @@ int main()
 
     Game game(0, 350, 0, WIDTH);
 
-    GameState state = GameState::SINGLEPLAYER;
+    GameState state = GameState::TITLE;
 
     TitleScreen tittle_screen(font, window, state);
 
     Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50), 0, WIDTH);
-
-    // Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, 0, WIDTH);
-
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
-    // }
 
     // ----------------------------------------------
 
@@ -118,6 +114,11 @@ int main()
 
             if (event.type == sf::Event::KeyPressed)
             {
+                if (username_field.is_field_active() && sf::Event::TextEntered)
+                {
+                    username_field.handle_event(event);
+                }
+
                 if (event.key.code == sf::Keyboard::A)
                 {
                     moveLeft = true;
@@ -196,6 +197,10 @@ int main()
             tittle_screen.update(window);
             tittle_screen.draw(window);
 
+            username_field.draw(window);
+
+            username_field.update(window);
+
             break;
 
         case GameState::SINGLEPLAYER:
@@ -206,7 +211,6 @@ int main()
 
             game.draw(window);
             player.draw(window);
-
 
             score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
             window.draw(score);
