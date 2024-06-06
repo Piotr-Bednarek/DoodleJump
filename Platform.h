@@ -26,9 +26,12 @@ public:
         }
         setPosition(pos);
 
+        
+        if(textureSize.x != s.x && textureSize.y != s.y){
+            platform_texture.setRepeated(true);
+        }
         setTexture(platform_texture);
-
-        setTextureRect(sf::IntRect(0, 0, textureSize.x, textureSize.y));
+        setTextureRect(sf::IntRect(0, 0, s.x, s.y));
     }
 
     void randomize_texture(sf::Texture &platform_texture)

@@ -14,23 +14,31 @@ enum class GameState
 class TitleScreen
 {
 private:
+
+    int WIDTH;
+    int HEIGHT;
+
     Button singleplayer_button;
     Button multiplayer_button;
     Button score_button;
 
     std::vector<Button> buttons;
 
+    sf::Font font_;
+
     sf::Text title;
     sf::Text info;
+    sf::Text highScoresText;
 
     sf::Texture singleplayer_button_texture;
     sf::Texture multiplayer_button_texture;
     sf::Texture score_button_texture;
 
 public:
-    TitleScreen(sf::Font &font, sf::RenderWindow &window, GameState &game_state)
+    TitleScreen(sf::Font &font, sf::RenderWindow &window, GameState &game_state):font_(font)
     {
-
+        WIDTH = window.getSize().x;
+        HEIGHT = window.getSize().y;
         if (!singleplayer_button_texture.loadFromFile("assets/buttons/singleplayer_button.png"))
         {
             std::cout << "Failed to load texture from assets/buttons/singleplayer_button.png" << std::endl;
@@ -94,5 +102,30 @@ public:
         sfText.setPosition(position);
 
         return sfText;
+    }
+
+    void updateHighScore(HighScoreManager &highScoreManager){
+        highScoresText.setFillColor(sf::Color::White);
+        highScoresText.setFont(font_);
+        highScoresText.setCharacterSize(50);
+        auto updateHighScoresText = [&]() {
+            std::string highScoresString = "High Scores\n";
+            const auto& scores = highScoreManager.getHighScores();
+            for (const auto& hs : scores) {
+                highScoresString += "   " + hs.name + ": " + std::to_string(hs.score) + "\n";
+            }
+            highScoresText.setString(highScoresString);
+        };
+        updateHighScoresText();
+        sf::FloatRect textRect = highScoresText.getLocalBounds();
+        highScoresText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+        highScoresText.setPosition(sf::Vector2f(WIDTH / 2.0f, HEIGHT / 2.0f));
+    }
+
+    void drawGameOver(sf::RenderWindow &window, HighScoreManager &highScoreManager){
+            updateHighScore(highScoreManager);
+            highScoreManager.saveHighScores();
+            window.draw(highScoresText);
+        
     }
 };

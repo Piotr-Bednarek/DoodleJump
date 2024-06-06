@@ -14,6 +14,7 @@
 #include "TitleScreen.h"
 #include "InputField.h"
 
+#include "HighScoreManager.h"
 #include "Player.h"
 
 sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
@@ -80,22 +81,33 @@ int main()
         return 1;
     }
 
-    sf::Text score = createText("Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
+    sf::Text score = createText("Your Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
+
+    HighScoreManager highScoreManager("highscores.txt");
 
     // ----------------------------------------------
 
     Game game(0, 350, 0, WIDTH);
 
+    game.create_platforms(50, 78, 35, HEIGHT, WIDTH);
+    game.create_enemy();
+
     GameState state = GameState::TITLE;
 
     TitleScreen tittle_screen(font, window, state);
 
-    Player player(sf::Vector2f(400, 400), sf::Vector2f(50, 50), 0, WIDTH);
+    Player player(sf::Vector2f(WIDTH / 2, HEIGHT - 84), sf::Vector2f(50, 50), 0, WIDTH);
+
+    // Enemy enemy1(sf::Vector2f(100, 100), 200, 1.0, enemy_flying_texture, 0, WIDTH);
+
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     enemy1.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
+    // }
 
     // ----------------------------------------------
 
-    game.create_platforms(50, 100, 20, HEIGHT, WIDTH);
-    game.create_enemy();
+    tittle_screen.updateHighScore(highScoreManager);
 
     // ----------------------------------------------
 
@@ -129,8 +141,8 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    // if (state == GameState::TITLE)
-                    // state = GameState::SINGLEPLAYER;
+                    if (state == GameState::TITLE)
+                        state = GameState::SINGLEPLAYER;
 
                     player.jump();
                 }
@@ -212,13 +224,14 @@ int main()
             game.draw(window);
             player.draw(window);
 
-            score.setString("Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
+            score.setString("Your Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
             window.draw(score);
 
             if (game.get_game_state())
             {
                 // std::cout << game.get_game_state() << std::endl;
                 state = GameState::GAMEOVER;
+                highScoreManager.addHighScore(HighScore(player.getName(), game.get_score()));
             }
 
             break;
@@ -228,7 +241,7 @@ int main()
         case GameState::GAMEOVER:
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
-
+            tittle_screen.drawGameOver(window, highScoreManager);
             break;
         }
 

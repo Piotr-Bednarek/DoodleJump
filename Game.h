@@ -10,11 +10,14 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "PowerUp.h"
+#include "HighScoreManager.h"
 
 class Game
 {
 private:
     bool game_over = false;
+
+    float time = 0;
 
     std::vector<Platform> platforms;
     std::vector<Enemy> enemies;
@@ -86,7 +89,9 @@ public:
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
     {
-        for (int i = -platform_height * 2; i < window_height; i = i + offset)
+        Platform platform1(sf::Vector2f(0, 765), sf::Vector2f(800, 34), platform_textures[0]);
+        platforms.emplace_back(platform1);
+        for (int i = platform_height * 2 + offset; i < window_height; i = i + offset)
         {
             int platform_y = window_height - i;
             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
@@ -96,20 +101,19 @@ public:
             platforms.emplace_back(platform);
         }
 
-        Platform platform(sf::Vector2f(400, 700), sf::Vector2f(800, 50), platform_textures[rand() % platform_textures.size()]);
-        platforms.emplace_back(platform);
-
         // Platform platform1(sf::Vector2f(400, 500), sf::Vector2f(800, 50), platform_textures[rand() % platform_textures.size()]);
         // platforms.emplace_back(platform1);
     }
 
     void update(float dt, sf::RenderWindow &window, Player &player)
     {
+        time = dt;
+
         // std::cout << "Game update" << std::endl;
         check_if_player_is_dead(player);
 
-        int platform_width = platforms[0].getLocalBounds().width;
-        int platform_height = platforms[0].getLocalBounds().height;
+        int platform_width = platforms[1].getLocalBounds().width;
+        int platform_height = platforms[1].getLocalBounds().height;
 
         for (Platform &platform : platforms)
         {
@@ -274,7 +278,12 @@ public:
             sf::FloatRect playerBounds = player.getGlobalBounds();
             sf::FloatRect platformBounds = platform.getGlobalBounds();
 
-            bool isPlayerOutsidePlatform = playerBounds.left + playerBounds.width < platformBounds.left || playerBounds.left > platformBounds.left + platformBounds.width;
+            bool isPlayerOutsidePlatform = true;
+
+            if (playerBounds.left + playerBounds.width > platformBounds.left && playerBounds.left < platformBounds.left + platformBounds.width && playerBounds.top + playerBounds.height >= platformBounds.top && playerBounds.top + playerBounds.height <= platformBounds.top + 5 + player.get_velocity().y * time)
+            {
+                isPlayerOutsidePlatform = false;
+            }
 
             if (isPlayerOutsidePlatform)
             {
@@ -287,7 +296,7 @@ public:
 
                 sf::Vector2f player_velocity = player.get_velocity();
 
-                if (player_velocity.y > 0 && intersection.height <= intersection.width)
+                if (player_velocity.y > 0) //&& intersection.height <= intersection.width)
                 {
                     player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
                     player.set_ground(true);
@@ -431,5 +440,9 @@ public:
             std::cout << "Unknown power-up type!" << std::endl;
             break;
         }
+    }
+    Platform *getFirstPlatform()
+    {
+        return &platforms[0];
     }
 };
