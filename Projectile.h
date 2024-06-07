@@ -17,12 +17,8 @@ private:
     sf::Texture projectile_texture;
 
 public:
-    Projectile(sf::Vector2f pos, float s, int a, sf::Texture &texture) : sf::Sprite()
+    Projectile(sf::Vector2f pos, float s, int a, sf::Texture &texture) : sf::Sprite(), position(pos), speed(s), angle(a), projectile_texture(texture)
     {
-        position = pos;
-        speed = s;
-        angle = a;
-        projectile_texture = texture;
 
         setTexture(texture);
 

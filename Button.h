@@ -20,7 +20,7 @@ private:
 public:
     Button() {}
 
-    Button(sf::Vector2f pos, sf::Vector2f s, std::string t, sf::Font &font, sf::Texture &texture, std::function<void()> callback) : sf::Sprite(), callback(callback)
+    Button(sf::Vector2f pos, sf::Vector2f s, std::string t, sf::Font &font, sf::Texture &texture, std::function<void()> callback) : sf::Sprite(), callback(callback), position(pos), size(s)
     {
         sf::Vector2u textureSize = texture.getSize();
 
@@ -29,9 +29,6 @@ public:
             std::cout << "Failed to load button texture" << std::endl;
             return;
         }
-
-        position = pos;
-        size = s;
 
         setPosition(position);
         setTexture(texture);

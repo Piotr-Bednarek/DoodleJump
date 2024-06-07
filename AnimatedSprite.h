@@ -13,11 +13,9 @@ private:
     int current_frame;
 
 public:
-    AnimatedSprite(sf::Vector2f pos, int fps) : sf::Sprite()
+    AnimatedSprite(sf::Vector2f &pos, int fps) : sf::Sprite(), animation_fps(fps), current_frame(0)
     {
         setPosition(pos);
-        animation_fps = fps;
-        current_frame = 0;
     }
 
     void add_animation_frame(sf::IntRect frame_rect)

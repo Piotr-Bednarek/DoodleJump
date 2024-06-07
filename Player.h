@@ -66,7 +66,7 @@ private:
     float scaleY = 2;
 
 public:
-    Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::Sprite(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
+    Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int &right_bound) : sf::Sprite(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound), game_left_bound(left_bound), game_right_bound(right_bound)
     {
         if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
         {
@@ -96,9 +96,6 @@ public:
         setPosition(pos);
         setScale(scaleX, scaleY);
 
-        game_left_bound = left_bound;
-        game_right_bound = right_bound;
-
         health_text = createText(std::to_string(health_points) + "/" + std::to_string(max_health), font, 40, sf::Color::White, pos);
 
         health_text.setOutlineColor(sf::Color::Black);
@@ -108,7 +105,7 @@ public:
         shield.setTexture(shield_texture);
     }
 
-    void update(float dt, sf::RenderWindow &window)
+    void update(float &dt, sf::RenderWindow &window)
     {
         check_state();
 
@@ -182,7 +179,7 @@ public:
         }
     }
 
-    void animate(float dt)
+    void animate(float &dt)
     {
         frame_timer += dt;
 
@@ -354,7 +351,7 @@ public:
         }
     }
 
-    void update_health(int damage)
+    void update_health(int &damage)
     {
         if (!is_invincible && !massacre_mode)
             health_points -= damage;
@@ -409,7 +406,7 @@ public:
         return massacre_mode;
     }
 
-    void setName(std::string n)
+    void setName(std::string &n)
     {
         name = n;
 

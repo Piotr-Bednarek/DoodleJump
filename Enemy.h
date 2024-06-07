@@ -34,7 +34,7 @@ private:
     // sf::Font font;
 
 public:
-    Enemy(sf::Vector2f pos, float s, int dir, sf::Texture &texture, int left_bound, int right_bound, float sX, float sY) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound)
+    Enemy(sf::Vector2f pos, float &s, int &dir, sf::Texture &texture, int &left_bound, int &right_bound, float sX, float sY) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound), speed(s), direction(dir), scaleX(sX), scaleY(sY), enemy_texture(texture), game_left_bound(left_bound), game_right_bound(right_bound)
     {
         // if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
         // {
@@ -46,11 +46,6 @@ public:
         // health_text.setOutlineColor(sf::Color::Black);
         // health_text.setOutlineThickness(3);
 
-        speed = s;
-        direction = dir;
-
-        scaleX = sX;
-        scaleY = sY;
 
         if (direction == 1)
         {
@@ -61,10 +56,7 @@ public:
             setScale(scaleX, scaleY);
         }
 
-        enemy_texture = texture;
-
-        game_left_bound = left_bound;
-        game_right_bound = right_bound;
+        //enemy_texture = texture;
 
         setTexture(texture);
         step();
@@ -86,7 +78,7 @@ public:
         return *this;
     }
 
-    void update(float dt, sf::RenderWindow &window, sf::Vector2f player_pos)
+    void update(float &dt, sf::RenderWindow &window, sf::Vector2f player_pos)
     {
         sf::Vector2f weaponPos = getPosition();
         weaponPos.x += getGlobalBounds().width / 2.0f;

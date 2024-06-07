@@ -39,14 +39,8 @@ private:
     int game_right_bound;
 
 public:
-    Weapon(sf::Vector2f pos, WeaponType initial_type, int left_bound, int right_bound)
+    Weapon(sf::Vector2f pos, WeaponType initial_type, int left_bound, int right_bound): position(pos), type(initial_type), game_left_bound(left_bound), game_right_bound(right_bound)
     {
-        position = pos;
-        type = initial_type;
-
-        game_left_bound = left_bound;
-        game_right_bound = right_bound;
-
         setType(type);
 
         std::vector<std::string> texturePaths = {"assets/enviroment/fireball_projectile.png", "assets/enviroment/shuriken_projectile.png"};
