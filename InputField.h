@@ -114,4 +114,8 @@ public:
             }
         }
     }
+    void updatePointer(Player* playerD)
+    {
+        player = playerD;
+    }
 };

@@ -95,13 +95,13 @@ int main()
 
     GameState state = GameState::TITLE;
 
-    TitleScreen title_screen(font, window, state);
+    TitleScreen* title_screen = new TitleScreen(font, window, state);
 
     std::unique_ptr<Player> player = std::make_unique <Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
-    
-    InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player.get());
 
-    title_screen.updateHighScore(highScoreManager);
+    std::unique_ptr <InputField> username_field = std::make_unique<InputField>(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player.get());
+
+    title_screen->updateHighScore(highScoreManager);
 
     // ----------------------------------------------
 
@@ -121,9 +121,9 @@ int main()
 
             if (event.type == sf::Event::KeyPressed)
             {
-                if (username_field.is_field_active() && sf::Event::TextEntered && state == GameState::TITLE)
+                if (username_field->is_field_active() && sf::Event::TextEntered && state == GameState::TITLE)
                 {
-                    username_field.handle_event(event);
+                    username_field->handle_event(event);
                 }
 
                 if (event.key.code == sf::Keyboard::A)
@@ -207,15 +207,16 @@ int main()
             if(player == nullptr){
                 player = std::make_unique<Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
                 player->setName(name);
+                username_field->updatePointer(player.get());
             }
             
 
-            title_screen.update(window);
-            title_screen.draw(window);
+            title_screen->update(window);
+            title_screen->draw(window);
 
-            username_field.draw(window);
+            username_field->draw(window);
 
-            username_field.update(window);
+            username_field->update(window);
 
             break;
 
@@ -246,7 +247,7 @@ int main()
         case GameState::GAMEOVER:
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
-            title_screen.drawGameOver(window, highScoreManager);
+            title_screen->drawGameOver(window, highScoreManager);
             if(game != nullptr){
                 game.reset();
                 name = player->getName();
