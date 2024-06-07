@@ -181,7 +181,7 @@ public:
 
         if (std::abs(angle) >= threshold)
         {
-            std::cout << "Angle: " << angle << std::endl;
+           // std::cout << "Angle: " << angle << std::endl;
             weapon.shoot(type, angle);
         }
     }

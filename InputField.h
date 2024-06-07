@@ -23,10 +23,10 @@ private:
 
     sf::Texture texture;
 
-    Player *player;
+    Player* player;
 
 public:
-    InputField(sf::Vector2f pos, sf::Vector2f s, sf::Font &font_, Player &player) : sf::Sprite(), font(font_)
+    InputField(sf::Vector2f pos, sf::Vector2f s, sf::Font &font_, Player* playerD) : sf::Sprite(), font(font_)
     {
         if (!texture.loadFromFile("assets/buttons/inputfield_background.png"))
         {
@@ -45,7 +45,7 @@ public:
         text.setFillColor(sf::Color::Black);
         text.setPosition(position.x - size.x / 2 + 12, position.y - size.y / 2 + 24);
 
-        this->player = &player;
+        this->player = playerD;
     }
 
     void draw(sf::RenderWindow &window)

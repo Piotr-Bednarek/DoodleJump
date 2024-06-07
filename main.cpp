@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <cmath>
+#include <memory>
 
 #include "Platform.h"
 #include "Enemy.h"
@@ -40,7 +41,7 @@ int main()
 
     bool moveLeft = false;
     bool moveRight = false;
-
+    std::string name = "Player";
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
     window.setFramerateLimit(FPS);
@@ -90,18 +91,15 @@ int main()
 
     // ----------------------------------------------
 
-    Game game(0, 350, 0, WIDTH);
-
-    game.create_platforms(50, 78, 35, HEIGHT, WIDTH);
-    game.create_enemy();
+    std::unique_ptr<Game> game = nullptr;
 
     GameState state = GameState::TITLE;
 
     TitleScreen title_screen(font, window, state);
 
-    Player player(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
-
-    InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player);
+    std::unique_ptr<Player> player = std::make_unique <Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
+    
+    InputField username_field(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player.get());
 
     title_screen.updateHighScore(highScoreManager);
 
@@ -115,6 +113,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
+        
             if (event.type == sf::Event::Closed)
             {
                 window.close();
@@ -137,7 +136,7 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    player.jump();
+                    player->jump();
                 }
 
                 if (event.key.code == sf::Keyboard::Space)
@@ -169,27 +168,27 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
             {
-                player.shoot(WeaponType::SINGLE);
+                player->shoot(WeaponType::SINGLE);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Left)
             {
-                player.shoot(WeaponType::MACHINEGUN);
+                player->shoot(WeaponType::MACHINEGUN);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Right)
             {
-                player.shoot(WeaponType::TRIPLE);
+                player->shoot(WeaponType::TRIPLE);
             }
         }
 
-        if (moveLeft)
+        if (moveLeft && state==GameState::SINGLEPLAYER)
         {
-            player.move(-1.0f, 0.0f);
+            player->move(-1.0f, 0.0f);
         }
-        if (moveRight)
+        if (moveRight && state==GameState::SINGLEPLAYER)
         {
-            player.move(1.0f, 0.0f);
+            player->move(1.0f, 0.0f);
         }
 
         window.clear();
@@ -199,6 +198,18 @@ int main()
         switch (state)
         {
         case GameState::TITLE:
+            if(game == nullptr){
+                game  = std::make_unique <Game> (0, 350, 0, WIDTH);
+                game->create_platforms(50, 78, 35, HEIGHT, WIDTH);
+                game->create_enemy();
+                score.setPosition(sf::Vector2f(100, 40));
+            }
+            if(player == nullptr){
+                player = std::make_unique<Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
+                player->setName(name);
+            }
+            
+
             title_screen.update(window);
             title_screen.draw(window);
 
@@ -209,22 +220,23 @@ int main()
             break;
 
         case GameState::SINGLEPLAYER:
-            game.check_collision(player);
 
-            game.update(dt, window, player);
-            player.update(dt, window);
+            game->check_collision(*player);
 
-            game.draw(window);
-            player.draw(window);
+            game->update(dt, window, *player);
+            player->update(dt, window);
 
-            score.setString("Your Score: " + std::to_string(static_cast<int>(std::round(game.get_score()))));
+            game->draw(window);
+            player->draw(window);
+
+            score.setString("Your Score: " + std::to_string(static_cast<int>(game->get_score())));
             window.draw(score);
 
-            if (game.get_game_state())
+            if (game->get_game_state())
             {
                 // std::cout << game.get_game_state() << std::endl;
                 state = GameState::GAMEOVER;
-                highScoreManager.addHighScore(HighScore(player.getName(), game.get_score()));
+                highScoreManager.addHighScore(HighScore(player->getName(), game->get_score()));
             }
 
             break;
@@ -235,6 +247,12 @@ int main()
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
             title_screen.drawGameOver(window, highScoreManager);
+            if(game != nullptr){
+                game.reset();
+                name = player->getName();
+                player.reset();
+            }
+
             break;
         }
 
