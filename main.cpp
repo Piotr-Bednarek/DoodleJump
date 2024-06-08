@@ -200,44 +200,75 @@ int main()
                     games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH/2 + i*(WIDTH/2));
                     games[i]->create_enemy();
                     score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
-                }
-                else{
-                    games[i] = std::make_unique <Game> (0, 350, 0, WIDTH);
-                    games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH);
-                    games[i]->create_enemy();
-                    score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
-                }
-                if(players[i] == nullptr){
                     players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound()-games[i]->getLeftBound()-50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 + i*(WIDTH/2), WIDTH/2 + i*(WIDTH/2));
                     players[i]->setName(name[i]);
                     inputFields[i]->updatePointer(players[i].get());
+                    titleScreens[i].reset();
+                    titleScreens[i] = std::make_unique<TitleScreen>(font, 0+i*(WIDTH/2), WIDTH/2 + i*(WIDTH/2), HEIGHT, gameStates[i]);
+                    titleScreens[i]->updateHighScore(*highScoreManager);
                 }
-                titleScreens[i]->update(window);
-                titleScreens[i]->draw(window);
-                inputFields[i]->update(window);
-                inputFields[i]->draw(window);
+                else if (games[i] == nullptr){
+                    std::cout << 'a' << std::endl;
+                    games[i] = std::make_unique <Game> (0, 350, 0, WIDTH);
+                    std::cout << 'b' << std::endl;
+                    games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH);
+                    std::cout << 'c' << std::endl;
+                    games[i]->create_enemy();
+                    std::cout << 'd' << std::endl;
+                    score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
+                    std::cout << 'e' << std::endl;
+                    players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound()-games[i]->getLeftBound()-50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 , WIDTH);
+                    std::cout << 'f' << std::endl;
+                    players[i]->setName(name[i]);
+                    std::cout << 'g' << std::endl;
+                    inputFields[i]->updatePointer(players[i].get());
+                    std::cout << 'h' << std::endl;
+                    titleScreens[i].reset();
+                    titleScreens[i] = std::make_unique<TitleScreen>(font, 0, WIDTH, HEIGHT, gameStates[i]);
+                    titleScreens[i]->updateHighScore(*highScoreManager);
+                }
 
+                titleScreens[i]->update(window);
+                std::cout << 'i' << std::endl;
+                titleScreens[i]->draw(window);
+                std::cout << 'j' << std::endl;
+                inputFields[i]->update(window);
+                std::cout << 'k' << std::endl;
+                inputFields[i]->draw(window);
+                std::cout << "l " << (int)gameStates[i] << std::endl;
+                if(gameStates[i] == GameState::SINGLEPLAYER){
+                    std::cout <<"wtf" <<std::endl;
+                }
                 break;
 
             case GameState::SINGLEPLAYER:
-
+                std::cout << 1 << std::endl;
                 games[i]->check_collision(*players[i]);
+                std::cout << 2 << std::endl;
                 games[i]->update(dt, window, *players[i]);
+                std::cout << 3 << std::endl;
                 players[i]->update(dt, window);
+                std::cout << 4 << std::endl;
                 games[i]->draw(window);
+                std::cout << 5 << std::endl;
                 players[i]->draw(window);
+                std::cout << 6 << std::endl;
 
                 score[i].setString("Your Score: " + std::to_string(static_cast<int>(games[i]->get_score())));
+                std::cout << 7 << std::endl;
                 window.draw(score[i]);
+                std::cout << 8 << std::endl;
 
                 if (games[i]->get_game_state())
                 {
+                    std::cout << 9 << std::endl;
                     gameStates[i] = GameState::GAMEOVER;
                     highScoreManager->loadHighScores();
                     highScoreManager->addHighScore(HighScore(players[i]->getName(), games[i]->get_score()));
                     highScoreManager->saveHighScores();
+                    std::cout << 10 << std::endl;
                 }
-
+                std::cout << 11 << std::endl;
                 break;
 
             case GameState::MULTIPLAYER:
@@ -278,11 +309,12 @@ int main()
                     games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH);
                     games[i]->create_enemy();
                     score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
-                }
-                if(players[i] == nullptr){
                     players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound()-games[i]->getLeftBound()-50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 + i*WIDTH/2, WIDTH);
                     players[i]->setName(name[i]);
                     inputFields[i]->updatePointer(players[i].get());
+                    titleScreens[i].reset();
+                    titleScreens[i] = std::make_unique<TitleScreen>(font, 0+i*(WIDTH/2), WIDTH/2 + i*(WIDTH/2), HEIGHT, gameStates[i]);
+                    titleScreens[i]->updateHighScore(*highScoreManager);
                 }
                 break;
             case GameState::GAMEOVER:
