@@ -3,24 +3,33 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 #include "AnimatedSprite.h"
 #include "Projectile.h"
 #include "Weapon.h"
 
+enum class EnemyType
+{
+    DRAGON,
+    BEE,
+    KAMIKAZE,
+};
+
 class Enemy : public AnimatedSprite
 {
 private:
     float speed;
-    int direction;
+    int directionX;
+    int directionY = 1;
 
     int max_health = 30;
-
     int health_points = max_health;
 
     sf::Texture enemy_texture;
 
     Weapon weapon;
+    bool is_weapon_active = true;
 
     int game_left_bound;
     int game_right_bound;
@@ -30,47 +39,34 @@ private:
 
     sf::Vector2f player_position;
 
-    // sf::Text health_text;
-    // sf::Font font;
+    ProjectileType projectile_type;
+
+    EnemyType enemy_type;
+
+    int window_height;
+
+    int kamikaze_damage = 25;
 
 public:
-    Enemy(sf::Vector2f pos, float &s, int &dir, sf::Texture &texture, int &left_bound, int &right_bound, float sX, float sY) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound), speed(s), direction(dir), scaleX(sX), scaleY(sY), enemy_texture(texture), game_left_bound(left_bound), game_right_bound(right_bound)
+    Enemy(sf::Vector2f pos, float &s, int &dir, sf::Texture &texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10),
+                                                                                                                                                                           weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir), scaleX(sX), scaleY(sY), enemy_texture(texture), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
     {
-        // if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
-        // {
-        //     std::cout << "Failed to load font" << std::endl;
-        // }
+        if (enemy_type == EnemyType::KAMIKAZE)
+        {
+            is_weapon_active = false;
+        }
 
-        // health_text = createText(std::to_string(health_points) + "/" + std::to_string(max_health), font, 40, sf::Color::White, pos);
-
-        // health_text.setOutlineColor(sf::Color::Black);
-        // health_text.setOutlineThickness(3);
-
-
-        if (direction == 1)
+        if (directionX == 1)
         {
             setScale(-scaleX, scaleY);
         }
-        else if (direction == -1)
+        else if (directionX == -1)
         {
             setScale(scaleX, scaleY);
         }
 
-        //enemy_texture = texture;
-
         setTexture(texture);
         step();
-
-        // try
-        // {
-        //     std::string healthStr = std::to_string(health_points);
-        //     std::string maxHealthStr = std::to_string(max_health);
-        //     health_text = createText(healthStr + "/" + maxHealthStr, font, 20, sf::Color::Black, sf::Vector2f(0, 0));
-        // }
-        // catch (const std::exception &e)
-        // {
-        //     std::cout << "Exception caught: " << e.what() << std::endl;
-        // }
     }
 
     sf::Sprite &getSprite()
@@ -80,20 +76,24 @@ public:
 
     void update(float &dt, sf::RenderWindow &window, sf::Vector2f player_pos)
     {
-        sf::Vector2f weaponPos = getPosition();
-        weaponPos.x += getGlobalBounds().width / 2.0f;
-        weaponPos.y += getGlobalBounds().height / 2.0f;
-        weapon.update(dt, weaponPos, window);
 
-        int width = getGlobalBounds().width;
-        int height = getGlobalBounds().height;
+        window_height = window.getSize().y;
+
+        player_position = player_pos;
+
+        if (is_weapon_active)
+        {
+            int width = getGlobalBounds().width;
+            int height = getGlobalBounds().height;
+
+            sf::Vector2f weaponPos = getPosition();
+            weaponPos.x += getGlobalBounds().width / 2.0f;
+            weaponPos.y += getGlobalBounds().height / 2.0f;
+            weapon.update(dt, getPosition() + sf::Vector2f(0, height / 2), window);
+        }
 
         step();
         draw(window);
-
-        weapon.update(dt, getPosition() + sf::Vector2f(0, height / 2), window);
-
-        player_position = player_pos;
 
         // health_text.setPosition(getPosition() + sf::Vector2f(getGlobalBounds().width / 2, -20));
         // health_text.setString(std::to_string(health_points) + "/" + std::to_string(max_health));
@@ -103,54 +103,128 @@ public:
     {
         sf::Vector2f pos = getPosition();
 
-        pos.x += speed * direction * dt;
         pos.y += dy;
         setPosition(pos);
 
-        if (pos.x < game_left_bound || pos.x > game_right_bound)
+        // DRAGON BEHAVIOR
+        if (enemy_type == EnemyType::DRAGON)
         {
-            direction *= -1;
-            bounce(weapon);
+            pos.x += speed * directionX * dt;
+            setPosition(pos);
+
+            if (pos.x < game_left_bound || pos.x > game_right_bound)
+            {
+                directionX *= -1;
+                bounceX();
+
+                std::cout << "Bounce" << std::endl;
+            }
+
+            if (rand() % 100 < 5)
+            {
+                shoot(WeaponType::SINGLE);
+            }
+
+            weapon.move(0, dy);
         }
 
-        if (rand() % 100 < 5)
+        // BEE BEHAVIOR
+        else if (enemy_type == EnemyType::BEE)
         {
-            shoot(WeaponType::SINGLE);
+            pos.x += speed * directionX * dt;
+            pos.y += speed * directionY * dt;
+            setPosition(pos);
+
+            if (pos.x < game_left_bound || pos.x > game_right_bound)
+            {
+                directionX *= -1;
+                bounceX();
+
+                std::cout << "Bounce" << std::endl;
+            }
+
+            if ((pos.y < 0 && directionY == -1) || (pos.y > window_height / 2.0f && directionY == 1))
+            {
+                directionY *= -1;
+
+                std::cout << "Bounce" << std::endl;
+            }
+
+            if (rand() % 100 < 5)
+            {
+                shoot(WeaponType::SINGLE);
+            }
+
+            weapon.move(0, dy);
         }
 
-        weapon.move(0, dy);
+        // KAMIKAZE BEHAVIOR
+        else if (enemy_type == EnemyType::KAMIKAZE)
+        {
+            sf::Vector2f direction = player_position - getPosition();
+
+            float max_val = std::max(std::abs(direction.x), std::abs(direction.y));
+            direction.x /= max_val;
+            direction.y /= max_val;
+
+            std::cout << "Direction: " << direction.x << ", " << direction.y << std::endl;
+
+            if (direction.x < 0)
+            {
+                setScale(abs(scaleX), scaleY);
+            }
+            else if (direction.x > 0)
+            {
+                setScale(-abs(scaleX), scaleY);
+            }
+
+            pos.x += direction.x * speed * dt;
+            pos.y += direction.y * speed * dt;
+            setPosition(pos);
+        }
     }
 
-    void bounce(Weapon &weapon)
+    void bounceX()
     {
         float width = getGlobalBounds().width;
 
         sf::Vector2f position = getPosition();
 
-        if (direction == 1)
+        if (directionX == 1)
         {
             setScale(-scaleX, scaleY);
             setPosition(position.x + width, position.y);
 
-            weapon.move(-width);
+            if (is_weapon_active)
+            {
+                weapon.move(-width);
+            }
 
-            // std::cout << "Bounce right" << std::endl;
+            std::cout << "Bounce left" << std::endl;
         }
-        else if (direction == -1)
+        else if (directionX == -1)
         {
             setScale(scaleX, scaleY);
             setPosition(position.x - width, position.y);
 
-            weapon.move(width);
+            if (is_weapon_active)
+            {
+                weapon.move(width);
+            }
 
-            // std::cout << "Bounce left" << std::endl;
+            std::cout << "Bounce right" << std::endl;
         }
     }
 
     void draw(sf::RenderWindow &window)
     {
         window.draw(*this);
-        weapon.draw(window);
+
+        if (is_weapon_active)
+        {
+            weapon.draw(window);
+        }
+
         sf::RectangleShape hitbox;
         hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
         hitbox.setPosition(getPosition().x - getGlobalBounds().width / 2, getPosition().y - getGlobalBounds().height / 2);
@@ -173,7 +247,7 @@ public:
 
         if (std::abs(angle) >= threshold)
         {
-           // std::cout << "Angle: " << angle << std::endl;
+            // std::cout << "Angle: " << angle << std::endl;
             weapon.shoot(type, angle);
         }
     }
@@ -190,9 +264,30 @@ public:
 
     int check_projeciltile_collision(sf::FloatRect bounds)
     {
+
         int result = weapon.check_collision(bounds);
 
         return result;
+    }
+
+    int check_kamikaze_collision(sf::FloatRect bounds, bool is_massacre_active)
+    {
+        if (is_massacre_active)
+        {
+            return -1;
+        }
+
+        if (getGlobalBounds().intersects(bounds))
+        {
+            return kamikaze_damage;
+        }
+
+        return -1;
+    }
+
+    EnemyType get_enemy_type()
+    {
+        return enemy_type;
     }
 
     // sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)

@@ -241,18 +241,18 @@ public:
         {
         case PlayerState::IDLE:
             setTexture(player_idle_textures[current_frame]);
-            //std::cout << "IDLE" << std::endl;
+            // std::cout << "IDLE" << std::endl;
             break;
 
         case PlayerState::JUMP:
             setTexture(player_jump_textures[current_frame]);
 
-            //std::cout << "JUMP" << std::endl;
+            // std::cout << "JUMP" << std::endl;
             break;
 
         case PlayerState::RUN:
             setTexture(player_run_textures[current_frame]);
-           // std::cout << "RUN" << std::endl;
+            // std::cout << "RUN" << std::endl;
             break;
         }
     }
@@ -410,7 +410,7 @@ public:
     {
         name = n;
 
-      //  std::cout << "Name set to: " << name << std::endl;
+        //  std::cout << "Name set to: " << name << std::endl;
     }
 
     std::string getName()

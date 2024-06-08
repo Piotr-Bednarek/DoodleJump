@@ -61,7 +61,7 @@ public:
             platform_textures.push_back(std::move(texture));
         }
 
-        std::vector<std::string> enemy_texture_paths = {"assets/enemy/dragon_flying.png", "assets/enemy/bee_flying.png"};
+        std::vector<std::string> enemy_texture_paths = {"assets/enemy/dragon_flying.png", "assets/enemy/bee_flying.png", "assets/enemy/kamikaze_flying.png"};
 
         for (const auto &path : enemy_texture_paths)
         {
@@ -213,8 +213,22 @@ public:
 
         player.check_projeciltile_collision(enemies);
 
-        for (Enemy &enemy : enemies)
+        for (int i = 0; i < enemies.size(); i++)
         {
+            Enemy &enemy = enemies[i];
+            if (enemy.get_enemy_type() == EnemyType::KAMIKAZE)
+            {
+                int result = enemy.check_kamikaze_collision(player.getGlobalBounds(), player.get_massacre());
+
+                if (result != -1)
+                {
+                    player.update_health(result);
+                    enemies.erase(enemies.begin() + i);
+                    i--;
+                }
+                continue;
+            }
+
             int result = enemy.check_projeciltile_collision(player.getGlobalBounds());
 
             if (result != -1)
@@ -341,24 +355,43 @@ public:
 
         speed = rand() % 101 + 100;
 
-        if (rand() % 2 == 0)
+        int enemy_type = rand() % 3;
+
+        // Enemy enemy(position, speed, direction, enemy_textures[2], game_left_bound, game_right_bound, 1.5, 1.5, ProjectileType::SHURIKEN, EnemyType::KAMIKAZE);
+        // for (int i = 0; i < 15; i++)
+        // {
+        //     enemy.add_animation_frame(sf::IntRect(62 * i, 0, 62, 72));
+        // }
+        // enemies.emplace_back(enemy);
+
+        if (enemy_type == 0)
         {
-            Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound, 1, 1);
+            Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound, 1, 1, ProjectileType::FIREBALL, EnemyType::DRAGON);
 
             for (int i = 0; i < 4; i++)
             {
                 enemy.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
             }
-
             enemies.emplace_back(enemy);
         }
-        else
+        else if (enemy_type == 1)
         {
-            Enemy enemy(position, speed, direction, enemy_textures[1], game_left_bound, game_right_bound, 2, 2);
+            Enemy enemy(position, speed, direction, enemy_textures[1], game_left_bound, game_right_bound, 2, 2, ProjectileType::SHURIKEN, EnemyType::BEE);
 
             for (int i = 0; i < 4; i++)
             {
                 enemy.add_animation_frame(sf::IntRect(64 * i, 0, 64, 64));
+            }
+
+            enemies.emplace_back(enemy);
+        }
+        else if (enemy_type == 2)
+        {
+            Enemy enemy(position, speed, direction, enemy_textures[2], game_left_bound, game_right_bound, 1.5, 1.5, ProjectileType::SHURIKEN, EnemyType::KAMIKAZE);
+
+            for (int i = 0; i < 15; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(62 * i, 0, 62, 72));
             }
 
             enemies.emplace_back(enemy);
