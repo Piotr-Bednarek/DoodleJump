@@ -89,7 +89,7 @@ public:
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
     {
-        Platform platform1(sf::Vector2f(0, window_height-35), sf::Vector2f(window_width, 34), platform_textures[0]);
+        Platform platform1(sf::Vector2f(0, window_height - 35), sf::Vector2f(window_width, 34), platform_textures[0]);
         platforms.emplace_back(platform1);
         for (int i = platform_height * 2 + offset; i < window_height; i = i + offset)
         {
@@ -116,7 +116,6 @@ public:
 
         for (Platform &platform : platforms)
         {
-            
 
             platform.move(sf::Vector2f(0, velocity * dt));
             if (platform.getPowerUp() != nullptr)
@@ -188,7 +187,7 @@ public:
 
             elevation += diff;
 
-            for (int i = 0; i< platforms.size(); i++)
+            for (int i = 0; i < platforms.size(); i++)
             {
                 platforms[i].move(0, diff);
 
@@ -206,12 +205,14 @@ public:
                 if (platforms[i].getGlobalBounds().getPosition().y > window.getSize().y)
                 {
                     int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-                    platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand()%(platform_height)+player.get_velocity().y * dt));
-                    for(int j = 0; j <platforms.size(); j++){
-                        if(platforms[i].getGlobalBounds().intersects(platforms[j].getGlobalBounds()) && i!=j){
+                    platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand() % (platform_height) + player.get_velocity().y * dt));
+                    for (int j = 0; j < platforms.size(); j++)
+                    {
+                        if (platforms[i].getGlobalBounds().intersects(platforms[j].getGlobalBounds()) && i != j)
+                        {
                             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-                            platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand()%(platform_height)+player.get_velocity().y * dt));
-                            j=0;
+                            platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand() % (platform_height) + player.get_velocity().y * dt));
+                            j = 0;
                         }
                     }
                     platforms[i].randomize_texture(platform_textures[rand() % platform_textures.size()]);

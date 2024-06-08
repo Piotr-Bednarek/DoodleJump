@@ -23,10 +23,10 @@ private:
 
     sf::Texture texture;
 
-    Player* player;
+    Player *player;
 
 public:
-    InputField(sf::Vector2f pos, sf::Vector2f s, sf::Font &font_, Player* playerD) : sf::Sprite(), font(font_)
+    InputField(sf::Vector2f pos, sf::Vector2f s, sf::Font &font_, Player *playerD) : sf::Sprite(), font(font_)
     {
         if (!texture.loadFromFile("assets/buttons/inputfield_background.png"))
         {
@@ -114,7 +114,7 @@ public:
             }
         }
     }
-    void updatePointer(Player* playerD)
+    void updatePointer(Player *playerD)
     {
         player = playerD;
     }

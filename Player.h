@@ -66,7 +66,7 @@ private:
     float scaleY = 2;
 
 public:
-    Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int &right_bound) : sf::Sprite(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, ProjectileType::SHURIKEN), game_left_bound(left_bound), game_right_bound(right_bound)
+    Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::Sprite(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, ProjectileType::SHURIKEN), game_left_bound(left_bound), game_right_bound(right_bound)
     {
         if (!font.loadFromFile("assets/fonts/Jacquard12.ttf"))
         {
