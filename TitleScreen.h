@@ -39,7 +39,7 @@ private:
     sf::Clock clock;
 
 public:
-    TitleScreen(sf::Font &font_, int left, int width, int height, GameState &game_state) : font(font_),left_bound(left), WIDTH(width), HEIGHT(height)
+    TitleScreen(sf::Font &font_, int left, int width, int height, GameState &game_state) : font(font_), left_bound(left), WIDTH(width), HEIGHT(height)
     {
         if (!singleplayer_button_texture.loadFromFile("assets/buttons/singleplayer_button.png"))
         {
@@ -61,23 +61,22 @@ public:
             std::cout << "Failed to load texture from assets/buttons/home_button.png" << std::endl;
         }
 
-
         create_buttons(font, game_state);
 
-        title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(left + (WIDTH-left) / 2.0f, 75));
-        info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(left + (WIDTH-left) / 2.0f, 150));
+        title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(left + (WIDTH - left) / 2.0f, 75));
+        info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(left + (WIDTH - left) / 2.0f, 150));
     }
 
     void create_buttons(sf::Font &font, GameState &game_state)
     {
-        int center_x = left_bound + (WIDTH-100 - left_bound) / 2.0f;
-        singleplayer_button = Button(sf::Vector2f(center_x-250, 450), sf::Vector2f(100, 100), "Singleplayer", font, singleplayer_button_texture, [&game_state]
+        int center_x = left_bound + (WIDTH - 100 - left_bound) / 2.0f;
+        singleplayer_button = Button(sf::Vector2f(center_x - 250, 450), sf::Vector2f(100, 100), "Singleplayer", font, singleplayer_button_texture, [&game_state]
                                      { game_state = GameState::SINGLEPLAYER; });
 
         multiplayer_button = Button(sf::Vector2f(center_x, 450), sf::Vector2f(100, 100), "Multiplayer", font, multiplayer_button_texture, [&game_state]
                                     { game_state = GameState::MULTIPLAYER; });
 
-        score_button = Button(sf::Vector2f(center_x+250, 450), sf::Vector2f(100, 100), "Score", font, score_button_texture, [&game_state]
+        score_button = Button(sf::Vector2f(center_x + 250, 450), sf::Vector2f(100, 100), "Score", font, score_button_texture, [&game_state]
                               { game_state = GameState::GAMEOVER; });
 
         home_button = Button(sf::Vector2f(center_x, 600), sf::Vector2f(100, 100), "Home", font, home_button_texture, [&game_state]
@@ -135,7 +134,7 @@ public:
         updateHighScoresText();
         sf::FloatRect textRect = highScoresText.getLocalBounds();
         highScoresText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-        highScoresText.setPosition(sf::Vector2f(left_bound + (WIDTH-left_bound) / 2.0f, HEIGHT / 2.0f));
+        highScoresText.setPosition(sf::Vector2f(left_bound + (WIDTH - left_bound) / 2.0f, HEIGHT / 2.0f));
     }
 
     void drawGameOver(sf::RenderWindow &window, HighScoreManager &highScoreManager)
@@ -157,7 +156,6 @@ public:
         sf::Text winnerText = createText("Player " + std::to_string(player) + " Wins!", font, 50, sf::Color::White, sf::Vector2f(WIDTH / 2.0f, HEIGHT / 2.0f));
         window.draw(winnerText);
 
-
         home_button.draw(window);
         home_button.update(window);
         if (home_button.isClicked(window))
@@ -165,5 +163,4 @@ public:
             clock.restart();
         }
     }
-
 };

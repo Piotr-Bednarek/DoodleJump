@@ -35,7 +35,7 @@ int main()
     srand(time(NULL));
     sf::Clock clock;
 
-    int WIDTH = 1600;
+    int WIDTH = 800;
     int HEIGHT = 800;
     int FPS = 60;
 
@@ -77,7 +77,6 @@ int main()
 
     //
 
-
     // if (!projectile_texture.loadFromFile("assets/fireball_projectile.png"))
     // {
     //     return 1;
@@ -103,7 +102,7 @@ int main()
 
     GameState state = GameState::TITLE;
 
-    TitleScreen *title_screen = new TitleScreen(font, window, state);
+    TitleScreen *title_screen = new TitleScreen(font, 0, WIDTH, HEIGHT, state);
 
     std::unique_ptr<Game> game1 = nullptr;
     std::unique_ptr<Game> game2 = nullptr;
@@ -130,7 +129,6 @@ int main()
 
     // int random_index = ;
     // sf::Sprite background = background_sprites[random_index];
-
 
     while (window.isOpen())
     {
@@ -165,7 +163,6 @@ int main()
                     if (player1 != nullptr)
                     {
                         player1->jump();
-
                     }
                 }
                 if (event.key.code == sf::Keyboard::C)
@@ -232,32 +229,14 @@ int main()
 
             if (event.type == sf::Event::KeyReleased)
             {
-                for(int i = 0; i < players.size(); i++){
-                    if(players[i]!=nullptr){
-                        if (event.key.code == keys[i][0])
-                        {
-                            move[i].first = false;
-                        }
-                        if (event.key.code == keys[i][1])
-                        {
-                            move[i].second = false;
-                        }
-                    }
-                }
-            }
-        }
-        for(int i = 0; i < players.size(); i++){
-            if( players[i]!=nullptr && gameStates[i] == GameState::SINGLEPLAYER){
-                if (move[i].first)
+                if (event.key.code == sf::Keyboard::A)
                 {
                     moveLeft1 = false;
-
                 }
-                if (move[i].second)
+                if (event.key.code == sf::Keyboard::D)
                 {
                     moveRight1 = false;
                 }
-
                 if (event.key.code == sf::Keyboard::Left)
                 {
                     moveLeft2 = false;
@@ -435,7 +414,6 @@ int main()
                     name = player1->getName();
                     player1.reset();
                 }
-
             }
         }
         window.display();
