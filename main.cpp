@@ -95,11 +95,11 @@ int main()
 
     GameState state = GameState::TITLE;
 
-    TitleScreen* title_screen = new TitleScreen(font, window, state);
+    TitleScreen *title_screen = new TitleScreen(font, window, state);
 
-    std::unique_ptr<Player> player = std::make_unique <Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
+    std::unique_ptr<Player> player = std::make_unique<Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
 
-    std::unique_ptr <InputField> username_field = std::make_unique<InputField>(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player.get());
+    std::unique_ptr<InputField> username_field = std::make_unique<InputField>(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player.get());
 
     title_screen->updateHighScore(highScoreManager);
 
@@ -113,7 +113,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-        
+
             if (event.type == sf::Event::Closed)
             {
                 window.close();
@@ -182,11 +182,11 @@ int main()
             }
         }
 
-        if (moveLeft && state==GameState::SINGLEPLAYER)
+        if (moveLeft && state == GameState::SINGLEPLAYER)
         {
             player->move(-1.0f, 0.0f);
         }
-        if (moveRight && state==GameState::SINGLEPLAYER)
+        if (moveRight && state == GameState::SINGLEPLAYER)
         {
             player->move(1.0f, 0.0f);
         }
@@ -198,18 +198,18 @@ int main()
         switch (state)
         {
         case GameState::TITLE:
-            if(game == nullptr){
-                game  = std::make_unique <Game> (0, 350, 0, WIDTH);
+            if (game == nullptr)
+            {
+                game = std::make_unique<Game>(0, 350, 0, WIDTH);
                 game->create_platforms(50, 78, 35, HEIGHT, WIDTH);
-                game->create_enemy();
                 score.setPosition(sf::Vector2f(100, 40));
             }
-            if(player == nullptr){
+            if (player == nullptr)
+            {
                 player = std::make_unique<Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
                 player->setName(name);
                 username_field->updatePointer(player.get());
             }
-            
 
             title_screen->update(window);
             title_screen->draw(window);
@@ -248,7 +248,8 @@ int main()
             window.draw(score);
             score.setPosition(WIDTH / 2.0f, 150);
             title_screen->drawGameOver(window, highScoreManager);
-            if(game != nullptr){
+            if (game != nullptr)
+            {
                 game.reset();
                 name = player->getName();
                 player.reset();

@@ -38,8 +38,10 @@ private:
     int game_left_bound;
     int game_right_bound;
 
+    ProjectileType projectile_type;
+
 public:
-    Weapon(sf::Vector2f pos, WeaponType initial_type, int left_bound, int right_bound): position(pos), type(initial_type), game_left_bound(left_bound), game_right_bound(right_bound)
+    Weapon(sf::Vector2f pos, WeaponType initial_type, int left_bound, int right_bound, ProjectileType proj_type) : position(pos), type(initial_type), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type)
     {
         setType(type);
 
@@ -130,9 +132,17 @@ public:
 
     void create_projectile(sf::Vector2f position, float speed, int angle_offset)
     {
-        Projectile projectile(position, speed, angle_offset, projectile_texture[1]);
 
-        projectiles.emplace_back(projectile);
+        if (projectile_type == ProjectileType::FIREBALL)
+        {
+            Projectile projectile(position, speed, angle_offset, projectile_texture[0]);
+            projectiles.emplace_back(projectile);
+        }
+        else if (projectile_type == ProjectileType::SHURIKEN)
+        {
+            Projectile projectile(position, speed, angle_offset, projectile_texture[1]);
+            projectiles.emplace_back(projectile);
+        }
     }
 
     void move(float dx, float dy)
