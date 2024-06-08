@@ -107,7 +107,7 @@ public:
         pos.y += dy;
         setPosition(pos);
 
-        if (pos.x < 0 || pos.x > 800)
+        if (pos.x < game_left_bound || pos.x > game_right_bound)
         {
             direction *= -1;
             bounce(weapon);

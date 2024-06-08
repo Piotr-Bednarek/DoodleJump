@@ -89,7 +89,7 @@ public:
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
     {
-        Platform platform1(sf::Vector2f(0, window_height-35), sf::Vector2f(window_width, 34), platform_textures[0]);
+        Platform platform1(sf::Vector2f(game_left_bound, window_height-35), sf::Vector2f(window_width, 34), platform_textures[0]);
         platforms.emplace_back(platform1);
         for (int i = platform_height * 2 + offset; i < window_height; i = i + offset)
         {
@@ -137,20 +137,6 @@ public:
                     platform.setPowerUp(nullptr);
                 }
             }
-
-            /*if (platform.getPosition().y > window.getSize().y)
-            {
-                int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-                platform.setPosition(sf::Vector2f(platform_x, -platform_height));
-                for(int i = 0; i <platforms.size(); i++){
-                    if(platforms[i].getGlobalBounds().intersects(platform.getGlobalBounds())){
-                        int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-                        platform.setPosition(sf::Vector2f(platform_x, -platform_height));
-                        i--;
-                    }
-                }
-                platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
-            }*/
         }
         for (Enemy &enemy : enemies)
         {
@@ -159,9 +145,7 @@ public:
                 enemy.update_health(100000);
             }
         }
-        enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy)
-                                     { return enemy.get_health() <= 0; }),
-                      enemies.end());
+        enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy){ return enemy.get_health() <= 0; }),enemies.end());
 
         for (Enemy &enemy : enemies)
         {
@@ -205,11 +189,11 @@ public:
 
                 if (platforms[i].getGlobalBounds().getPosition().y > window.getSize().y)
                 {
-                    int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
+                    int platform_x =rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
                     platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand()%(platform_height)+player.get_velocity().y * dt));
                     for(int j = 0; j <platforms.size(); j++){
                         if(platforms[i].getGlobalBounds().intersects(platforms[j].getGlobalBounds()) && i!=j){
-                            int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
+                            int platform_x =rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
                             platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand()%(platform_height)+player.get_velocity().y * dt));
                             j=0;
                         }
@@ -452,5 +436,13 @@ public:
     Platform *getFirstPlatform()
     {
         return &platforms[0];
+    }
+    int getRightBound()
+    {
+        return game_right_bound;
+    } 
+    int getLeftBound()
+    {
+        return game_left_bound;
     }
 };
