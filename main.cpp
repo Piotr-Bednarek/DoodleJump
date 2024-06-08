@@ -35,7 +35,7 @@ int main()
     srand(time(NULL));
     sf::Clock clock;
 
-    int WIDTH = 800;
+    int WIDTH = 1600;
     int HEIGHT = 800;
     int FPS = 60;
 
@@ -47,6 +47,7 @@ int main()
     int which_player_won = 0;
 
     std::string name = "Player";
+
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
     window.setFramerateLimit(FPS);
@@ -57,7 +58,6 @@ int main()
 
     // sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
-
     // sf::Texture projectile_texture;
 
     sf::Texture platform_grass_texture;
@@ -76,6 +76,7 @@ int main()
     sf::Sprite background(background_texture);
 
     //
+
 
     // if (!projectile_texture.loadFromFile("assets/fireball_projectile.png"))
     // {
@@ -130,6 +131,7 @@ int main()
     // int random_index = ;
     // sf::Sprite background = background_sprites[random_index];
 
+
     while (window.isOpen())
     {
         sf::Time elapsed = clock.restart();
@@ -163,6 +165,7 @@ int main()
                     if (player1 != nullptr)
                     {
                         player1->jump();
+
                     }
                 }
                 if (event.key.code == sf::Keyboard::C)
@@ -229,11 +232,28 @@ int main()
 
             if (event.type == sf::Event::KeyReleased)
             {
-                if (event.key.code == sf::Keyboard::A)
+                for(int i = 0; i < players.size(); i++){
+                    if(players[i]!=nullptr){
+                        if (event.key.code == keys[i][0])
+                        {
+                            move[i].first = false;
+                        }
+                        if (event.key.code == keys[i][1])
+                        {
+                            move[i].second = false;
+                        }
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < players.size(); i++){
+            if( players[i]!=nullptr && gameStates[i] == GameState::SINGLEPLAYER){
+                if (move[i].first)
                 {
                     moveLeft1 = false;
+
                 }
-                if (event.key.code == sf::Keyboard::D)
+                if (move[i].second)
                 {
                     moveRight1 = false;
                 }
@@ -415,11 +435,9 @@ int main()
                     name = player1->getName();
                     player1.reset();
                 }
+
             }
-
-            break;
         }
-
         window.display();
     }
 

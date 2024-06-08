@@ -136,20 +136,6 @@ public:
                     platform.setPowerUp(nullptr);
                 }
             }
-
-            /*if (platform.getPosition().y > window.getSize().y)
-            {
-                int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-                platform.setPosition(sf::Vector2f(platform_x, -platform_height));
-                for(int i = 0; i <platforms.size(); i++){
-                    if(platforms[i].getGlobalBounds().intersects(platform.getGlobalBounds())){
-                        int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
-                        platform.setPosition(sf::Vector2f(platform_x, -platform_height));
-                        i--;
-                    }
-                }
-                platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
-            }*/
         }
         for (Enemy &enemy : enemies)
         {
@@ -158,9 +144,7 @@ public:
                 enemy.update_health(100000);
             }
         }
-        enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy)
-                                     { return enemy.get_health() <= 0; }),
-                      enemies.end());
+        enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy){ return enemy.get_health() <= 0; }),enemies.end());
 
         for (Enemy &enemy : enemies)
         {
@@ -213,6 +197,7 @@ public:
                             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
                             platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand() % (platform_height) + player.get_velocity().y * dt));
                             j = 0;
+
                         }
                     }
                     platforms[i].randomize_texture(platform_textures[rand() % platform_textures.size()]);
@@ -486,5 +471,13 @@ public:
     Platform *getFirstPlatform()
     {
         return &platforms[0];
+    }
+    int getRightBound()
+    {
+        return game_right_bound;
+    } 
+    int getLeftBound()
+    {
+        return game_left_bound;
     }
 };
