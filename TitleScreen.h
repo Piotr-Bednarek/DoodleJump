@@ -151,11 +151,12 @@ public:
             clock.restart();
         }
     }
-    void drawGameOverMultiplayer(sf::RenderWindow &window, HighScoreManager &highScoreManager)
+
+    void drawWinner(sf::RenderWindow &window, int player)
     {
-        updateHighScore(highScoreManager);
-        highScoreManager.saveHighScores();
-        window.draw(highScoresText);
+        sf::Text winnerText = createText("Player " + std::to_string(player) + " Wins!", font, 50, sf::Color::White, sf::Vector2f(WIDTH / 2.0f, HEIGHT / 2.0f));
+        window.draw(winnerText);
+
 
         home_button.draw(window);
         home_button.update(window);
@@ -164,14 +165,5 @@ public:
             clock.restart();
         }
     }
-    void drawMultiplayer(sf::RenderWindow &window)
-    {
-        //singleplayer_button.draw(window);
-       // multiplayer_button.draw(window);
-        score_button.draw(window);
-        // home_button.draw(window);
 
-        window.draw(title);
-        window.draw(info);
-    }
 };
