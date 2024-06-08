@@ -136,7 +136,9 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    player->jump();
+                    if(player!=nullptr){
+                        player->jump();
+                    }
                 }
 
                 if (event.key.code == sf::Keyboard::Space)
@@ -226,7 +228,7 @@ int main()
 
             game->update(dt, window, *player);
             player->update(dt, window);
-
+            
             game->draw(window);
             player->draw(window);
 

@@ -89,7 +89,7 @@ public:
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
     {
-        Platform platform1(sf::Vector2f(0, 765), sf::Vector2f(800, 34), platform_textures[0]);
+        Platform platform1(sf::Vector2f(0, window_height-35), sf::Vector2f(window_width, 34), platform_textures[0]);
         platforms.emplace_back(platform1);
         for (int i = platform_height * 2 + offset; i < window_height; i = i + offset)
         {
@@ -116,7 +116,7 @@ public:
 
         for (Platform &platform : platforms)
         {
-            int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
+            
 
             platform.move(sf::Vector2f(0, velocity * dt));
             if (platform.getPowerUp() != nullptr)
@@ -138,11 +138,19 @@ public:
                 }
             }
 
-            if (platform.getPosition().y > window.getSize().y)
+            /*if (platform.getPosition().y > window.getSize().y)
             {
+                int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
                 platform.setPosition(sf::Vector2f(platform_x, -platform_height));
+                for(int i = 0; i <platforms.size(); i++){
+                    if(platforms[i].getGlobalBounds().intersects(platform.getGlobalBounds())){
+                        int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
+                        platform.setPosition(sf::Vector2f(platform_x, -platform_height));
+                        i--;
+                    }
+                }
                 platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
-            }
+            }*/
         }
         for (Enemy &enemy : enemies)
         {
@@ -172,7 +180,6 @@ public:
         float threshold = window.getSize().y * 0.5f;
         if (player.getPosition().y < threshold)
         {
-            int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
 
             float diff = threshold - player.getPosition().y;
             player.move(0, diff);
@@ -181,28 +188,36 @@ public:
 
             elevation += diff;
 
-            for (Platform &platform : platforms)
+            for (int i = 0; i< platforms.size(); i++)
             {
-                platform.move(0, diff);
+                platforms[i].move(0, diff);
 
-                if (platform.getPowerUp() != nullptr)
+                if (platforms[i].getPowerUp() != nullptr)
                 {
-                    platform.getPowerUp()->move(0, diff);
+                    platforms[i].getPowerUp()->move(0, diff);
                 }
 
-                if (!platform.getPowerUpSpawned())
+                if (!platforms[i].getPowerUpSpawned())
                 {
-                    platform.setPowerUp(create_powerUps(platform));
-                    platform.setPowerUpSpawned(true);
+                    platforms[i].setPowerUp(create_powerUps(platforms[i]));
+                    platforms[i].setPowerUpSpawned(true);
                 }
 
-                if (platform.getPosition().y > window.getSize().y)
+                if (platforms[i].getGlobalBounds().getPosition().y > window.getSize().y)
                 {
-                    platform.setPosition(sf::Vector2f(platform_x, -platform_height));
-                    platform.randomize_texture(platform_textures[rand() % platform_textures.size()]);
-                    platform.setPowerUpSpawned(false);
-                    delete platform.getPowerUp();
-                    platform.setPowerUp(nullptr);
+                    int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
+                    platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand()%(platform_height)+player.get_velocity().y * dt));
+                    for(int j = 0; j <platforms.size(); j++){
+                        if(platforms[i].getGlobalBounds().intersects(platforms[j].getGlobalBounds()) && i!=j){
+                            int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
+                            platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand()%(platform_height)+player.get_velocity().y * dt));
+                            j=0;
+                        }
+                    }
+                    platforms[i].randomize_texture(platform_textures[rand() % platform_textures.size()]);
+                    platforms[i].setPowerUpSpawned(false);
+                    delete platforms[i].getPowerUp();
+                    platforms[i].setPowerUp(nullptr);
                 }
             }
 
@@ -318,6 +333,8 @@ public:
 
     int find_platform_index(Player &player)
     {
+        sort(platforms.begin(), platforms.end(), [](Platform &a, Platform &b)
+             { return a.getPosition().y > b.getPosition().y; });
         for (int i = 0; i < platforms.size(); i++)
         {
             sf::FloatRect playerBounds = player.getGlobalBounds();
@@ -436,10 +453,8 @@ public:
                 std::cout << "Unknown power-up type!" << std::endl;
                 break;
             }
-            float powerUpX = platform.getPosition().x + (rand() % static_cast<int>(platform.getGlobalBounds().getSize().x) - powerUp->getGlobalBounds().getSize().x);
-            if (powerUpX < platform.getPosition().x)
-                powerUpX = platform.getPosition().x;
-            float powerUpY = platform.getPosition().y - powerUp->getGlobalBounds().getSize().y;
+            float powerUpX = platform.getPosition().x + rand() % (static_cast<int>(platform.getGlobalBounds().width - powerUp->getGlobalBounds().width));
+            float powerUpY = platform.getPosition().y - powerUp->getGlobalBounds().height;
             powerUp->setPosition(powerUpX, powerUpY);
         }
         return powerUp;
