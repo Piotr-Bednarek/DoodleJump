@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
@@ -117,7 +118,7 @@ public:
                 directionX *= -1;
                 bounceX();
 
-                std::cout << "Bounce" << std::endl;
+                // std::cout << "Bounce" << std::endl;
             }
 
             if (rand() % 100 < 5)
@@ -140,14 +141,14 @@ public:
                 directionX *= -1;
                 bounceX();
 
-                std::cout << "Bounce" << std::endl;
+                // std::cout << "Bounce" << std::endl;
             }
 
             if ((pos.y < 0 && directionY == -1) || (pos.y > window_height / 2.0f && directionY == 1))
             {
                 directionY *= -1;
 
-                std::cout << "Bounce" << std::endl;
+                // std::cout << "Bounce" << std::endl;
             }
 
             if (rand() % 100 < 5)
@@ -167,7 +168,7 @@ public:
             direction.x /= max_val;
             direction.y /= max_val;
 
-            std::cout << "Direction: " << direction.x << ", " << direction.y << std::endl;
+            // std::cout << "Direction: " << direction.x << ", " << direction.y << std::endl;
 
             if (direction.x < 0)
             {

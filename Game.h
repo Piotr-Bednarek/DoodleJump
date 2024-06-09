@@ -141,7 +141,9 @@ public:
                 enemy.update_health(100000);
             }
         }
-        enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy){ return enemy.get_health() <= 0; }),enemies.end());
+        enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy)
+                                     { return enemy.get_health() <= 0; }),
+                      enemies.end());
 
         for (Enemy &enemy : enemies)
         {
@@ -194,7 +196,6 @@ public:
                             int platform_x = rand() % (game_right_bound - platform_width - game_left_bound) + game_left_bound;
                             platforms[i].setPosition(sf::Vector2f(platform_x, -platform_height - rand() % (platform_height) + player.get_velocity().y * dt));
                             j = 0;
-
                         }
                     }
                     platforms[i].randomize_texture(platform_textures[rand() % platform_textures.size()]);
@@ -472,7 +473,7 @@ public:
     int getRightBound()
     {
         return game_right_bound;
-    } 
+    }
     int getLeftBound()
     {
         return game_left_bound;

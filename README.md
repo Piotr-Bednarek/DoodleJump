@@ -8,3 +8,4 @@
 -   https://free-game-assets.itch.io/free-jump-game-objects
 -   https://lydschung.itch.io/star-power-up-animation-asset
 -   https://rvros.itch.io/animated-pixel-hero
+-   https://kronbits.itch.io/freesfx

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
 #include <iostream>
 
@@ -65,6 +66,12 @@ private:
     float scaleX = 2;
     float scaleY = 2;
 
+    sf::SoundBuffer jump_buffer;
+    sf::Sound jump_sound;
+
+    sf::SoundBuffer shoot_buffer;
+    sf::Sound shoot_sound;
+
 public:
     Player(sf::Vector2f pos, sf::Vector2f s, int left_bound, int right_bound) : sf::Sprite(), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, ProjectileType::SHURIKEN), game_left_bound(left_bound), game_right_bound(right_bound)
     {
@@ -93,6 +100,22 @@ public:
             player_run_textures.push_back(texture);
         }
 
+        if (!jump_buffer.loadFromFile("assets/sounds/jump.wav"))
+        {
+            std::cout << "Failed to load jump sound" << std::endl;
+        }
+
+        if (!shoot_buffer.loadFromFile("assets/sounds/player_shoot.wav"))
+        {
+            std::cout << "Failed to load shoot sound" << std::endl;
+        }
+
+        jump_sound.setBuffer(jump_buffer);
+        jump_sound.setVolume(5);
+
+        shoot_sound.setBuffer(shoot_buffer);
+        shoot_sound.setVolume(5);
+
         setTexture(player_idle_textures[0]);
         setPosition(pos);
         setScale(scaleX, scaleY);
@@ -104,13 +127,16 @@ public:
 
         shield_texture.loadFromFile("assets/powerup/shield.png");
         shield.setTexture(shield_texture);
-        
     }
 
     void update(float &dt, sf::RenderWindow &window)
     {
         check_state();
 
+        if (!massacre_mode)
+        {
+            setColor(sf::Color::White);
+        }
         if (invincible_timer > 0)
         {
             invincible_timer -= dt;
@@ -316,6 +342,8 @@ public:
         {
             is_on_ground = false;
             velocity.y = -jump_force;
+
+            jump_sound.play();
         }
     }
 
@@ -332,6 +360,7 @@ public:
     void shoot(WeaponType type)
     {
         weapon.shoot(type, 0);
+        shoot_sound.play();
     }
 
     void check_projeciltile_collision(std::vector<Enemy> &enemies)
@@ -402,6 +431,8 @@ public:
     {
         massacre_mode = true;
         massacre_timer = (float)massacre;
+
+        setColor(sf::Color::Red);
     }
     bool get_massacre()
     {
