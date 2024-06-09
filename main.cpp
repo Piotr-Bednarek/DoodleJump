@@ -36,18 +36,13 @@ int main()
     sf::Clock clock;
 
     int WIDTH = 800;
-    int HEIGHT = 800;
+    int HEIGHT = 793;
     int FPS = 60;
 
-    bool moveLeft1 = false;
-    bool moveRight1 = false;
-    bool moveLeft2 = false;
-    bool moveRight2 = false;
+    std::vector<std::pair<bool,bool>> move = {{false, false}, {false, false}};
+    std::vector<std::vector<sf::Keyboard::Key>> keys = {{sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, sf::Keyboard::C, sf::Keyboard::V, sf::Keyboard::B}, {sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, sf::Keyboard::Numpad1, sf::Keyboard::Numpad2, sf::Keyboard::Numpad3}};
 
-    int which_player_won = 0;
-
-    std::string name = "Player";
-
+    std::vector<std::string> name = {"Player1", "Player2"};
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
 
     window.setFramerateLimit(FPS);
@@ -72,11 +67,9 @@ int main()
     {
         return 1;
     }
-
-    sf::Sprite background(background_texture);
-
-    //
-
+    background_texture.setRepeated(true);
+    sf::Sprite background(background_texture, sf::IntRect(0, 0, 1600, HEIGHT));
+   
     // if (!projectile_texture.loadFromFile("assets/fireball_projectile.png"))
     // {
     //     return 1;
@@ -94,41 +87,32 @@ int main()
         return 1;
     }
 
-    sf::Text score = createText("Your Score: 0", font, 50, sf::Color::Black, sf::Vector2f(100, 40));
-
-    HighScoreManager highScoreManager("highscores.txt");
-
-    // ----------------------------------------------
-
-    GameState state = GameState::TITLE;
-
-    TitleScreen *title_screen = new TitleScreen(font, 0, WIDTH, HEIGHT, state);
-
-    std::unique_ptr<Game> game1 = nullptr;
-    std::unique_ptr<Game> game2 = nullptr;
-    std::unique_ptr<Player> player1 = nullptr;
-    std::unique_ptr<Player> player2 = nullptr;
-    // std::unique_ptr<Player> player1 = std::make_unique<Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
-    // std::unique_ptr<Player> player2 = std::make_unique<Player>(sf::Vector2f(WIDTH / 4 * 3, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
-
-    std::unique_ptr<InputField> username_field = std::make_unique<InputField>(sf::Vector2f(400, 300), sf::Vector2f(250, 75), font1, player1.get());
-
-    title_screen->updateHighScore(highScoreManager);
-
-    sf::View view1(sf::FloatRect(0, 0, WIDTH / 2, HEIGHT));
-    sf::View view2(sf::FloatRect(0, 0, WIDTH / 2, HEIGHT));
-
-    view1.setViewport(sf::FloatRect(0, 0, 0.5f, 1));
-    view2.setViewport(sf::FloatRect(0.5f, 0, 0.5f, 1));
-
-    sf::RectangleShape blackBar(sf::Vector2f(5, window.getSize().y));
+    sf::RectangleShape blackBar(sf::Vector2f(2, window.getSize().y));
     blackBar.setFillColor(sf::Color::Black);
-    blackBar.setPosition(window.getSize().x / 2 - blackBar.getSize().x / 2, 0);
+    blackBar.setPosition(window.getSize().x + 2, 0);
+    std::vector<sf::View> view{sf::View(sf::FloatRect(0, 0, 800, HEIGHT)), sf::View(sf::FloatRect(800, 0, 1600, HEIGHT))};
+    view[0].setViewport(sf::FloatRect(0, 0, 0.5, 1));
+    view[1].setViewport(sf::FloatRect(0.5, 0, 1, 1));
 
-    // ----------------------------------------------
 
-    // int random_index = ;
-    // sf::Sprite background = background_sprites[random_index];
+    std::vector<sf::Text> score;
+    score.emplace_back(createText("Your Score: 0", font, 50, sf::Color::Black, sf::Vector2f(130, 40)));
+    std::unique_ptr<HighScoreManager> highScoreManager = std::make_unique<HighScoreManager>("highscores.txt");
+    std::unique_ptr<Game> game = nullptr;
+    std::vector<std::unique_ptr<Game>> games;
+    std::vector<std::unique_ptr<Player>> players;
+    std::vector<std::unique_ptr<InputField>> inputFields;
+    std::vector<std::unique_ptr<TitleScreen>> titleScreens;
+    std::vector<GameState> gameStates;
+    
+    games.emplace_back(nullptr);
+    players.emplace_back(std::make_unique<Player>(sf::Vector2f((WIDTH-50) / 2, HEIGHT - 100), sf::Vector2f(50, 50), 0, WIDTH));
+    inputFields.emplace_back(std::make_unique<InputField>(sf::Vector2f(WIDTH/2, 300), sf::Vector2f(250, 75), font1, players[0].get()));
+    gameStates.emplace_back(GameState::TITLE);
+    titleScreens.emplace_back(std::make_unique<TitleScreen>(font, 0, WIDTH, HEIGHT, gameStates[0], sf::Keyboard::W));
+    titleScreens[0]->updateHighScore(*highScoreManager);
+    
+
 
     while (window.isOpen())
     {
@@ -146,278 +130,213 @@ int main()
 
             if (event.type == sf::Event::KeyPressed)
             {
-                if (username_field->is_field_active() && sf::Event::TextEntered && state == GameState::TITLE)
-                {
-                    username_field->handle_event(event);
-                }
-                if (event.key.code == sf::Keyboard::A)
-                {
-                    moveLeft1 = true;
-                }
-                if (event.key.code == sf::Keyboard::D)
-                {
-                    moveRight1 = true;
-                }
-                if (event.key.code == sf::Keyboard::W)
-                {
-                    if (player1 != nullptr)
-                    {
-                        player1->jump();
+                for(int i = 0; i < inputFields.size(); i++){
+                    if(inputFields[i]->is_field_active() && sf::Event::TextEntered && gameStates[i] == GameState::TITLE){
+                        inputFields[i]->handle_event(event);
                     }
                 }
-                if (event.key.code == sf::Keyboard::C)
-                {
-                    player1->shoot(WeaponType::SINGLE);
+                if(event.key.code == sf::Keyboard::W && gameStates[0] == GameState::TITLE){
+                    gameStates[0] = GameState::GAME;
+                }
+                if(event.key.code == sf::Keyboard::Up && gameStates.size()>1 && gameStates[1] == GameState::TITLE){
+                    gameStates[1] = GameState::GAME;
                 }
 
-                if (event.key.code == sf::Keyboard::V)
-                {
-                    player1->shoot(WeaponType::MACHINEGUN);
-                }
+                for(int i = 0; i < players.size(); i++){
+                    if(players[i]!=nullptr){
+                        if (event.key.code == keys[i][0])
+                        {
+                            move[i].first = true;
+                        }
+                        if (event.key.code == keys[i][1])
+                        {
+                            move[i].second = true;
+                        }
+                        if (event.key.code == keys[i][2])
+                        {
+                            if(players[i]!=nullptr){
+                                players[i]->jump();
+                            }
+                        }
+                        
+                        if (event.key.code == keys[i][3])
+                        {
+                            players[i]->shoot(WeaponType::SINGLE);
+                        }
 
-                if (event.key.code == sf::Keyboard::B)
-                {
-                    player1->shoot(WeaponType::TRIPLE);
-                }
-
-                // ----------------------------------------------
-
-                if (event.key.code == sf::Keyboard::Left)
-                {
-                    moveLeft2 = true;
-                }
-                if (event.key.code == sf::Keyboard::Right)
-                {
-                    moveRight2 = true;
-                }
-                if (event.key.code == sf::Keyboard::Up)
-                {
-                    if (player2 != nullptr)
-                    {
-                        player2->jump();
-                    }
-                }
-                if (event.key.code == sf::Keyboard::Numpad1)
-                {
-                    player2->shoot(WeaponType::SINGLE);
-                }
-
-                if (event.key.code == sf::Keyboard::Numpad2)
-                {
-                    player2->shoot(WeaponType::MACHINEGUN);
-                }
-
-                if (event.key.code == sf::Keyboard::Numpad3)
-                {
-                    player2->shoot(WeaponType::TRIPLE);
-                }
-
-                // if (event.key.code == sf::Keyboard::Space)
-                // {
-                //     switch (state)
-                //     {
-                //     case GameState::TITLE:
-                //         std::cout << "TITLE" << std::endl;
-                //         break;
-
-                //     case GameState::SINGLEPLAYER:
-                //         std::cout << "SINGLEPLAYER" << std::endl;
-                //         break;
-                //     }
-                // }
             }
 
             if (event.type == sf::Event::KeyReleased)
             {
-                if (event.key.code == sf::Keyboard::A)
-                {
-                    moveLeft1 = false;
-                }
-                if (event.key.code == sf::Keyboard::D)
-                {
-                    moveRight1 = false;
-                }
-                if (event.key.code == sf::Keyboard::Left)
-                {
-                    moveLeft2 = false;
-                }
-                if (event.key.code == sf::Keyboard::Right)
-                {
-                    moveRight2 = false;
+                for(int i = 0; i < players.size(); i++){
+                    if (event.key.code == keys[i][0])
+                    {
+                        move[i].first = false;
+                    }
+                    if (event.key.code == keys[i][1])
+                    {
+                        move[i].second = false;
+                    }
+                    
                 }
             }
         }
-
-        if (moveLeft1 && (state == GameState::SINGLEPLAYER || state == GameState::MULTIPLAYER))
-        {
-            player1->move(-1.0f, 0.0f);
-        }
-        if (moveRight1 && (state == GameState::SINGLEPLAYER || state == GameState::MULTIPLAYER))
-        {
-            player1->move(1.0f, 0.0f);
-        }
-
-        if (moveLeft2 && state == GameState::MULTIPLAYER)
-        {
-            player2->move(-1.0f, 0.0f);
-        }
-        if (moveRight2 && state == GameState::MULTIPLAYER)
-        {
-            player2->move(1.0f, 0.0f);
+        for(int i = 0; i < players.size(); i++){
+            if( players[i]!=nullptr && gameStates[i] == GameState::GAME){
+                if (move[i].first)
+                {
+                    players[i]->move(-1.0f, 0.0f);
+                }
+                if (move[i].second)
+                {
+                    players[i]->move(1.0f, 0.0f);
+                }
+            }
         }
 
         window.clear();
+        window.draw(background);
 
-        switch (state)
-        {
-        case GameState::TITLE:
-            window.draw(background);
-
-            title_screen->update(window);
-            title_screen->draw(window);
-
-            username_field->draw(window);
-            username_field->update(window);
-
-            break;
-
-        case GameState::SINGLEPLAYER:
-            window.draw(background);
-
-            if (player1 == nullptr)
+        for(int i = 0; i < gameStates.size(); i++){
+        
+            switch (gameStates[i])
             {
-                player1 = std::make_unique<Player>(sf::Vector2f(WIDTH / 2, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH);
-                player1->setName(name);
-                username_field->updatePointer(player1.get());
-            }
-            if (game1 == nullptr)
-            {
-                game1 = std::make_unique<Game>(0, 350, 0, WIDTH);
-                game1->create_platforms(50, 78, 35, HEIGHT, WIDTH);
-                score.setPosition(sf::Vector2f(100, 40));
-            }
-
-            game1->check_collision(*player1);
-            game1->update(dt, window, *player1);
-            player1->update(dt, window);
-
-            game1->draw(window);
-            player1->draw(window);
-
-            score.setString("Your Score: " + std::to_string(static_cast<int>(game1->get_score())));
-            window.draw(score);
-
-            if (game1->get_game_state())
-            {
-                // std::cout << game.get_game_state() << std::endl;
-                state = GameState::GAMEOVER;
-                highScoreManager.addHighScore(HighScore(player1->getName(), game1->get_score()));
-            }
-
-            break;
-
-        case GameState::MULTIPLAYER:
-            if (player1 == nullptr)
-            {
-                player1 = std::make_unique<Player>(sf::Vector2f(WIDTH / 4, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH / 2);
-            }
-            if (game1 == nullptr)
-            {
-                game1 = std::make_unique<Game>(0, 350, 0, WIDTH / 2);
-                game1->create_platforms(50, 78, 35, HEIGHT, WIDTH);
-                // score.setPosition(sf::Vector2f(150, 40));
-            }
-
-            window.setView(view1);
-            window.draw(background);
-
-            game1->check_collision(*player1);
-            game1->update(dt, window, *player1);
-            player1->update(dt, window);
-
-            game1->draw(window);
-            player1->draw(window);
-
-            // ----------------------------------------------
-
-            if (player2 == nullptr)
-            {
-                player2 = std::make_unique<Player>(sf::Vector2f(WIDTH / 4, HEIGHT - 150), sf::Vector2f(50, 50), 0, WIDTH / 2);
-            }
-            if (game2 == nullptr)
-            {
-                game2 = std::make_unique<Game>(0, 350, 0, WIDTH / 2);
-                game2->create_platforms(50, 78, 35, HEIGHT, WIDTH);
-                // score.setPosition(sf::Vector2f(150, 40));
-            }
-
-            window.setView(view2);
-            window.draw(background);
-
-            game2->check_collision(*player2);
-            game2->update(dt, window, *player2);
-            player2->update(dt, window);
-
-            game2->draw(window);
-            player2->draw(window);
-
-            window.setView(window.getDefaultView());
-            window.draw(blackBar);
-
-            if (game1->get_game_state())
-            {
-                // std::cout << game.get_game_state() << std::endl;
-                std::cout << "PLAYER 2 WON" << std::endl;
-                which_player_won = 2;
-                state = GameState::GAMEOVER;
-            }
-
-            if (game2->get_game_state())
-            {
-                // std::cout << game.get_game_state() << std::endl;
-                std::cout << "PLAYER 1 WON" << std::endl;
-                which_player_won = 1;
-                state = GameState::GAMEOVER;
-            }
-
-            break;
-        case GameState::GAMEOVER:
-
-            window.setView(window.getDefaultView());
-            window.draw(background);
-
-            if (which_player_won != 0)
-            {
-
-                title_screen->drawWinner(window, which_player_won);
-
-                if (game1 != nullptr)
-                {
-                    game1.reset();
-                    player1.reset();
+            case GameState::TITLE:
+                if(games[i] == nullptr && gameStates.size()>1){
+                    games[i] = std::make_unique <Game> (0, 350, 0+i*(WIDTH/2), WIDTH/2 + i*(WIDTH/2));
+                    games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH/2 + i*(WIDTH/2));
+                    games[i]->create_enemy();
+                    score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
+                    players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound()-games[i]->getLeftBound()-50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 + i*(WIDTH/2), WIDTH/2 + i*(WIDTH/2));
+                    players[i]->setName(name[i]);
+                    inputFields[i] = std::make_unique<InputField>(sf::Vector2f(games[i]->getLeftBound() + (games[i]->getRightBound()-games[i]->getLeftBound())/2 , 300), sf::Vector2f(250, 75), font1, players[i].get());
+                    inputFields[i]->setText(name[i]);
+                    titleScreens[i].reset();
+                    titleScreens[i] = std::make_unique<TitleScreen>(font, 0+i*(WIDTH/2), WIDTH/2 + i*(WIDTH/2), HEIGHT, gameStates[i], keys[i][2]);
+                    titleScreens[i]->updateHighScore(*highScoreManager);
                 }
+                else if (games[i] == nullptr){
+                    games[i] = std::make_unique <Game> (0, 350, 0, WIDTH);
+                    games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH);
+                    games[i]->create_enemy();
+                    score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
+                    players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound()-games[i]->getLeftBound()-50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 , WIDTH);
+                    players[i]->setName(name[i]);
+                    inputFields[i] = std::make_unique<InputField>(sf::Vector2f(games[i]->getLeftBound() + (games[i]->getRightBound()-games[i]->getLeftBound())/2 , 300), sf::Vector2f(250, 75), font1, players[i].get());
+                    inputFields[i]->setText(name[i]);
+                    titleScreens[i].reset();
+                    titleScreens[i] = std::make_unique<TitleScreen>(font, 0, WIDTH, HEIGHT, gameStates[i], keys[i][2]);
+                    titleScreens[i]->updateHighScore(*highScoreManager);
+                }
+                titleScreens[i]->update(window);
+                titleScreens[i]->draw(window);
+                inputFields[i]->update(window);
+                inputFields[i]->draw(window);
+                break;
 
-                if (game2 != nullptr)
-                {
-                    game2.reset();
-                    player1.reset();
+            case GameState::GAME:
+                if(gameStates.size()>1){
+                    window.setView(view[i]);
                 }
-            }
-            else
-            {
-                window.draw(score);
-                score.setPosition(WIDTH / 2.0f, 150);
-                title_screen->drawGameOver(window, highScoreManager);
-                if (game1 != nullptr)
+                window.draw(background);
+                games[i]->check_collision(*players[i]);
+                games[i]->update(dt, window, *players[i]);
+                players[i]->update(dt, window);
+                games[i]->draw(window);
+                players[i]->draw(window);
+
+                score[i].setString("Your Score: " + std::to_string(static_cast<int>(games[i]->get_score())));
+                window.draw(score[i]);
+
+                if (games[i]->get_game_state())
                 {
-                    game1.reset();
-                    name = player1->getName();
-                    player1.reset();
+                    gameStates[i] = GameState::GAMEOVER;
+                    highScoreManager->loadHighScores();
+                    highScoreManager->addHighScore(HighScore(players[i]->getName(), games[i]->get_score()));
+                    highScoreManager->saveHighScores();
                 }
+                window.setView(window.getDefaultView());
+                break;
+            case GameState::SINGLEPLAYER:
+                if(gameStates.size()>1){
+                    WIDTH = 800;
+                    gameStates.pop_back();
+                    games.pop_back();
+                    players.pop_back();
+                    inputFields.pop_back();
+                    window.create(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
+                    window.setFramerateLimit(FPS);
+                    window.setVerticalSyncEnabled(true);
+                    blackBar.setPosition(window.getSize().x + 10 , 0);
+                    titleScreens.pop_back();
+                }
+                if(games[i] != nullptr){
+                    titleScreens[i]->draw(window);
+                    inputFields[i]->draw(window);
+                    games[i].reset();
+                    name[i] = players[i]->getName();
+                    players[i].reset();
+                    inputFields[i].reset();
+                    gameStates[i] = GameState::TITLE;
+                    titleScreens[i].reset();
+                }
+                break;
+            case GameState::MULTIPLAYER:
+                if(i == 0 && gameStates.size() == 1){
+                    WIDTH = 1600;
+                    games[i].reset();
+                    name[i] = players[i]->getName();
+                    players[i].reset();
+                    titleScreens[i].reset();
+                    inputFields[i].reset();
+                    games.emplace_back(nullptr);
+                    players.emplace_back(nullptr);
+                    titleScreens.emplace_back(nullptr);
+                    inputFields.emplace_back(nullptr);
+                    gameStates.emplace_back(GameState::MULTIPLAYER);
+                }
+                if(games[i] == nullptr){
+                    games[i] = std::make_unique <Game> (0, 350, 0+i*(WIDTH/2), WIDTH/2 + i*(WIDTH/2));
+                    players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound()-games[i]->getLeftBound()-50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 + i*WIDTH/2, WIDTH/2 + i*(WIDTH/2));
+                    titleScreens[i] = std::make_unique<TitleScreen>(font, games[i]->getLeftBound(), games[i]->getRightBound(), HEIGHT, gameStates[i], keys[i][2]);
+                    inputFields[i] = std::make_unique<InputField>(sf::Vector2f(games[i]->getLeftBound() + (games[i]->getRightBound()-games[i]->getLeftBound())/2 , 300), sf::Vector2f(250, 75), font1, players[i].get());
+                    inputFields[i]->setText(name[i]);
+                    games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH/2);
+                    games[i]->create_enemy();
+                    players[i]->setName(name[i]);
+                    titleScreens[i]->updateHighScore(*highScoreManager);                    
+                    if(i == 1){
+                        score.emplace_back(createText("Your Score: 0", font, 50, sf::Color::Black, sf::Vector2f(games[i]->getLeftBound()+130, 40)));
+                        window.create(sf::VideoMode(WIDTH, HEIGHT), "Doodle Jump!", sf::Style::Close | sf::Style::Titlebar);
+                        window.setFramerateLimit(FPS);
+                        window.setVerticalSyncEnabled(true);
+                        blackBar.setPosition(window.getSize().x / 2 - blackBar.getSize().x / 2, 0);
+                    }
+                    score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
+                }
+                titleScreens[i]->draw(window);
+                inputFields[i]->draw(window);
+                gameStates[i] = GameState::TITLE;
+                break;
+            case GameState::GAMEOVER:
+                if(gameStates.size()>1){
+                    window.setView(view[i]);
+                }
+                window.draw(background);
+                window.draw(score[i]);
+                titleScreens[i]->drawGameOver(window, *highScoreManager);
+                if(games[i] != nullptr){
+                    score[i].setPosition((games[i]->getRightBound() - games[i]->getLeftBound())/ 2.0f + games[i]->getLeftBound() , 150);
+                    games[i].reset();
+                    name[i] = players[i]->getName();
+                    players[i].reset();
+                }
+                window.setView(window.getDefaultView());
+                break;
             }
         }
+        window.draw(blackBar);
         window.display();
     }
-
     return 0;
 }

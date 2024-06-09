@@ -37,7 +37,7 @@ private:
     int max_health = 100;
     int health_points = max_health;
 
-    std::string name = "Player";
+    std::string name;
 
     bool is_invincible = false;
     float invincible_timer = 0;
@@ -93,6 +93,7 @@ public:
             player_run_textures.push_back(texture);
         }
 
+        setTexture(player_idle_textures[0]);
         setPosition(pos);
         setScale(scaleX, scaleY);
 
@@ -103,6 +104,7 @@ public:
 
         shield_texture.loadFromFile("assets/powerup/shield.png");
         shield.setTexture(shield_texture);
+        
     }
 
     void update(float &dt, sf::RenderWindow &window)

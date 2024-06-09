@@ -118,4 +118,8 @@ public:
     {
         player = playerD;
     }
+    void setText(std::string s)
+    {
+        value = s;
+    }
 };

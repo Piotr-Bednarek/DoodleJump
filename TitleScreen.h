@@ -8,7 +8,8 @@ enum class GameState
     TITLE,
     SINGLEPLAYER,
     MULTIPLAYER,
-    GAMEOVER
+    GAMEOVER,
+    GAME
 };
 
 class TitleScreen
@@ -39,7 +40,7 @@ private:
     sf::Clock clock;
 
 public:
-    TitleScreen(sf::Font &font_, int left, int width, int height, GameState &game_state) : font(font_), left_bound(left), WIDTH(width), HEIGHT(height)
+    TitleScreen(sf::Font &font_, int left, int width, int height, GameState &game_state, sf::Keyboard::Key key) : font(font_),left_bound(left), WIDTH(width), HEIGHT(height)
     {
         if (!singleplayer_button_texture.loadFromFile("assets/buttons/singleplayer_button.png"))
         {
@@ -62,9 +63,15 @@ public:
         }
 
         create_buttons(font, game_state);
-
-        title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(left + (WIDTH - left) / 2.0f, 75));
-        info = createText("Press SPACE to start", font, 50, sf::Color::Black, sf::Vector2f(left + (WIDTH - left) / 2.0f, 150));
+        if(key == sf::Keyboard::W)
+        {
+            info = createText("Press W to start", font, 50, sf::Color::Black, sf::Vector2f(left + (WIDTH-left) / 2.0f, 150));
+        }
+        else
+        {
+            info = createText("Press Up to start", font, 50, sf::Color::Black, sf::Vector2f(left + (WIDTH-left) / 2.0f, 150));
+        }
+        title = createText("Doodle Jump!", font, 100, sf::Color::Black, sf::Vector2f(left + (WIDTH-left) / 2.0f, 75));
     }
 
     void create_buttons(sf::Font &font, GameState &game_state)
