@@ -89,7 +89,7 @@ public:
 
     void create_platforms(int offset, int platform_width, int platform_height, int window_height, int window_width)
     {
-        Platform platform1(sf::Vector2f(0, window_height - 35), sf::Vector2f(window_width, 34), platform_textures[0]);
+        Platform platform1(sf::Vector2f(game_left_bound, window_height - 35), sf::Vector2f(window_width, 34), platform_textures[0]);
         platforms.emplace_back(platform1);
         for (int i = platform_height * 2 + offset; i < window_height; i = i + offset)
         {
@@ -100,9 +100,6 @@ public:
 
             platforms.emplace_back(platform);
         }
-
-        // Platform platform1(sf::Vector2f(400, 500), sf::Vector2f(800, 50), platform_textures[rand() % platform_textures.size()]);
-        // platforms.emplace_back(platform1);
     }
 
     void update(float dt, sf::RenderWindow &window, Player &player)

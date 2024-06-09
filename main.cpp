@@ -158,14 +158,22 @@ int main()
                                 players[i]->jump();
                             }
                         }
-                        
                         if (event.key.code == keys[i][3])
                         {
                             players[i]->shoot(WeaponType::SINGLE);
                         }
+                        if (event.key.code == keys[i][4])
+                        {
+                            players[i]->shoot(WeaponType::MACHINEGUN);
+                        }
+                        if (event.key.code == keys[i][5])
+                        {
+                            players[i]->shoot(WeaponType::TRIPLE);
+                        }
 
+                    }
+                }
             }
-
             if (event.type == sf::Event::KeyReleased)
             {
                 for(int i = 0; i < players.size(); i++){
@@ -181,6 +189,7 @@ int main()
                 }
             }
         }
+        
         for(int i = 0; i < players.size(); i++){
             if( players[i]!=nullptr && gameStates[i] == GameState::GAME){
                 if (move[i].first)
