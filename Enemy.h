@@ -48,15 +48,28 @@ private:
 
     int kamikaze_damage = 25;
 
-public:
+    sf::Clock timer;
+    bool timer_active = false;
 
-    Enemy(sf::Vector2f pos, float &s, int &dir, std::vector<sf::Texture> texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10), enemy_texture(texture),
-                                                                                                                                                                           weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir), scaleX(sX), scaleY(sY), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
+public:
+    Enemy(sf::Vector2f pos, float &s, int &dir, sf::Texture &texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir), scaleX(sX), scaleY(sY), enemy_texture(texture), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
     {
         if (enemy_type == EnemyType::KAMIKAZE)
         {
             is_weapon_active = false;
+            max_health = 25;
         }
+
+        if (enemy_type == EnemyType::DRAGON)
+        {
+            max_health = 100;
+        }
+        if (enemy_type == EnemyType::BEE)
+        {
+            max_health = 50;
+        }
+
+        health_points = max_health;
 
         if (directionX == 1)
         {
@@ -78,6 +91,11 @@ public:
 
     void update(float &dt, sf::RenderWindow &window, sf::Vector2f player_pos)
     {
+
+        if (timer.getElapsedTime() > sf::milliseconds(100) && timer_active)
+        {
+            setColor(sf::Color::White);
+        }
 
         window_height = window.getSize().y;
 
@@ -122,7 +140,7 @@ public:
                 // std::cout << "Bounce" << std::endl;
             }
 
-            if (rand() % 100 < 5)
+            if (rand() % 100 < 2)
             {
                 shoot(WeaponType::SINGLE);
             }
@@ -202,7 +220,7 @@ public:
                 weapon.move(-width);
             }
 
-            std::cout << "Bounce left" << std::endl;
+            // std::cout << "Bounce left" << std::endl;
         }
         else if (directionX == -1)
         {
@@ -214,7 +232,7 @@ public:
                 weapon.move(width);
             }
 
-            std::cout << "Bounce right" << std::endl;
+            // std::cout << "Bounce right" << std::endl;
         }
     }
 
@@ -227,13 +245,13 @@ public:
             weapon.draw(window);
         }
 
-        sf::RectangleShape hitbox;
-        hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
-        hitbox.setPosition(getPosition().x - getGlobalBounds().width / 2, getPosition().y - getGlobalBounds().height / 2);
-        hitbox.setOutlineColor(sf::Color::Red);
-        hitbox.setOutlineThickness(1.0f);
-        hitbox.setFillColor(sf::Color::Transparent);
-        window.draw(hitbox);
+        // sf::RectangleShape hitbox;
+        // hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
+        // hitbox.setPosition(getPosition().x - getGlobalBounds().width / 2, getPosition().y - getGlobalBounds().height / 2);
+        // hitbox.setOutlineColor(sf::Color::Red);
+        // hitbox.setOutlineThickness(1.0f);
+        // hitbox.setFillColor(sf::Color::Transparent);
+        // window.draw(hitbox);
     }
 
     void shoot(WeaponType type)
@@ -257,6 +275,10 @@ public:
     void update_health(int damage)
     {
         health_points -= damage;
+        setColor(sf::Color::Red);
+
+        timer.restart();
+        timer_active = true;
     }
 
     int get_health()

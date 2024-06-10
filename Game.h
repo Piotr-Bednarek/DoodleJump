@@ -477,7 +477,7 @@ public:
     PowerUp *create_powerUps(Platform &platform)
     {
         PowerUp *powerUp = nullptr;
-        if (rand() % 100 < 25)
+        if (rand() % 100 < 20)
         {
             PowerUpType type = static_cast<PowerUpType>(rand() % (static_cast<int>(PowerUpType::MASSACRE) + 1));
             switch (type)
@@ -489,7 +489,7 @@ public:
                 powerUp = new PowerUp(powerUp_textures[(int)type], type, 10);
                 break;
             case PowerUpType::JUMPBOOST:
-                powerUp = new PowerUp(powerUp_textures[(int)type], type, -1500);
+                powerUp = new PowerUp(powerUp_textures[(int)type], type, -750);
                 powerUp->setScale(0.3, 0.3);
                 break;
             case PowerUpType::MASSACRE:

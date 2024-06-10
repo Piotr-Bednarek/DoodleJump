@@ -92,19 +92,19 @@ public:
                 {
                     char letter = 'A' + (event.key.code - sf::Keyboard::A);
                     value += std::toupper(letter);
-                    std::cout << value << std::endl;
+                    // std::cout << value << std::endl;
                 }
 
                 if (event.key.code == sf::Keyboard::Enter)
                 {
-                    std::cout << "Enter key was pressed" << std::endl;
+                    // std::cout << "Enter key was pressed" << std::endl;
                     is_active = false;
 
                     player->setName(value);
                 }
                 else if (event.key.code == sf::Keyboard::BackSpace)
                 {
-                    std::cout << "Backspace key was pressed" << std::endl;
+                    // std::cout << "Backspace key was pressed" << std::endl;
 
                     if (value.size() > 0)
                     {

@@ -69,15 +69,15 @@ public:
             shootDelay = sf::milliseconds(500);
             break;
         case WeaponType::MACHINEGUN:
-            shootDelay = sf::milliseconds(100);
+            shootDelay = sf::milliseconds(200);
             break;
         case WeaponType::TRIPLE:
-            shootDelay = sf::milliseconds(1);
+            shootDelay = sf::milliseconds(500);
             break;
         }
     }
 
-    void shoot(WeaponType type, int angle_offset)
+    bool shoot(WeaponType type, int angle_offset)
     {
 
         // std::cout << "Projectile count: " << projectiles.size() << std::endl;
@@ -87,20 +87,28 @@ public:
         if (clock.getElapsedTime() >= shootDelay)
         {
 
-            if (type == WeaponType::SINGLE || type == WeaponType::MACHINEGUN)
+            if (type == WeaponType::SINGLE)
             {
-                create_projectile(position, projectile_speed, 0 + angle_offset);
+                create_projectile(position, projectile_speed, 0 + angle_offset, 10);
+            }
+            else if (type == WeaponType::MACHINEGUN)
+            {
+                create_projectile(position, projectile_speed, 0 + angle_offset, 5);
             }
             else if (type == WeaponType::TRIPLE)
             {
 
-                create_projectile(position, projectile_speed, 0 + angle_offset);
-                create_projectile(position, projectile_speed, 45 + angle_offset);
-                create_projectile(position, projectile_speed, -45 + angle_offset);
+                create_projectile(position, projectile_speed, 0 + angle_offset, 15);
+                create_projectile(position, projectile_speed, 45 + angle_offset, 15);
+                create_projectile(position, projectile_speed, -45 + angle_offset, 15);
             }
 
             clock.restart();
+
+            return true;
         }
+
+        return false;
     }
 
     void update(float dt, sf::Vector2f pos, sf::RenderWindow &window)
@@ -130,17 +138,17 @@ public:
         }
     };
 
-    void create_projectile(sf::Vector2f position, float speed, int angle_offset)
+    void create_projectile(sf::Vector2f position, float speed, int angle_offset, int damage)
     {
 
         if (projectile_type == ProjectileType::FIREBALL)
         {
-            Projectile projectile(position, speed, angle_offset, projectile_texture[0]);
+            Projectile projectile(position, speed, angle_offset, projectile_texture[0], damage);
             projectiles.emplace_back(projectile);
         }
         else if (projectile_type == ProjectileType::SHURIKEN)
         {
-            Projectile projectile(position, speed, angle_offset, projectile_texture[1]);
+            Projectile projectile(position, speed, angle_offset, projectile_texture[1], damage);
             projectiles.emplace_back(projectile);
         }
     }

@@ -232,7 +232,7 @@ int main()
                 if (games[i] == nullptr && gameStates.size() > 1)
                 {
                     games[i] = std::make_unique<Game>(0, 350, 0 + i * (WIDTH / 2), WIDTH / 2 + i * (WIDTH / 2));
-                    games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH / 2 + i * (WIDTH / 2));
+                    games[i]->create_platforms(75, 78, 35, HEIGHT, WIDTH / 2 + i * (WIDTH / 2));
                     // games[i]->create_enemy();
                     score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
                     players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound() - games[i]->getLeftBound() - 50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 + i * (WIDTH / 2), WIDTH / 2 + i * (WIDTH / 2));
