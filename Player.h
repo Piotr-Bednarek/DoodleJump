@@ -359,8 +359,8 @@ public:
 
     void shoot(WeaponType type)
     {
-        weapon.shoot(type, 0);
-        shoot_sound.play();
+        if (weapon.shoot(type, 0))
+            shoot_sound.play();
     }
 
     void check_projeciltile_collision(std::vector<Enemy> &enemies)
@@ -375,7 +375,7 @@ public:
             {
                 // std::cout << "Collision" << std::endl;
 
-                std::cout << "Collision with enemy at index: " << &enemy - &enemies[0] << std::endl;
+                // std::cout << "Collision with enemy at index: " << &enemy - &enemies[0] << std::endl;
 
                 enemy.update_health(result);
             }
