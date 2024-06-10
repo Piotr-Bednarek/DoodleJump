@@ -37,8 +37,11 @@ private:
     int last_enemy_spawn;
 
     std::vector<sf::Texture> platform_textures;
-    std::vector<sf::Texture> enemy_textures;
+    //std::vector<sf::Texture> enemy_textures;
     std::vector<sf::Texture> powerUp_textures;
+    std::vector<std::vector<sf::Texture>> enemy_animations;
+
+    std::vector<Enemy> tempE;
 
 public:
     Game(float grav, float jump, int left_bound, int right_bound)
@@ -47,7 +50,7 @@ public:
         velocity = grav;
         game_left_bound = left_bound;
         game_right_bound = right_bound;
-
+        enemy_animations.resize(3);
         std::vector<std::string> platform_texture_paths = {"assets/enviroment/platform_grass.png", "assets/enviroment/platform_stone.png"};
 
         for (const auto &path : platform_texture_paths)
@@ -61,7 +64,7 @@ public:
             platform_textures.push_back(std::move(texture));
         }
 
-        std::vector<std::string> enemy_texture_paths = {"assets/enemy/dragon_flying.png", "assets/enemy/bee_flying.png", "assets/enemy/kamikaze_flying.png"};
+        std::vector<std::string> enemy_texture_paths = {"assets/enemy/bee_flying.png", "assets/enemy/bee_hit.png", "assets/enemy/bee_hit.png", "assets/enemy/dragon_flying.png", "assets/enemy/dragon_hit.png", "assets/enemy/dragon_death.png", "assets/enemy/kamikaze_flying.png", "assets/enemy/kamikaze_hit.png", "assets/enemy/kamikaze_death.png"};
 
         for (const auto &path : enemy_texture_paths)
         {
@@ -71,7 +74,17 @@ public:
                 std::cout << "Failed to load texture from " << path << std::endl;
                 continue;
             }
-            enemy_textures.push_back(std::move(texture));
+           // enemy_textures.push_back(std::move(texture));
+            if(enemy_animations[0].size()<3){
+                //enemy_animations[0].push_back(std::move(texture));
+                enemy_animations[0].push_back(texture);
+            }
+            else if(enemy_animations[1].size()<3){
+                enemy_animations[1].push_back(texture);
+            }
+            else{
+                enemy_animations[2].push_back(texture);
+            }
         }
 
         std::vector<std::string> powerUp_texture_paths = {"assets/powerup/heart.png", "assets/powerup/shield.png", "assets/powerup/jump.png", "assets/powerup/massacre.png"};
@@ -136,14 +149,22 @@ public:
         }
         for (Enemy &enemy : enemies)
         {
+            if(enemy.isEndOfAnimation()){
+                enemy.set_animation(AnimationType::FLY);
+                enemy.set_Texture(AnimationType::FLY);
+            }
             if (enemy.getGlobalBounds().intersects(player.getGlobalBounds()) && player.get_massacre())
             {
                 enemy.update_health(100000);
             }
+            if(enemy.get_health() <= 0)
+            {
+                tempE.emplace_back(std::move(enemy));
+                tempE[tempE.size() - 1].setWeaponActive(false);
+            }
         }
         enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy)
-                                     { return enemy.get_health() <= 0; }),
-                      enemies.end());
+        {return enemy.get_health() <= 0; }), enemies.end());
 
         for (Enemy &enemy : enemies)
         {
@@ -215,13 +236,13 @@ public:
 
         for (int i = 0; i < enemies.size(); i++)
         {
-            Enemy &enemy = enemies[i];
-            if (enemy.get_enemy_type() == EnemyType::KAMIKAZE)
+            if (enemies[i].get_enemy_type() == EnemyType::KAMIKAZE)
             {
-                int result = enemy.check_kamikaze_collision(player.getGlobalBounds(), player.get_massacre());
+                int result = enemies[i].check_kamikaze_collision(player.getGlobalBounds(), player.get_massacre());
 
                 if (result != -1)
                 {
+                    tempE.emplace_back(std::move(enemies[i]));
                     player.update_health(result);
                     enemies.erase(enemies.begin() + i);
                     i--;
@@ -229,13 +250,29 @@ public:
                 continue;
             }
 
-            int result = enemy.check_projeciltile_collision(player.getGlobalBounds());
+            int result = enemies[i].check_projeciltile_collision(player.getGlobalBounds());
 
             if (result != -1)
             {
                 player.update_health(result);
             }
         }
+        for(int i = 0; i < tempE.size(); i++){
+            if(tempE[i].get_animation() != AnimationType::DEATH)
+            {
+                tempE[i].setWeaponActive(false);
+                tempE[i].set_Texture(AnimationType::DEATH);
+                tempE[i].set_animation(AnimationType::DEATH);
+            }
+            tempE[i].step();
+            if(tempE[i].isEndOfAnimation())
+            {
+                tempE.erase(tempE.begin() + i);
+                i--;
+            } 
+
+        }
+
     }
 
     void check_if_spawn_enemy()
@@ -264,6 +301,10 @@ public:
         }
 
         for (Enemy &enemy : enemies)
+        {
+            window.draw(enemy);
+        }
+        for (Enemy &enemy : tempE)
         {
             window.draw(enemy);
         }
@@ -366,35 +407,57 @@ public:
 
         if (enemy_type == 0)
         {
-            Enemy enemy(position, speed, direction, enemy_textures[0], game_left_bound, game_right_bound, 1, 1, ProjectileType::FIREBALL, EnemyType::DRAGON);
 
+            Enemy enemy(position, speed, direction, std::cref(enemy_animations[1]), game_left_bound, game_right_bound, 1, 1, ProjectileType::FIREBALL, EnemyType::DRAGON);
             for (int i = 0; i < 4; i++)
             {
-                enemy.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81));
+                enemy.add_animation_frame(sf::IntRect(81 * i, 0, 71, 81), AnimationType::FLY);
             }
-            enemies.emplace_back(enemy);
+            for (int i = 0; i < 4; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(7 + 81 * i, 0, 65, 69), AnimationType::HIT);
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(2 + 81 * i, 3, 68, 68), AnimationType::DEATH);
+            }
+            enemies.emplace_back(std::move(enemy));
         }
         else if (enemy_type == 1)
         {
-            Enemy enemy(position, speed, direction, enemy_textures[1], game_left_bound, game_right_bound, 2, 2, ProjectileType::SHURIKEN, EnemyType::BEE);
-
+            Enemy enemy(position, speed, direction, std::cref(enemy_animations[0]), game_left_bound, game_right_bound, 2, 2, ProjectileType::SHURIKEN, EnemyType::BEE);
             for (int i = 0; i < 4; i++)
             {
-                enemy.add_animation_frame(sf::IntRect(64 * i, 0, 64, 64));
+                enemy.add_animation_frame(sf::IntRect(64 * i, 0, 64, 64), AnimationType::FLY);
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(64 * i, 0, 64, 64), AnimationType::HIT);
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(64 * i, 0, 64, 64), AnimationType::DEATH);
             }
 
-            enemies.emplace_back(enemy);
+            enemies.emplace_back(std::move(enemy));
         }
         else if (enemy_type == 2)
         {
-            Enemy enemy(position, speed, direction, enemy_textures[2], game_left_bound, game_right_bound, 1.5, 1.5, ProjectileType::SHURIKEN, EnemyType::KAMIKAZE);
+            Enemy enemy(position, speed, direction, std::cref(enemy_animations[2]), game_left_bound, game_right_bound, 1.5, 1.5, ProjectileType::SHURIKEN, EnemyType::KAMIKAZE);
 
             for (int i = 0; i < 15; i++)
             {
-                enemy.add_animation_frame(sf::IntRect(62 * i, 0, 62, 72));
+                enemy.add_animation_frame(sf::IntRect(62 * i, 0, 62, 72), AnimationType::FLY);
             }
-
-            enemies.emplace_back(enemy);
+            for (int i = 0; i < 4; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(62 * i, 0, 51, 55), AnimationType::HIT);
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                enemy.add_animation_frame(sf::IntRect(62 * i, 0, 60, 59), AnimationType::DEATH);
+            }
+            enemies.emplace_back(std::move(enemy));
         }
     }
 

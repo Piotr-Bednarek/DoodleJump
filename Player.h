@@ -378,6 +378,8 @@ public:
                 std::cout << "Collision with enemy at index: " << &enemy - &enemies[0] << std::endl;
 
                 enemy.update_health(result);
+                enemy.set_Texture(AnimationType::HIT);
+                enemy.set_animation(AnimationType::HIT);
             }
         }
     }

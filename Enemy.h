@@ -27,7 +27,7 @@ private:
     int max_health = 30;
     int health_points = max_health;
 
-    sf::Texture enemy_texture;
+    std::vector<sf::Texture> enemy_texture;
 
     Weapon weapon;
     bool is_weapon_active = true;
@@ -49,8 +49,9 @@ private:
     int kamikaze_damage = 25;
 
 public:
-    Enemy(sf::Vector2f pos, float &s, int &dir, sf::Texture &texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10),
-                                                                                                                                                                           weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir), scaleX(sX), scaleY(sY), enemy_texture(texture), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
+
+    Enemy(sf::Vector2f pos, float &s, int &dir, std::vector<sf::Texture> texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10), enemy_texture(texture),
+                                                                                                                                                                           weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir), scaleX(sX), scaleY(sY), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
     {
         if (enemy_type == EnemyType::KAMIKAZE)
         {
@@ -66,7 +67,7 @@ public:
             setScale(scaleX, scaleY);
         }
 
-        setTexture(texture);
+        setTexture(enemy_texture[0]);
         step();
     }
 
@@ -290,7 +291,14 @@ public:
     {
         return enemy_type;
     }
-
+    void setWeaponActive(bool active)
+    {
+        is_weapon_active = active;
+    }
+    void set_Texture(AnimationType type)
+    {
+        setTexture(enemy_texture[static_cast<int>(type)]);
+    }
     // sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
     // {
     //     sf::Text sfText(text, font, size);
