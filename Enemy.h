@@ -52,7 +52,7 @@ private:
     bool timer_active = false;
 
 public:
-    Enemy(sf::Vector2f pos, float &s, int &dir, sf::Texture &texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir), scaleX(sX), scaleY(sY), enemy_texture(texture), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
+    Enemy(sf::Vector2f pos, float &s, int &dir, std::vector<sf::Texture> texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir),enemy_texture(texture), scaleX(sX), scaleY(sY), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
     {
         if (enemy_type == EnemyType::KAMIKAZE)
         {
