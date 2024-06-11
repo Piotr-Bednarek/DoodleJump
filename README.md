@@ -31,5 +31,6 @@ Player 2:\
     NumPad2 - Multiple shoot\
     NumPad3 - Triple shoot
 # Instruction
-To start the game pres your jump button. After typing your name press Enter to confirm. 
+To start the game pres your jump button. After typing your name press Enter to confirm.\
+The .exe file is in the https://github.com/Piotr-Bednarek/DoodleJump/releases/tag/v1.0.0
   
