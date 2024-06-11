@@ -166,7 +166,6 @@ public:
 
         for (Enemy &enemy : enemies)
         {
-            
             enemy.update(dt, window, player.getPosition());
             enemy.move(dt, velocity * dt);
 
@@ -228,6 +227,7 @@ public:
 
             for (Enemy &enemy : enemies)
             {
+                enemy.update(dt, window, player.getPosition());
                 enemy.move(0, diff);
             }
             for(Enemy &enemy : tempE){
@@ -305,6 +305,12 @@ public:
                 window.draw(static_cast<PowerUp>(*platform.getPowerUp()));
             }
         }
+        for(Enemy &enemy : enemies){
+            window.draw(enemy);
+        }
+        for(Enemy &enemy : tempE){
+            window.draw(enemy);
+        }
     }
 
     float get_score()
@@ -380,20 +386,20 @@ public:
         float speed;
         int direction;
 
-        if (true);//rand() % 2 == 0)
+        if (rand() % 2 == 0)
         {
             position = sf::Vector2f(game_left_bound, 0);
             direction = 1;
         }
-        /*else
+        else
         {
             position = sf::Vector2f(game_right_bound, 0);
             direction = -1;
-        }*/
+        }
 
         speed = rand() % 101 + 100;
 
-        int enemy_type =2;// rand() % 3;
+        int enemy_type = rand() % 3;
 
         // Enemy enemy(position, speed, direction, enemy_textures[2], game_left_bound, game_right_bound, 1.5, 1.5, ProjectileType::SHURIKEN, EnemyType::KAMIKAZE);
         // for (int i = 0; i < 15; i++)
