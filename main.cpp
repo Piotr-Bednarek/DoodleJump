@@ -148,16 +148,36 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::W && gameStates[0] == GameState::TITLE)
                 {
-                    gameStates[0] = GameState::GAME;
+                    bool t = true;
+                    for(auto &inputField : inputFields)
+                    {
+                        if(inputField->is_field_active())
+                        {
+                            t = false;
+                        }
+                    }
+                    if(t)
+                    {
+                        gameStates[0] = GameState::GAME;
+                    }
+                    
+                }
+                if (event.key.code == sf::Keyboard::W && gameStates[0] == GameState::GAMEOVER)
+                {
+                    gameStates[0] = GameState::TITLE;
                 }
                 if (event.key.code == sf::Keyboard::Up && gameStates.size() > 1 && gameStates[1] == GameState::TITLE)
                 {
                     gameStates[1] = GameState::GAME;
                 }
+                if (event.key.code == sf::Keyboard::Up && gameStates.size() > 1 && gameStates[1] == GameState::GAMEOVER)
+                {
+                    gameStates[1] = GameState::TITLE;
+                }
 
                 for (int i = 0; i < players.size(); i++)
                 {
-                    if (players[i] != nullptr)
+                    if (players[i] != nullptr && gameStates[i] == GameState::GAME)
                     {
                         if (event.key.code == keys[i][0])
                         {
@@ -375,5 +395,6 @@ int main()
         window.draw(blackBar);
         window.display();
     }
+    music.stop();
     return 0;
 }

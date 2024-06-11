@@ -74,9 +74,7 @@ public:
                 std::cout << "Failed to load texture from " << path << std::endl;
                 continue;
             }
-           // enemy_textures.push_back(std::move(texture));
             if(enemy_animations[0].size()<3){
-                //enemy_animations[0].push_back(std::move(texture));
                 enemy_animations[0].push_back(texture);
             }
             else if(enemy_animations[1].size()<3){
@@ -181,10 +179,11 @@ public:
         check_if_spawn_enemy();
 
         float threshold = window.getSize().y * 0.5f;
+        float diff = threshold - player.getPosition().y;
         if (player.getPosition().y < threshold)
         {
 
-            float diff = threshold - player.getPosition().y;
+            
             player.move(0, diff);
 
             score += diff;
@@ -230,6 +229,9 @@ public:
             {
                 enemy.move(0, diff);
             }
+            for(Enemy &enemy : tempE){
+                enemy.move(0, diff);
+            }
         }
 
         player.check_projeciltile_collision(enemies);
@@ -264,7 +266,6 @@ public:
                 tempE[i].set_Texture(AnimationType::DEATH);
                 tempE[i].set_animation(AnimationType::DEATH);
             }
-            tempE[i].step();
             if(tempE[i].isEndOfAnimation())
             {
                 tempE.erase(tempE.begin() + i);
@@ -298,15 +299,6 @@ public:
             {
                 window.draw(static_cast<PowerUp>(*platform.getPowerUp()));
             }
-        }
-
-        for (Enemy &enemy : enemies)
-        {
-            window.draw(enemy);
-        }
-        for (Enemy &enemy : tempE)
-        {
-            window.draw(enemy);
         }
     }
 

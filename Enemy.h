@@ -81,7 +81,7 @@ public:
         }
 
         setTexture(enemy_texture[0]);
-        step();
+        //step();
     }
 
     sf::Sprite &getSprite()

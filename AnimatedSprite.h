@@ -31,7 +31,7 @@ public:
     {
         animation_frames[static_cast<int>(type)].emplace_back(frame_rect);
 
-        if (animation_frames.size() == 1 && animation_frames[0].size() == 1)
+        if (animation_frames[0].size() == 1)
         {
             setTextureRect(animation_frames[static_cast<int>(type)][0]);
         }
@@ -41,8 +41,8 @@ public:
     {
         if (clock.getElapsedTime().asSeconds() >= 1.0f / animation_fps)
         {
-            current_frame = (current_frame + 1) % animation_frames[static_cast<int>(current_animation)].size();
             setTextureRect(animation_frames[static_cast<int>(current_animation)][current_frame]);
+            current_frame = (current_frame + 1) % animation_frames[static_cast<int>(current_animation)].size();
             clock.restart();
         }
     }
@@ -58,6 +58,6 @@ public:
     }
     bool isEndOfAnimation()
     {
-        return current_frame == animation_frames[static_cast<int>(current_animation)].size() - 1;
+        return current_frame == animation_frames[static_cast<int>(current_animation)].size()-1;
     }
 };
