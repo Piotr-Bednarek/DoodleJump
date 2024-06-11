@@ -177,13 +177,15 @@ public:
         pos.x += velocity.x * dt;
         pos.y += velocity.y * dt;
         setPosition(pos);
-        if (is_invincible)
-        {
-            shield.setPosition(getPosition().x - shield.getGlobalBounds().width, getPosition().y + getGlobalBounds().height - shield.getGlobalBounds().height);
-        }
-
         weapon.update(dt, getPosition() + sf::Vector2f(getGlobalBounds().width / 2, 0), window);
-
+        if (is_invincible && getScale().x < 0)
+        {
+            shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width*1.2, getPosition().y + getGlobalBounds().height/2 - shield.getGlobalBounds().height/4);
+        }
+        else if(is_invincible)
+        {            
+            shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width/2, getPosition().y + getGlobalBounds().height/2 - shield.getGlobalBounds().height/4);
+        }
         health_text.setPosition(getPosition() + sf::Vector2f(getGlobalBounds().width / 2, -20));
         health_text.setString(std::to_string(health_points) + "/" + std::to_string(max_health));
 
@@ -422,7 +424,7 @@ public:
     {
         is_invincible = true;
         invincible_timer = (float)invincible;
-        shield.setPosition(getPosition().x + getGlobalBounds().width * 2, getPosition().y + getGlobalBounds().height - shield.getGlobalBounds().height);
+        shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width/2, getPosition().y + getGlobalBounds().height/2 - shield.getGlobalBounds().height/4);
     }
     void boostJump(int boost)
     {
