@@ -80,8 +80,6 @@ public:
     bool shoot(WeaponType type, int angle_offset)
     {
 
-        // std::cout << "Projectile count: " << projectiles.size() << std::endl;
-
         setType(type);
 
         if (clock.getElapsedTime() >= shootDelay)

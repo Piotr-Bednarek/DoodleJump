@@ -37,7 +37,6 @@ private:
     int last_enemy_spawn = 0;
 
     std::vector<sf::Texture> platform_textures;
-    //std::vector<sf::Texture> enemy_textures;
     std::vector<sf::Texture> powerUp_textures;
     std::vector<std::vector<sf::Texture>> enemy_animations;
 
@@ -74,13 +73,16 @@ public:
                 std::cout << "Failed to load texture from " << path << std::endl;
                 continue;
             }
-            if(enemy_animations[0].size()<3){
+            if (enemy_animations[0].size() < 3)
+            {
                 enemy_animations[0].push_back(texture);
             }
-            else if(enemy_animations[1].size()<3){
+            else if (enemy_animations[1].size() < 3)
+            {
                 enemy_animations[1].push_back(texture);
             }
-            else{
+            else
+            {
                 enemy_animations[2].push_back(texture);
             }
         }
@@ -147,7 +149,8 @@ public:
         }
         for (Enemy &enemy : enemies)
         {
-            if(enemy.isEndOfAnimation()){
+            if (enemy.isEndOfAnimation())
+            {
                 enemy.set_animation(AnimationType::FLY);
                 enemy.set_Texture(AnimationType::FLY);
             }
@@ -155,25 +158,20 @@ public:
             {
                 enemy.update_health(100000);
             }
-            if(enemy.get_health() <= 0)
+            if (enemy.get_health() <= 0)
             {
                 tempE.emplace_back(std::move(enemy));
                 tempE[tempE.size() - 1].setWeaponActive(false);
             }
         }
         enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](Enemy &enemy)
-        {return enemy.get_health() <= 0; }), enemies.end());
+                                     { return enemy.get_health() <= 0; }),
+                      enemies.end());
 
         for (Enemy &enemy : enemies)
         {
             enemy.update(dt, window, player.getPosition());
             enemy.move(dt, velocity * dt);
-
-            // if (enemy.get_health() <= 0)
-            // {
-            //     enemies.erase(std::remove(enemies.begin(), enemies.end(), enemy), enemies.end());
-            //     continue;
-            // }
         }
 
         check_if_spawn_enemy();
@@ -183,7 +181,6 @@ public:
         if (player.getPosition().y < threshold)
         {
 
-            
             player.move(0, diff);
 
             score += diff;
@@ -230,7 +227,8 @@ public:
                 enemy.update(dt, window, player.getPosition());
                 enemy.move(0, diff);
             }
-            for(Enemy &enemy : tempE){
+            for (Enemy &enemy : tempE)
+            {
                 enemy.move(0, diff);
             }
         }
@@ -260,14 +258,15 @@ public:
                 player.update_health(result);
             }
         }
-        for(int i = 0; i < tempE.size(); i++){
-            if(tempE[i].get_animation() != AnimationType::DEATH)
+        for (int i = 0; i < tempE.size(); i++)
+        {
+            if (tempE[i].get_animation() != AnimationType::DEATH)
             {
                 tempE[i].setWeaponActive(false);
                 tempE[i].set_Texture(AnimationType::DEATH);
                 tempE[i].set_animation(AnimationType::DEATH);
             }
-            if(tempE[i].isEndOfAnimation())
+            if (tempE[i].isEndOfAnimation())
             {
                 tempE.erase(tempE.begin() + i);
                 i--;
@@ -278,7 +277,6 @@ public:
                 tempE[i].draw(window);
             }
         }
-
     }
 
     void check_if_spawn_enemy()
@@ -305,10 +303,12 @@ public:
                 window.draw(static_cast<PowerUp>(*platform.getPowerUp()));
             }
         }
-        for(Enemy &enemy : enemies){
+        for (Enemy &enemy : enemies)
+        {
             window.draw(enemy);
         }
-        for(Enemy &enemy : tempE){
+        for (Enemy &enemy : tempE)
+        {
             window.draw(enemy);
         }
     }
@@ -346,7 +346,7 @@ public:
 
                 sf::Vector2f player_velocity = player.get_velocity();
 
-                if (player_velocity.y > 0) //&& intersection.height <= intersection.width)
+                if (player_velocity.y > 0)
                 {
                     player.setPosition(player.getPosition().x, platformBounds.top - playerBounds.height);
                     player.set_ground(true);
@@ -400,13 +400,6 @@ public:
         speed = rand() % 101 + 100;
 
         int enemy_type = rand() % 3;
-
-        // Enemy enemy(position, speed, direction, enemy_textures[2], game_left_bound, game_right_bound, 1.5, 1.5, ProjectileType::SHURIKEN, EnemyType::KAMIKAZE);
-        // for (int i = 0; i < 15; i++)
-        // {
-        //     enemy.add_animation_frame(sf::IntRect(62 * i, 0, 62, 72));
-        // }
-        // enemies.emplace_back(enemy);
 
         if (enemy_type == 0)
         {

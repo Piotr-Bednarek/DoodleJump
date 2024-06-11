@@ -52,7 +52,7 @@ private:
     bool timer_active = false;
 
 public:
-    Enemy(sf::Vector2f pos, float &s, int &dir, std::vector<sf::Texture> texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir),enemy_texture(texture), scaleX(sX), scaleY(sY), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
+    Enemy(sf::Vector2f pos, float &s, int &dir, std::vector<sf::Texture> texture, int &left_bound, int &right_bound, float sX, float sY, ProjectileType proj_type, EnemyType e_type) : AnimatedSprite(pos, 10), weapon(pos, WeaponType::SINGLE, left_bound, right_bound, proj_type), speed(s), directionX(dir), enemy_texture(texture), scaleX(sX), scaleY(sY), game_left_bound(left_bound), game_right_bound(right_bound), projectile_type(proj_type), enemy_type(e_type)
     {
         if (enemy_type == EnemyType::KAMIKAZE)
         {
@@ -112,9 +112,6 @@ public:
         }
         step();
         draw(window);
-
-        // health_text.setPosition(getPosition() + sf::Vector2f(getGlobalBounds().width / 2, -20));
-        // health_text.setString(std::to_string(health_points) + "/" + std::to_string(max_health));
     }
 
     void move(float dt, float dy)
@@ -134,8 +131,6 @@ public:
             {
                 directionX *= -1;
                 bounceX();
-
-                // std::cout << "Bounce" << std::endl;
             }
 
             if (rand() % 100 < 2)
@@ -157,15 +152,11 @@ public:
             {
                 directionX *= -1;
                 bounceX();
-
-                // std::cout << "Bounce" << std::endl;
             }
 
             if ((pos.y < 0 && directionY == -1) || (pos.y > window_height / 2.0f && directionY == 1))
             {
                 directionY *= -1;
-
-                // std::cout << "Bounce" << std::endl;
             }
 
             if (rand() % 100 < 5)
@@ -184,8 +175,6 @@ public:
             float max_val = std::max(std::abs(direction.x), std::abs(direction.y));
             direction.x /= max_val;
             direction.y /= max_val;
-
-            //std::cout << "Direction: " << direction.x << ", " << direction.y << std::endl;
 
             if (direction.x < 0)
             {
@@ -217,8 +206,6 @@ public:
             {
                 weapon.move(-width);
             }
-
-            // std::cout << "Bounce left" << std::endl;
         }
         else if (directionX == -1)
         {
@@ -229,8 +216,6 @@ public:
             {
                 weapon.move(width);
             }
-
-            // std::cout << "Bounce right" << std::endl;
         }
     }
 
@@ -241,14 +226,6 @@ public:
         {
             weapon.draw(window);
         }
-
-        // sf::RectangleShape hitbox;
-        // hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
-        // hitbox.setPosition(getPosition().x - getGlobalBounds().width / 2, getPosition().y - getGlobalBounds().height / 2);
-        // hitbox.setOutlineColor(sf::Color::Red);
-        // hitbox.setOutlineThickness(1.0f);
-        // hitbox.setFillColor(sf::Color::Transparent);
-        // window.draw(hitbox);
     }
 
     void shoot(WeaponType type)
@@ -264,7 +241,6 @@ public:
 
         if (std::abs(angle) >= threshold)
         {
-            // std::cout << "Angle: " << angle << std::endl;
             weapon.shoot(type, angle);
         }
     }
@@ -318,15 +294,4 @@ public:
     {
         setTexture(enemy_texture[static_cast<int>(type)]);
     }
-    // sf::Text createText(const std::string &text, const sf::Font &font, int size, const sf::Color &color, const sf::Vector2f &position)
-    // {
-    //     sf::Text sfText(text, font, size);
-    //     sfText.setFillColor(color);
-
-    //     sf::FloatRect textRect = sfText.getLocalBounds();
-    //     sfText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    //     sfText.setPosition(position);
-
-    //     return sfText;
-    // }
 };

@@ -95,7 +95,6 @@ public:
         singleplayer_button.draw(window);
         multiplayer_button.draw(window);
         score_button.draw(window);
-        // home_button.draw(window);
 
         window.draw(title);
         window.draw(info);

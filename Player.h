@@ -180,11 +180,11 @@ public:
         weapon.update(dt, getPosition() + sf::Vector2f(getGlobalBounds().width / 2, 0), window);
         if (is_invincible && getScale().x < 0)
         {
-            shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width*1.2, getPosition().y + getGlobalBounds().height/2 - shield.getGlobalBounds().height/4);
+            shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width * 1.2, getPosition().y + getGlobalBounds().height / 2 - shield.getGlobalBounds().height / 4);
         }
-        else if(is_invincible)
-        {            
-            shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width/2, getPosition().y + getGlobalBounds().height/2 - shield.getGlobalBounds().height/4);
+        else if (is_invincible)
+        {
+            shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width / 2, getPosition().y + getGlobalBounds().height / 2 - shield.getGlobalBounds().height / 4);
         }
         health_text.setPosition(getPosition() + sf::Vector2f(getGlobalBounds().width / 2, -20));
         health_text.setString(std::to_string(health_points) + "/" + std::to_string(max_health));
@@ -194,7 +194,6 @@ public:
 
     void check_state()
     {
-        // std::cout << "Velocity: " << velocity.x << ", " << velocity.y << std::endl;
         if (velocity.y < 0)
         {
             setPlayerState(PlayerState::JUMP);
@@ -271,18 +270,14 @@ public:
         {
         case PlayerState::IDLE:
             setTexture(player_idle_textures[current_frame]);
-            // std::cout << "IDLE" << std::endl;
             break;
 
         case PlayerState::JUMP:
             setTexture(player_jump_textures[current_frame]);
-
-            // std::cout << "JUMP" << std::endl;
             break;
 
         case PlayerState::RUN:
             setTexture(player_run_textures[current_frame]);
-            // std::cout << "RUN" << std::endl;
             break;
         }
     }
@@ -329,13 +324,6 @@ public:
         {
             window.draw(shield);
         }
-
-        // sf::RectangleShape hitbox(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
-        // hitbox.setPosition(getPosition());
-        // hitbox.setFillColor(sf::Color::Transparent);
-        // hitbox.setOutlineColor(sf::Color::Red);
-        // hitbox.setOutlineThickness(2);
-        // window.draw(hitbox);
     }
 
     void jump()
@@ -375,10 +363,6 @@ public:
 
             if (result != -1)
             {
-                // std::cout << "Collision" << std::endl;
-
-                // std::cout << "Collision with enemy at index: " << &enemy - &enemies[0] << std::endl;
-
                 enemy.update_health(result);
                 enemy.set_Texture(AnimationType::HIT);
                 enemy.set_animation(AnimationType::HIT);
@@ -390,7 +374,6 @@ public:
     {
         if (!is_invincible && !massacre_mode)
             health_points -= damage;
-        // std::cout << "Health: " << health_points << std::endl;
     }
     void restoreHealth(int health)
     {
@@ -424,7 +407,7 @@ public:
     {
         is_invincible = true;
         invincible_timer = (float)invincible;
-        shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width/2, getPosition().y + getGlobalBounds().height/2 - shield.getGlobalBounds().height/4);
+        shield.setPosition(getPosition().x + getGlobalBounds().width - shield.getGlobalBounds().width / 2, getPosition().y + getGlobalBounds().height / 2 - shield.getGlobalBounds().height / 4);
     }
     void boostJump(int boost)
     {
@@ -446,8 +429,6 @@ public:
     void setName(std::string &n)
     {
         name = n;
-
-        //  std::cout << "Name set to: " << name << std::endl;
     }
 
     std::string getName()

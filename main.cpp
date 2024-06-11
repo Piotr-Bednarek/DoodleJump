@@ -52,17 +52,10 @@ int main()
 
     // ----------------------------------------------
 
-    // sf::Texture enemy_flying_texture;
     sf::Texture background_texture;
-    // sf::Texture projectile_texture;
 
     sf::Texture platform_grass_texture;
     sf::Texture platform_stone_texture;
-
-    // if (!enemy_flying_texture.loadFromFile("assets/enemy/dragon_flying.png"))
-    // {
-    //     return 1;
-    // }
 
     if (!background_texture.loadFromFile("assets/enviroment/background.png"))
     {
@@ -70,11 +63,6 @@ int main()
     }
     background_texture.setRepeated(true);
     sf::Sprite background(background_texture, sf::IntRect(0, 0, 1600, HEIGHT));
-
-    // if (!projectile_texture.loadFromFile("assets/fireball_projectile.png"))
-    // {
-    //     return 1;
-    // }
 
     sf::Font font;
     sf::Font font1;
@@ -149,18 +137,17 @@ int main()
                 if (event.key.code == sf::Keyboard::W && gameStates[0] == GameState::TITLE)
                 {
                     bool t = true;
-                    for(auto &inputField : inputFields)
+                    for (auto &inputField : inputFields)
                     {
-                        if(inputField->is_field_active())
+                        if (inputField->is_field_active())
                         {
                             t = false;
                         }
                     }
-                    if(t)
+                    if (t)
                     {
                         gameStates[0] = GameState::GAME;
                     }
-                    
                 }
                 if (event.key.code == sf::Keyboard::W && gameStates[0] == GameState::GAMEOVER)
                 {
@@ -253,7 +240,6 @@ int main()
                 {
                     games[i] = std::make_unique<Game>(0, 350, 0 + i * (WIDTH / 2), WIDTH / 2 + i * (WIDTH / 2));
                     games[i]->create_platforms(75, 78, 35, HEIGHT, WIDTH / 2 + i * (WIDTH / 2));
-                    // games[i]->create_enemy();
                     score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
                     players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound() - games[i]->getLeftBound() - 50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0 + i * (WIDTH / 2), WIDTH / 2 + i * (WIDTH / 2));
                     players[i]->setName(name[i]);
@@ -267,7 +253,6 @@ int main()
                 {
                     games[i] = std::make_unique<Game>(0, 350, 0, WIDTH);
                     games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH);
-                    // games[i]->create_enemy();
                     score[i].setPosition(sf::Vector2f(130 + games[i]->getLeftBound(), 40));
                     players[i] = std::make_unique<Player>(sf::Vector2f((games[i]->getRightBound() - games[i]->getLeftBound() - 50) / 2 + games[i]->getLeftBound(), HEIGHT - 100), sf::Vector2f(50, 50), 0, WIDTH);
                     players[i]->setName(name[i]);
@@ -356,7 +341,7 @@ int main()
                     inputFields[i] = std::make_unique<InputField>(sf::Vector2f(games[i]->getLeftBound() + (games[i]->getRightBound() - games[i]->getLeftBound()) / 2, 300), sf::Vector2f(250, 75), font1, players[i].get());
                     inputFields[i]->setText(name[i]);
                     games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH / 2);
-                    //games[i]->create_enemy();
+                    // games[i]->create_enemy();
                     players[i]->setName(name[i]);
                     titleScreens[i]->updateHighScore(*highScoreManager);
                     if (i == 1)
