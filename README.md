@@ -32,5 +32,5 @@
     > NumPad3 - Triple shoot
 # Instruction
 To start the game pres your jump button. After typing your name press Enter to confirm.\
-The .exe file is in the https://github.com/Piotr-Bednarek/DoodleJump/releases/tag/v1.0.0
+The .exe file is in the https://github.com/Piotr-Bednarek/DoodleJump/releases
   
