@@ -13,7 +13,7 @@
 
 # Movement
  Player 1:\
-  Movments:\
+  Movements:\
     A - Left\
     D - Right\
     W - Jump\
@@ -22,7 +22,7 @@
     V - Multiple shoot\
     B - Triple shoot\
 Player 2:\
-  Movments:\
+  Movements:\
     Left arrow - Left\
     Right arrow - Right\
     Up arrow - Jump\
