@@ -85,7 +85,7 @@ int main()
 
     music.setLoop(true);
     music.play();
-    music.setVolume(3);
+    music.setVolume(30);
 
     sf::RectangleShape blackBar(sf::Vector2f(2, window.getSize().y));
     blackBar.setFillColor(sf::Color::Black);
@@ -380,6 +380,9 @@ int main()
         window.draw(blackBar);
         window.display();
     }
+    
     music.stop();
+    music.~Music();
+
     return 0;
 }
