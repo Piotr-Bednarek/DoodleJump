@@ -11,7 +11,7 @@
 -   https://kronbits.itch.io/freesfx
 -   https://trimurtigames.itch.io/2d-flying-enemy
 
-# Movment
+# Movement
  Player 1:\
   Movments:\
     A - Left\
