@@ -41,8 +41,8 @@ public:
     {
         if (clock.getElapsedTime().asSeconds() >= 1.0f / animation_fps)
         {
-            setTextureRect(animation_frames[static_cast<int>(current_animation)][current_frame]);
             current_frame = (current_frame + 1) % animation_frames[static_cast<int>(current_animation)].size();
+            setTextureRect(animation_frames[static_cast<int>(current_animation)][current_frame]);
             clock.restart();
         }
     }

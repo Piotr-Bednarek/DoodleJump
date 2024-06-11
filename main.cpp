@@ -290,8 +290,8 @@ int main()
                 }
                 window.draw(background);
                 games[i]->check_collision(*players[i]);
-                games[i]->update(dt, window, *players[i]);
                 players[i]->update(dt, window);
+                games[i]->update(dt, window, *players[i]);
                 games[i]->draw(window);
                 players[i]->draw(window);
 
@@ -356,7 +356,7 @@ int main()
                     inputFields[i] = std::make_unique<InputField>(sf::Vector2f(games[i]->getLeftBound() + (games[i]->getRightBound() - games[i]->getLeftBound()) / 2, 300), sf::Vector2f(250, 75), font1, players[i].get());
                     inputFields[i]->setText(name[i]);
                     games[i]->create_platforms(50, 78, 35, HEIGHT, WIDTH / 2);
-                    games[i]->create_enemy();
+                    //games[i]->create_enemy();
                     players[i]->setName(name[i]);
                     titleScreens[i]->updateHighScore(*highScoreManager);
                     if (i == 1)

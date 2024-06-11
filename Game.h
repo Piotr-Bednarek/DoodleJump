@@ -34,7 +34,7 @@ private:
 
     float slow_down = 7.5;
 
-    int last_enemy_spawn;
+    int last_enemy_spawn = 0;
 
     std::vector<sf::Texture> platform_textures;
     //std::vector<sf::Texture> enemy_textures;
@@ -166,8 +166,9 @@ public:
 
         for (Enemy &enemy : enemies)
         {
-            enemy.move(dt, velocity * dt);
+            
             enemy.update(dt, window, player.getPosition());
+            enemy.move(dt, velocity * dt);
 
             // if (enemy.get_health() <= 0)
             // {
@@ -270,8 +271,12 @@ public:
             {
                 tempE.erase(tempE.begin() + i);
                 i--;
-            } 
-
+            }
+            else
+            {
+                tempE[i].step();
+                tempE[i].draw(window);
+            }
         }
 
     }
@@ -375,20 +380,20 @@ public:
         float speed;
         int direction;
 
-        if (rand() % 2 == 0)
+        if (true);//rand() % 2 == 0)
         {
             position = sf::Vector2f(game_left_bound, 0);
             direction = 1;
         }
-        else
+        /*else
         {
             position = sf::Vector2f(game_right_bound, 0);
             direction = -1;
-        }
+        }*/
 
         speed = rand() % 101 + 100;
 
-        int enemy_type = rand() % 3;
+        int enemy_type =2;// rand() % 3;
 
         // Enemy enemy(position, speed, direction, enemy_textures[2], game_left_bound, game_right_bound, 1.5, 1.5, ProjectileType::SHURIKEN, EnemyType::KAMIKAZE);
         // for (int i = 0; i < 15; i++)

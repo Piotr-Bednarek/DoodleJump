@@ -74,10 +74,12 @@ public:
         if (directionX == 1)
         {
             setScale(-scaleX, scaleY);
+            std::cout << "Scale1: " << getScale().x << std::endl;
         }
         else if (directionX == -1)
         {
             setScale(scaleX, scaleY);
+            std::cout << "Scale2: " << getScale().x << std::endl;
         }
 
         setTexture(enemy_texture[0]);
@@ -111,7 +113,7 @@ public:
             weaponPos.y += getGlobalBounds().height / 2.0f;
             weapon.update(dt, getPosition() + sf::Vector2f(0, height / 2), window);
         }
-
+        std::cout << "Scale3: " << getScale().x << std::endl;
         step();
         draw(window);
 
@@ -181,13 +183,15 @@ public:
         // KAMIKAZE BEHAVIOR
         else if (enemy_type == EnemyType::KAMIKAZE)
         {
+            std::cout << player_position.x << ", " << player_position.y << std::endl;
+            std::cout << getPosition().x << ", " << getPosition().y << std::endl;
             sf::Vector2f direction = player_position - getPosition();
 
             float max_val = std::max(std::abs(direction.x), std::abs(direction.y));
             direction.x /= max_val;
             direction.y /= max_val;
 
-            // std::cout << "Direction: " << direction.x << ", " << direction.y << std::endl;
+            std::cout << "Direction: " << direction.x << ", " << direction.y << std::endl;
 
             if (direction.x < 0)
             {
